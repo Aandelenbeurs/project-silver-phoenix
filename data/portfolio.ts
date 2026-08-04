@@ -1,52 +1,165 @@
-export type Holding={name:string,ticker:string,yahoo?:string,shares:number,currency:'CAD'|'USD'|'AUD'|'EUR'|'HKD',category:string,rank?:number,score?:number,target?:number,max?:number,tier?:string};
-export const holdings:Holding[]=[
-['Onyx Gold Corp','ONYX','ONYX.V',660,'CAD','Goud',25,89.7,.01,.025,'B'],
-['Advanced Gold Exploration','AUEX','AUEX.CN',2200,'CAD','Goud',36,83.6,.0025,.01,'C'],
-['Solstice Gold','SGC','SGC.V',5000,'CAD','Goud',33,85.6,.005,.015,'C'],
-['Cassiar Gold','756','GLDC.V',14000,'CAD','Goud',15,93.8,.025,.04,'A'],
-['Great Pacific Gold','0B3','GPAC.V',1908.396947,'CAD','Goud',13,94.6,.03,.05,'A'],
-['Walhalla Gold','WAU','WAU.AX',1908,'AUD','Goud',24,90.1,.01,.025,'B'],
-['First Mining Gold','FMG','FF.TO',14548,'CAD','Goud',19,92,.02,.04,'A'],
-['Freeman Gold','3WU','FMAN.CN',19410,'CAD','Goud',32,86.1,.005,.015,'B'],
-['TRX Gold','TRGO','TRX.TO',3000,'CAD','Goud',20,91.8,.02,.04,'A'],
-['Golden Goliath Resources','GGZA','GNG.V',28000,'CAD','Goud',35,84.4,.005,.015,'C'],
-['Vista Gold','JEJ','VGZ',806.451612,'USD','Goud',11,95.6,.04,.06,'S'],
-['Spanish Mountain Gold','S3Y','SPA.V',12500,'CAD','Goud',12,95,.04,.06,'S'],
-['Minnova','2J1A','MCI.V',10000,'CAD','Goud',38,82.2,.0025,.01,'C'],
-['New Murchison Gold','TJ30','NMG.AX',23750,'AUD','Goud',37,83,.0025,.01,'C'],
-['Silver X Mining','AGX','AGX.V',33300,'CAD','Zilver',6,97.7,.06,.08,'S'],
-['IMPACT Silver','IKL','IPT.V',63880,'CAD','Zilver',9,96.5,.05,.07,'S'],
-['Silver47 Exploration','QP2','AGA.V',8407,'CAD','Zilver',4,98.8,.08,.09,'S+'],
-['Alaska Silver','MK71','',11500,'CAD','Zilver',30,87.1,.005,.015,'B'],
-['Silver Dollar Resources','4YW','SLV.V',15000,'CAD','Zilver',42,79.6,.0025,.01,'D'],
-['First Andes Silver','9TZ0','FAS.V',17500,'CAD','Zilver',31,86.8,.005,.015,'B'],
-['Silver Hammer Mining','7BW0','HAMR.CN',16000,'CAD','Zilver',41,80.2,.0025,.01,'D'],
-['Tier One Silver','TOV0','TSLV.V',92000,'CAD','Zilver',28,88,.01,.02,'B'],
-['Silver Elephant Mining','1P2','ELEF.TO',1477,'CAD','Zilver',39,81.6,.0025,.01,'C'],
-['Americore Resources','5GP','',22365,'CAD','Zilver',18,92.5,.02,.04,'A'],
-['Blackrock Silver','AHZO','BRC.V',1150,'CAD','Zilver',7,97.2,.05,.07,'S'],
-['China Silver Group','2CS','0815.HK',30000,'HKD','Zilver',40,80.9,.0025,.01,'D'],
-['Defiance Silver','D4E','DEF.V',15250,'CAD','Zilver',10,95.9,.04,.06,'S'],
-['Discovery Mining','1CU','DSV.TO',1950,'CAD','Gemengd',1,99.8,.09,.10,'S+'],
-['Silver One Resources','BRK1','SVE.V',13550,'CAD','Zilver',29,87.5,.01,.02,'B'],
-['GR Silver Mining','GPE','GRSL.V',21950,'CAD','Zilver',17,92.9,.02,.04,'A'],
-['Kuya Silver','GMR1','KUYA.CN',23435,'CAD','Zilver',14,94.2,.03,.05,'A'],
-['Outcrop Silver & Gold','MRG','OCG.V',13700,'CAD','Zilver',8,96.9,.05,.07,'S'],
-['Contango Silver & Gold','CTGO','CTGO',24,'USD','Gemengd'],
-['AbraSilver Resources','ABRA','ABRA.TO',100,'CAD','Zilver',2,99.5,.08,.09,'S+'],
-['Capitan Silver','CAPT','CAPT.V',400,'CAD','Zilver',21,91.5,.02,.04,'A'],
-['Kootenay Silver','KTN','KTN.V',1210,'CAD','Zilver',3,99.2,.08,.09,'S+'],
-['Silver Storm Mining','SVRS','SVRS.V',1500,'CAD','Zilver',22,91.2,.02,.04,'A'],
-['Nord Precious Metals','NTH','NTH.V',4000,'CAD','Zilver',43,78.9,0,.005,'D'],
-['Argentum Silver','ASL','ASL.V',19609,'CAD','Zilver',26,89,.01,.02,'B'],
-['Canasil Resources','CLZ','CLZ.V',20500,'CAD','Zilver',27,88.6,.01,.02,'B'],
-['Monarca Minerals','MMN','MMN.V',75000,'CAD','Zilver',44,77.8,0,.005,'D'],
-['Southern Silver','SEG1','SSV.V',28000,'CAD','Zilver',5,98.2,.07,.08,'S+'],
-['Zacatecas Silver','7TV','ZAC.V',142500,'CAD','Zilver',34,85,.005,.015,'C'],
-['Excellon Resources','E4X2','EXN.TO',15000,'CAD','Zilver',23,90.5,.015,.03,'B'],
-['Americas Gold & Silver','SZ7','USA.TO',480,'CAD','Gemengd',16,93.4,.025,.04,'A'],
-['WisdomTree Physical Silver','PHAG','PHAG.L',56,'USD','ETF'],
-['Invesco Physical Silver ETC','8PSB','8PSB.DE',32,'EUR','ETF'],
-['Global X Silver Miners ETF','SLVR','SLVR.L',11,'USD','ETF'],
-['Fysiek zilver','—','SI=F',404,'EUR','Fysiek']
-].map(x=>({name:x[0] as string,ticker:x[1] as string,yahoo:x[2] as string,shares:x[3] as number,currency:x[4] as Holding['currency'],category:x[5] as string,rank:x[6] as number|undefined,score:x[7] as number|undefined,target:x[8] as number|undefined,max:x[9] as number|undefined,tier:x[10] as string|undefined}));
+import {
+  companies,
+  getCompanyById,
+  type Company,
+  type CompanyStatus,
+} from "./companies";
+
+import {
+  holdings,
+  type Holding,
+} from "./holdings";
+
+export type PortfolioPosition = {
+  holding: Holding;
+  company?: Company;
+
+  id: string;
+  name: string;
+  ticker?: string;
+  quantity: number;
+
+  rank: number | null;
+  masterScore: number | null;
+  tier: string;
+  targetAllocation: number;
+  maximumAllocation: number;
+  status: CompanyStatus | "separate";
+
+  hasValidScore: boolean;
+  isEquity: boolean;
+};
+
+function getSafeStatus(
+  holding: Holding,
+  company?: Company,
+): CompanyStatus | "separate" {
+  if (holding.type !== "equity") {
+    return "separate";
+  }
+
+  if (!company) {
+    return "review";
+  }
+
+  if (
+    company.masterScore === null ||
+    company.rank === null ||
+    company.tier === "REVIEW"
+  ) {
+    return "review";
+  }
+
+  return company.status;
+}
+
+export const portfolioPositions: PortfolioPosition[] = holdings.map(
+  (holding) => {
+    const company = holding.companyId
+      ? getCompanyById(holding.companyId)
+      : undefined;
+
+    const hasValidScore =
+      company !== undefined &&
+      company.masterScore !== null &&
+      company.rank !== null &&
+      company.tier !== "REVIEW";
+
+    return {
+      holding,
+      company,
+
+      id: holding.id,
+      name: company?.name ?? holding.name,
+      ticker: company?.ticker ?? holding.ticker,
+      quantity: holding.quantity,
+
+      rank: company?.rank ?? null,
+      masterScore: company?.masterScore ?? null,
+      tier: company?.tier ?? "APART",
+      targetAllocation: company?.targetAllocation ?? 0,
+      maximumAllocation: company?.maximumAllocation ?? 0,
+      status: getSafeStatus(holding, company),
+
+      hasValidScore,
+      isEquity: holding.type === "equity",
+    };
+  },
+);
+
+export const equityPositions = portfolioPositions.filter(
+  (position) => position.isEquity,
+);
+
+export const separatePositions = portfolioPositions.filter(
+  (position) => !position.isEquity,
+);
+
+export const corePositions = equityPositions.filter(
+  (position) => position.status === "core",
+);
+
+export const keepPositions = equityPositions.filter(
+  (position) => position.status === "keep",
+);
+
+export const reducePositions = equityPositions.filter(
+  (position) => position.status === "reduce",
+);
+
+export const exitPositions = equityPositions.filter(
+  (position) => position.status === "exit",
+);
+
+export const reviewPositions = equityPositions.filter(
+  (position) => position.status === "review",
+);
+
+export const rankedCompanies = [...companies]
+  .filter(
+    (company) =>
+      company.rank !== null &&
+      company.masterScore !== null,
+  )
+  .sort(
+    (a, b) =>
+      (a.rank ?? Number.MAX_SAFE_INTEGER) -
+      (b.rank ?? Number.MAX_SAFE_INTEGER),
+  );
+
+export const unrankedCompanies = companies.filter(
+  (company) =>
+    company.rank === null ||
+    company.masterScore === null,
+);
+
+export function getPositionByCompanyId(
+  companyId: string,
+): PortfolioPosition | undefined {
+  return portfolioPositions.find(
+    (position) => position.company?.id === companyId,
+  );
+}
+
+export function getPositionsByStatus(
+  status: CompanyStatus | "separate",
+): PortfolioPosition[] {
+  return portfolioPositions.filter(
+    (position) => position.status === status,
+  );
+}
+
+export const portfolioSummary = {
+  totalPositions: portfolioPositions.length,
+  equityPositions: equityPositions.length,
+  separatePositions: separatePositions.length,
+
+  core: corePositions.length,
+  keep: keepPositions.length,
+  reduce: reducePositions.length,
+  exit: exitPositions.length,
+  review: reviewPositions.length,
+
+  rankedCompanies: rankedCompanies.length,
+  unrankedCompanies: unrankedCompanies.length,
+};

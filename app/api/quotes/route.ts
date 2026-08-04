@@ -1,30 +1,60 @@
-import { NextRequest, NextResponse } from 'next/server';
+import {
+  getYahooMarketSnapshot,
+} from "../../../services/yahoo";
 
-type YahooChart = {
-  chart?: {
-    result?: Array<{
-      meta?: { regularMarketPrice?: number; currency?: string };
-      indicators?: { quote?: Array<{ close?: Array<number | null> }> };
-    }>;
-  };
-};
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
-async function getQuote(symbol: string) {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=5d`;
-  const response = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, next: { revalidate: 300 } });
-  if (!response.ok) return { price: null, currency: null };
-  const payload = (await response.json()) as YahooChart;
-  const result = payload.chart?.result?.[0];
-  const latest = result?.meta?.regularMarketPrice;
-  const closes = result?.indicators?.quote?.[0]?.close ?? [];
-  const fallback = [...closes].reverse().find((value): value is number => typeof value === 'number');
-  return { price: latest ?? fallback ?? null, currency: result?.meta?.currency ?? null };
-}
+export async function GET() {
+  try {
+    const snapshot =
+      await getYahooMarketSnapshot();
 
-export async function GET(request: NextRequest) {
-  const symbols = (request.nextUrl.searchParams.get('symbols') ?? '').split(',').map((s) => s.trim()).filter(Boolean);
-  if (!symbols.length) return NextResponse.json({});
-  const unique = [...new Set(symbols)].slice(0, 75);
-  const entries = await Promise.all(unique.map(async (symbol) => [symbol, await getQuote(symbol)] as const));
-  return NextResponse.json(Object.fromEntries(entries));
+    return Response.json({
+      success: true,
+
+      requestedSymbols:
+        snapshot.requestedSymbols,
+
+      successfulSymbols:
+        snapshot.successfulSymbols,
+
+      failedSymbols:
+        snapshot.failedSymbols,
+
+      exchangeRates:
+        snapshot.exchangeRates,
+
+      fetchedAt:
+        snapshot.fetchedAt,
+
+      expiresAt:
+        snapshot.expiresAt,
+
+      errors:
+        snapshot.errors,
+
+      instruments:
+        snapshot.instruments,
+    });
+  } catch (error) {
+    console.error(
+      "Yahoo Finance ophalen mislukt:",
+      error,
+    );
+
+    return Response.json(
+      {
+        success: false,
+
+        error:
+          error instanceof Error
+            ? error.message
+            : "Onbekende fout bij het ophalen van marktdata.",
+      },
+      {
+        status: 500,
+      },
+    );
+  }
 }

@@ -1,0 +1,817 @@
+import "server-only";
+
+import YahooFinance from "yahoo-finance2";
+
+import {
+  companies,
+} from "../data/companies";
+
+import {
+  createPriceQuote,
+  defaultExchangeRates,
+  type ExchangeRates,
+  type PriceQuote,
+  type SupportedCurrency,
+} from "../data/prices";
+
+const CACHE_DURATION_MS = 5 * 60 * 1000;
+
+const yahooFinance = new YahooFinance({
+  quoteCombine: {
+    debounceTime: 50,
+    maxSymbolsPerRequest: 100,
+  },
+});
+
+type YahooQuote = {
+  symbol?: string;
+  currency?: string;
+
+  regularMarketPrice?: number;
+  regularMarketPreviousClose?: number;
+  regularMarketChange?: number;
+  regularMarketChangePercent?: number;
+  regularMarketTime?: Date | string | number;
+
+  marketCap?: number;
+  exchange?: string;
+  fullExchangeName?: string;
+  quoteType?: string;
+  shortName?: string;
+  longName?: string;
+};
+
+export type YahooInstrumentType =
+  | "company"
+  | "etf"
+  | "physical"
+  | "currency";
+
+export type YahooInstrument = {
+  id: string;
+  symbol: string;
+  type: YahooInstrumentType;
+
+  /**
+   * Alleen gebruiken wanneer Yahoo een onhandige of
+   * foutieve valuta teruggeeft voor de gekozen notering.
+   */
+  currencyOverride?: SupportedCurrency;
+};
+
+export type MarketInstrumentResult = {
+  id: string;
+  symbol: string;
+  type: YahooInstrumentType;
+
+  quote: PriceQuote;
+
+  marketCap: number | null;
+  exchange: string | null;
+  quoteType: string | null;
+  displayName: string | null;
+};
+
+export type YahooMarketSnapshot = {
+  instruments: Record<string, MarketInstrumentResult>;
+  exchangeRates: ExchangeRates;
+
+  requestedSymbols: number;
+  successfulSymbols: number;
+  failedSymbols: number;
+
+  errors: Record<string, string>;
+
+  fetchedAt: string;
+  expiresAt: string;
+};
+
+type CachedSnapshot = {
+  snapshot: YahooMarketSnapshot;
+  expiresAtMs: number;
+};
+
+const additionalInstruments: YahooInstrument[] = [
+  {
+    id: "phag",
+    symbol: "PHAG.L",
+    type: "etf",
+    currencyOverride: "USD",
+  },
+  {
+    id: "8psb",
+    symbol: "8PSB.DE",
+    type: "etf",
+    currencyOverride: "EUR",
+  },
+  {
+    id: "slvr",
+    symbol: "SLVR.L",
+    type: "etf",
+    currencyOverride: "USD",
+  },
+  {
+    id: "physical-silver",
+    symbol: "SI=F",
+    type: "physical",
+    currencyOverride: "USD",
+  },
+];
+
+const currencyInstruments: YahooInstrument[] = [
+  {
+    id: "fx-eur-usd",
+    symbol: "EURUSD=X",
+    type: "currency",
+  },
+  {
+    id: "fx-eur-cad",
+    symbol: "EURCAD=X",
+    type: "currency",
+  },
+  {
+    id: "fx-eur-aud",
+    symbol: "EURAUD=X",
+    type: "currency",
+  },
+  {
+    id: "fx-eur-hkd",
+    symbol: "EURHKD=X",
+    type: "currency",
+  },
+  {
+    id: "fx-eur-gbp",
+    symbol: "EURGBP=X",
+    type: "currency",
+  },
+];
+
+let cachedSnapshot: CachedSnapshot | null = null;
+let activeRequest: Promise<YahooMarketSnapshot> | null = null;
+
+/**
+ * Alle door PSP benodigde Yahoo-instrumenten.
+ *
+ * Bedrijven zonder yahooSymbol worden niet automatisch
+ * opgevraagd en blijven afhankelijk van een handmatige fallback.
+ */
+export function getYahooInstruments(): YahooInstrument[] {
+  const companyInstruments: YahooInstrument[] = companies
+    .filter(
+      (
+        company,
+      ): company is typeof company & {
+        yahooSymbol: string;
+      } =>
+        typeof company.yahooSymbol === "string" &&
+        company.yahooSymbol.trim().length > 0,
+    )
+    .map((company) => ({
+      id: company.id,
+      symbol: company.yahooSymbol,
+      type: "company",
+    }));
+
+  return [
+    ...companyInstruments,
+    ...additionalInstruments,
+    ...currencyInstruments,
+  ];
+}
+
+/**
+ * Yahoo gebruikt voor sommige Londense noteringen "GBp":
+ * Britse pence in plaats van Britse ponden.
+ *
+ * £1 = 100 GBp, dus de koers moet door 100.
+ */
+function normalizeCurrency({
+  yahooCurrency,
+  currencyOverride,
+}: {
+  yahooCurrency?: string;
+  currencyOverride?: SupportedCurrency;
+}): {
+  currency: SupportedCurrency;
+  priceMultiplier: number;
+} {
+  if (currencyOverride) {
+    return {
+      currency: currencyOverride,
+      priceMultiplier: 1,
+    };
+  }
+
+  const normalized =
+    yahooCurrency?.trim().toUpperCase();
+
+  if (normalized === "GBP") {
+    return {
+      currency: "GBP",
+      priceMultiplier: 1,
+    };
+  }
+
+  if (
+    normalized === "GBPENCE" ||
+    normalized === "GBX" ||
+    normalized === "GBP."
+  ) {
+    return {
+      currency: "GBP",
+      priceMultiplier: 0.01,
+    };
+  }
+
+  if (normalized === "USD") {
+    return {
+      currency: "USD",
+      priceMultiplier: 1,
+    };
+  }
+
+  if (normalized === "CAD") {
+    return {
+      currency: "CAD",
+      priceMultiplier: 1,
+    };
+  }
+
+  if (normalized === "AUD") {
+    return {
+      currency: "AUD",
+      priceMultiplier: 1,
+    };
+  }
+
+  if (normalized === "HKD") {
+    return {
+      currency: "HKD",
+      priceMultiplier: 1,
+    };
+  }
+
+  return {
+    currency: "EUR",
+    priceMultiplier: 1,
+  };
+}
+
+function normalizeDate(
+  value: Date | string | number | undefined,
+): string | null {
+  if (value === undefined) {
+    return null;
+  }
+
+  const date =
+    value instanceof Date
+      ? value
+      : new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date.toISOString();
+}
+
+function safeNumber(
+  value: unknown,
+): number | null {
+  return typeof value === "number" &&
+    Number.isFinite(value)
+    ? value
+    : null;
+}
+
+function createUnavailableResult(
+  instrument: YahooInstrument,
+  error: string,
+): MarketInstrumentResult {
+  const currency =
+    instrument.currencyOverride ?? "EUR";
+
+  return {
+    id: instrument.id,
+    symbol: instrument.symbol,
+    type: instrument.type,
+
+    quote: createPriceQuote({
+      symbol: instrument.symbol,
+      currency,
+      price: null,
+      previousClose: null,
+      source: "unavailable",
+      updatedAt: null,
+      error,
+    }),
+
+    marketCap: null,
+    exchange: null,
+    quoteType: null,
+    displayName: null,
+  };
+}
+
+function mapYahooQuote({
+  instrument,
+  yahooQuote,
+}: {
+  instrument: YahooInstrument;
+  yahooQuote: YahooQuote;
+}): MarketInstrumentResult {
+  const {
+    currency,
+    priceMultiplier,
+  } = normalizeCurrency({
+    yahooCurrency: yahooQuote.currency,
+    currencyOverride:
+      instrument.currencyOverride,
+  });
+
+  const rawPrice = safeNumber(
+    yahooQuote.regularMarketPrice,
+  );
+
+  const rawPreviousClose = safeNumber(
+    yahooQuote.regularMarketPreviousClose,
+  );
+
+  const price =
+    rawPrice === null
+      ? null
+      : rawPrice * priceMultiplier;
+
+  const previousClose =
+    rawPreviousClose === null
+      ? null
+      : rawPreviousClose * priceMultiplier;
+
+  const updatedAt = normalizeDate(
+    yahooQuote.regularMarketTime,
+  );
+
+  return {
+    id: instrument.id,
+    symbol: instrument.symbol,
+    type: instrument.type,
+
+    quote: createPriceQuote({
+      symbol: instrument.symbol,
+      currency,
+      price,
+      previousClose,
+      source:
+        price === null
+          ? "unavailable"
+          : instrument.type === "physical"
+            ? "physical"
+            : "yahoo",
+      updatedAt,
+      error:
+        price === null
+          ? "Yahoo retourneerde geen geldige marktprijs."
+          : undefined,
+    }),
+
+    marketCap: safeNumber(
+      yahooQuote.marketCap,
+    ),
+
+    exchange:
+      yahooQuote.fullExchangeName ??
+      yahooQuote.exchange ??
+      null,
+
+    quoteType:
+      yahooQuote.quoteType ?? null,
+
+    displayName:
+      yahooQuote.longName ??
+      yahooQuote.shortName ??
+      null,
+  };
+}
+
+/**
+ * Zet de Yahoo-resultaten altijd om naar een object
+ * met het symbool als sleutel.
+ */
+function normalizeQuoteResponse(
+  response:
+    | YahooQuote[]
+    | Record<string, YahooQuote>,
+): Record<string, YahooQuote> {
+  if (Array.isArray(response)) {
+    return Object.fromEntries(
+      response
+        .filter(
+          (
+            quote,
+          ): quote is YahooQuote & {
+            symbol: string;
+          } =>
+            typeof quote.symbol === "string",
+        )
+        .map((quote) => [
+          quote.symbol,
+          quote,
+        ]),
+    );
+  }
+
+  return response;
+}
+
+/**
+ * Haalt alle symbolen in één batch op.
+ *
+ * Met circa 50 symbolen blijven we onder de standaardlimiet
+ * van 100 symbolen per Yahoo-request.
+ */
+async function fetchBatchQuotes(
+  symbols: string[],
+): Promise<Record<string, YahooQuote>> {
+  if (symbols.length === 0) {
+    return {};
+  }
+
+  const response =
+    await yahooFinance.quote(
+      symbols,
+      {
+        return: "object",
+        fields: [
+          "symbol",
+          "currency",
+          "regularMarketPrice",
+          "regularMarketPreviousClose",
+          "regularMarketChange",
+          "regularMarketChangePercent",
+          "regularMarketTime",
+          "marketCap",
+          "exchange",
+          "fullExchangeName",
+          "quoteType",
+          "shortName",
+          "longName",
+        ],
+      },
+      {
+        /**
+         * Valuta, futures en sommige microcaps kunnen velden
+         * teruggeven die niet exact overeenkomen met het
+         * yahoo-finance2-schema.
+         *
+         * PSP normaliseert de relevante velden daarom zelf
+         * in mapYahooQuote().
+         */
+        validateResult: false,
+      },
+    );
+
+  return normalizeQuoteResponse(
+    response as
+      | YahooQuote[]
+      | Record<string, YahooQuote>,
+  );
+}
+
+/**
+ * Fallback wanneer de volledige batchaanvraag mislukt.
+ *
+ * Kleine batches voorkomen dat één problematisch symbool
+ * alle overige resultaten blokkeert.
+ */
+async function fetchQuotesWithFallback(
+  symbols: string[],
+): Promise<{
+  quotes: Record<string, YahooQuote>;
+  batchErrors: string[];
+}> {
+  try {
+    const quotes =
+      await fetchBatchQuotes(symbols);
+
+    return {
+      quotes,
+      batchErrors: [],
+    };
+  } catch (error) {
+    const chunkSize = 15;
+
+    const chunks: string[][] = [];
+
+    for (
+      let index = 0;
+      index < symbols.length;
+      index += chunkSize
+    ) {
+      chunks.push(
+        symbols.slice(
+          index,
+          index + chunkSize,
+        ),
+      );
+    }
+
+    const settled =
+      await Promise.allSettled(
+        chunks.map((chunk) =>
+          fetchBatchQuotes(chunk),
+        ),
+      );
+
+    const quotes: Record<
+      string,
+      YahooQuote
+    > = {};
+
+    const batchErrors: string[] = [];
+
+    settled.forEach(
+      (result, index) => {
+        if (result.status === "fulfilled") {
+          Object.assign(
+            quotes,
+            result.value,
+          );
+
+          return;
+        }
+
+        const chunk =
+          chunks[index];
+
+        const reason =
+          result.reason instanceof Error
+            ? result.reason.message
+            : String(result.reason);
+
+        batchErrors.push(
+          `${chunk.join(", ")}: ${reason}`,
+        );
+      },
+    );
+
+    return {
+      quotes,
+      batchErrors: [
+        `Volledige batch mislukt: ${
+          error instanceof Error
+            ? error.message
+            : String(error)
+        }`,
+        ...batchErrors,
+      ],
+    };
+  }
+}
+
+function inverseRate(
+  value: number | null,
+  fallback: number,
+): number {
+  if (
+    value === null ||
+    value <= 0 ||
+    !Number.isFinite(value)
+  ) {
+    return fallback;
+  }
+
+  return 1 / value;
+}
+
+/**
+ * Yahoo retourneert EURUSD=X als:
+ *
+ * €1 = x USD
+ *
+ * PSP gebruikt:
+ *
+ * $1 = x EUR
+ *
+ * Daarom nemen we voor alle valutaparen de inverse.
+ */
+function buildExchangeRates(
+  results: Record<
+    string,
+    MarketInstrumentResult
+  >,
+): ExchangeRates {
+  return {
+    EUR: 1,
+
+    USD: inverseRate(
+      results["fx-eur-usd"]
+        ?.quote.price ?? null,
+      defaultExchangeRates.USD,
+    ),
+
+    CAD: inverseRate(
+      results["fx-eur-cad"]
+        ?.quote.price ?? null,
+      defaultExchangeRates.CAD,
+    ),
+
+    AUD: inverseRate(
+      results["fx-eur-aud"]
+        ?.quote.price ?? null,
+      defaultExchangeRates.AUD,
+    ),
+
+    HKD: inverseRate(
+      results["fx-eur-hkd"]
+        ?.quote.price ?? null,
+      defaultExchangeRates.HKD,
+    ),
+
+    GBP: inverseRate(
+      results["fx-eur-gbp"]
+        ?.quote.price ?? null,
+      defaultExchangeRates.GBP,
+    ),
+  };
+}
+
+async function createYahooSnapshot(): Promise<YahooMarketSnapshot> {
+  const instruments =
+    getYahooInstruments();
+
+  const symbols = [
+    ...new Set(
+      instruments.map(
+        (instrument) =>
+          instrument.symbol,
+      ),
+    ),
+  ];
+
+  const {
+    quotes,
+    batchErrors,
+  } = await fetchQuotesWithFallback(
+    symbols,
+  );
+
+  const instrumentResults: Record<
+    string,
+    MarketInstrumentResult
+  > = {};
+
+  const errors: Record<
+    string,
+    string
+  > = {};
+
+  for (const instrument of instruments) {
+    const yahooQuote =
+      quotes[instrument.symbol];
+
+    if (!yahooQuote) {
+      const error =
+        "Yahoo retourneerde geen resultaat voor dit symbool.";
+
+      instrumentResults[instrument.id] =
+        createUnavailableResult(
+          instrument,
+          error,
+        );
+
+      errors[instrument.id] = error;
+
+      continue;
+    }
+
+    const result = mapYahooQuote({
+      instrument,
+      yahooQuote,
+    });
+
+    instrumentResults[instrument.id] =
+      result;
+
+    if (result.quote.price === null) {
+      errors[instrument.id] =
+        result.quote.error ??
+        "Geen geldige koers beschikbaar.";
+    }
+  }
+
+  batchErrors.forEach(
+    (error, index) => {
+      errors[`batch-${index + 1}`] =
+        error;
+    },
+  );
+
+  const fetchedAtDate = new Date();
+
+  const expiresAtDate = new Date(
+    fetchedAtDate.getTime() +
+      CACHE_DURATION_MS,
+  );
+
+  const successfulSymbols =
+    instruments.filter(
+      (instrument) =>
+        instrumentResults[instrument.id]
+          ?.quote.price !== null,
+    ).length;
+
+  return {
+    instruments: instrumentResults,
+
+    exchangeRates:
+      buildExchangeRates(
+        instrumentResults,
+      ),
+
+    requestedSymbols:
+      instruments.length,
+
+    successfulSymbols,
+
+    failedSymbols:
+      instruments.length -
+      successfulSymbols,
+
+    errors,
+
+    fetchedAt:
+      fetchedAtDate.toISOString(),
+
+    expiresAt:
+      expiresAtDate.toISOString(),
+  };
+}
+
+/**
+ * Centrale functie voor marktdata.
+ *
+ * - gebruikt vijf minuten cache;
+ * - deelt één lopend verzoek tussen gelijktijdige pagina-aanvragen;
+ * - forceRefresh=true negeert de bestaande cache.
+ */
+export async function getYahooMarketSnapshot({
+  forceRefresh = false,
+}: {
+  forceRefresh?: boolean;
+} = {}): Promise<YahooMarketSnapshot> {
+  const now = Date.now();
+
+  if (
+    !forceRefresh &&
+    cachedSnapshot &&
+    cachedSnapshot.expiresAtMs > now
+  ) {
+    return cachedSnapshot.snapshot;
+  }
+
+  if (!forceRefresh && activeRequest) {
+    return activeRequest;
+  }
+
+  activeRequest =
+    createYahooSnapshot();
+
+  try {
+    const snapshot =
+      await activeRequest;
+
+    cachedSnapshot = {
+      snapshot,
+      expiresAtMs:
+        Date.parse(snapshot.expiresAt),
+    };
+
+    return snapshot;
+  } finally {
+    activeRequest = null;
+  }
+}
+
+/**
+ * Verwijdert de lokale servercache.
+ */
+export function clearYahooCache(): void {
+  cachedSnapshot = null;
+}
+
+/**
+ * Haalt één resultaat uit de gecachete snapshot.
+ */
+export async function getYahooInstrument(
+  instrumentId: string,
+): Promise<
+  MarketInstrumentResult | undefined
+> {
+  const snapshot =
+    await getYahooMarketSnapshot();
+
+  return snapshot.instruments[
+    instrumentId
+  ];
+}

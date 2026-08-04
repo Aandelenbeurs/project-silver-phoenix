@@ -1,15 +1,141 @@
-import SelectionBadge, { selectionGroup } from '../../components/SelectionBadge';
-import { holdings } from '../../data/portfolio';
+import SelectionBadge, {
+  selectionGroup,
+  type SelectionGroup,
+} from "../../components/SelectionBadge";
+
+import {
+  portfolioPositions,
+} from "../../data/portfolio";
 
 export default function HoldingsPage() {
-  const rows = [...holdings].sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999));
+  const rows = [...portfolioPositions].sort((a, b) => {
+    if (a.rank === null && b.rank === null) {
+      return a.name.localeCompare(b.name);
+    }
+
+    if (a.rank === null) {
+      return 1;
+    }
+
+    if (b.rank === null) {
+      return -1;
+    }
+
+    return a.rank - b.rank;
+  });
+
   return (
     <section className="panel">
-      <div className="panel-heading"><div><p className="eyebrow">DATABASE</p><h2>Alle huidige posities</h2><p>Broker-aantallen zijn samengevoegd; fractionele aandelen zijn behouden.</p></div></div>
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">DATABASE</p>
+
+          <h2>Alle huidige posities</h2>
+
+          <p>
+            Broker-aantallen zijn samengevoegd en fractionele aandelen
+            zijn behouden. ETF’s en fysiek zilver worden apart behandeld.
+          </p>
+        </div>
+      </div>
+
       <div className="compact-table-wrap">
         <table className="data-table wide-table">
-          <thead><tr><th>Rang</th><th>Bedrijf</th><th>Ticker</th><th>Aantal</th><th>Categorie</th><th>Score</th><th>Tier</th><th>Doel</th><th>Max</th><th>Selectie</th></tr></thead>
-          <tbody>{rows.map((h) => <tr key={`${h.name}-${h.ticker}`}><td>{h.rank ? `#${h.rank}` : '—'}</td><td><strong>{h.name}</strong></td><td>{h.ticker}</td><td>{h.shares.toLocaleString('nl-NL', { maximumFractionDigits: 6 })}</td><td>{h.category}</td><td className="score-cell">{h.score?.toFixed(1) ?? '—'}</td><td>{h.tier ?? '—'}</td><td>{h.target != null ? `${(h.target * 100).toFixed(1)}%` : '—'}</td><td>{h.max != null ? `${(h.max * 100).toFixed(1)}%` : '—'}</td><td><SelectionBadge group={selectionGroup(h.score, h.category)} /></td></tr>)}</tbody>
+          <thead>
+            <tr>
+              <th>Rang</th>
+              <th>Bedrijf</th>
+              <th>Ticker</th>
+              <th>Aantal</th>
+              <th>Type</th>
+              <th>Metaal</th>
+              <th>Score</th>
+              <th>Tier</th>
+              <th>Doel</th>
+              <th>Maximum</th>
+              <th>Selectie</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {rows.map((position) => {
+              const commodity =
+                position.company?.commodity ?? "apart";
+
+              const group: SelectionGroup =
+                position.status === "review"
+                  ? "Nog beoordelen"
+                  : position.status === "separate"
+                    ? "Apart"
+                    : selectionGroup(
+                        position.masterScore ?? undefined,
+                        commodity,
+                      );
+
+              return (
+                <tr key={position.id}>
+                  <td className="rank-cell">
+                    {position.rank !== null
+                      ? `#${position.rank}`
+                      : "—"}
+                  </td>
+
+                  <td>
+                    <strong>{position.name}</strong>
+
+                    {!position.hasValidScore &&
+                      position.isEquity && (
+                        <small className="cell-subtitle">
+                          Nog beoordelen
+                        </small>
+                      )}
+                  </td>
+
+                  <td>{position.ticker ?? "—"}</td>
+
+                  <td>
+                    {position.quantity.toLocaleString("nl-NL", {
+                      maximumFractionDigits: 6,
+                    })}
+                  </td>
+
+                  <td>
+                    {position.holding.type === "equity"
+                      ? "Aandeel"
+                      : position.holding.type === "etf"
+                        ? "ETF / ETC"
+                        : "Fysiek"}
+                  </td>
+
+                  <td>{commodity}</td>
+
+                  <td className="score-cell">
+                    {position.masterScore !== null
+                      ? position.masterScore.toFixed(1)
+                      : "—"}
+                  </td>
+
+                  <td>{position.tier}</td>
+
+                  <td>
+                    {position.isEquity
+                      ? `${position.targetAllocation.toFixed(1)}%`
+                      : "—"}
+                  </td>
+
+                  <td>
+                    {position.isEquity
+                      ? `${position.maximumAllocation.toFixed(1)}%`
+                      : "—"}
+                  </td>
+
+                  <td>
+                    <SelectionBadge group={group} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
         </table>
       </div>
     </section>
