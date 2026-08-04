@@ -7,72 +7,123 @@ import SelectionBadge, {
 } from "../components/SelectionBadge";
 
 import {
-  corePositions,
-  keepPositions,
-  reducePositions,
-  exitPositions,
-  reviewPositions,
-  equityPositions,
-  rankedCompanies,
-} from "../data/portfolio";
+  getLivePortfolio,
+  type ValuedPortfolioPosition,
+} from "../data/portfolio-engine";
 
-export default function DashboardPage() {
-  const targetPortfolio = [
-    ...corePositions,
-    ...keepPositions,
-  ];
+import {
+  formatEur,
+  formatPercent,
+} from "../data/prices";
 
-  const averageScore =
-    rankedCompanies.length > 0
-      ? rankedCompanies.reduce(
-          (sum, company) =>
-            sum + (company.masterScore ?? 0),
-          0,
-        ) / rankedCompanies.length
+function adviceToSelectionGroup(
+  position: ValuedPortfolioPosition,
+): SelectionGroup {
+  if (position.advice === "NOG BEOORDELEN") {
+    return "Nog beoordelen";
+  }
+
+  if (position.advice === "APART") {
+    return "Apart";
+  }
+
+  if (position.advice === "UITSTAPPEN") {
+    return "Uitstappen / watchlist";
+  }
+
+  if (
+    position.advice === "AFBOUWEN" ||
+    position.advice === "NIET BIJKOPEN"
+  ) {
+    return "Afbouwen";
+  }
+
+  if (position.status === "core") {
+    return "Kernpositie";
+  }
+
+  return "Behouden";
+}
+
+function formatUpdatedAt(value: string): string {
+  return new Intl.DateTimeFormat("nl-NL", {
+    dateStyle: "short",
+    timeStyle: "short",
+    timeZone: "Europe/Amsterdam",
+  }).format(new Date(value));
+}
+
+export default async function DashboardPage() {
+  const portfolio = await getLivePortfolio();
+
+  const {
+    positions,
+    totals,
+    buyQueue,
+    sellQueue,
+  } = portfolio;
+
+  const equities = positions.filter(
+    (position) => position.isEquity,
+  );
+
+  const pricedEquities = equities.filter(
+    (position) => position.marketValueEur !== null,
+  );
+
+  const weightedScoreNumerator =
+    pricedEquities.reduce(
+      (total, position) =>
+        total +
+        (position.marketValueEur ?? 0) *
+          (position.masterScore ?? 0),
+      0,
+    );
+
+  const weightedScoreDenominator =
+    pricedEquities.reduce(
+      (total, position) =>
+        total + (position.marketValueEur ?? 0),
+      0,
+    );
+
+  const weightedPortfolioScore =
+    weightedScoreDenominator > 0
+      ? weightedScoreNumerator /
+        weightedScoreDenominator
       : 0;
 
-  const selectionSummary: {
-    group: SelectionGroup;
-    count: number;
-  }[] = [
-    {
-      group: "Kernpositie",
-      count: corePositions.length,
-    },
-    {
-      group: "Behouden",
-      count: keepPositions.length,
-    },
-    {
-      group: "Afbouwen",
-      count: reducePositions.length,
-    },
-    {
-      group: "Uitstappen / watchlist",
-      count: exitPositions.length,
-    },
-    {
-      group: "Nog beoordelen",
-      count: reviewPositions.length,
-    },
-  ];
+  const topHoldings = [...positions]
+    .filter(
+      (position) =>
+        position.marketValueEur !== null,
+    )
+    .sort(
+      (a, b) =>
+        (b.marketValueEur ?? 0) -
+        (a.marketValueEur ?? 0),
+    )
+    .slice(0, 10);
 
   return (
     <>
       <section className="hero-panel">
         <div>
           <p className="eyebrow">
-            PORTEFEUILLE IN ÉÉN OOGOPSLAG
+            LIVE PORTEFEUILLE
           </p>
 
           <h2>
-            Van {equityPositions.length} aandelen naar
-            een doelportefeuille van 20–25 sterke posities.
+            {formatEur(
+              totals.totalMarketValueEur,
+            )}
           </h2>
 
           <p>
-            Het dashboard gebruikt jouw huidige holdings en
-            Ultimate Master Ranking v3.0 als centrale basis.
+            Gebaseerd op {portfolio.successfulSymbols} van{" "}
+            {portfolio.requestedSymbols} live Yahoo-symbolen.
+            Laatste update:{" "}
+            {formatUpdatedAt(portfolio.fetchedAt)}.
           </p>
         </div>
 
@@ -86,40 +137,58 @@ export default function DashboardPage() {
 
       <section className="stats-grid">
         <StatCard
-          label="Individuele aandelen"
-          value={equityPositions.length}
-          detail="ETF en fysiek apart"
+          label="Totale portefeuille"
+          value={formatEur(
+            totals.totalMarketValueEur,
+          )}
+          detail={`${totals.pricedPositions} posities geprijsd`}
+          tone="gold"
         />
 
         <StatCard
-          label="Kern + behouden"
-          value={targetPortfolio.length}
-          detail="Binnen de doelportefeuille"
+          label="Aandelenwaarde"
+          value={formatEur(
+            totals.equityValueEur,
+          )}
+          detail={`${equities.length} individuele aandelen`}
+        />
+
+        <StatCard
+          label="ETF / ETC"
+          value={formatEur(
+            totals.etfValueEur,
+          )}
+          detail="Zilverproducten en miners-ETF"
+        />
+
+        <StatCard
+          label="Fysiek zilver"
+          value={formatEur(
+            totals.physicalValueEur,
+          )}
+          detail="404 gram"
+        />
+
+        <StatCard
+          label="Gewogen Phoenix Score"
+          value={weightedPortfolioScore.toFixed(1)}
+          detail="Gewogen naar actuele marktwaarde"
           tone="green"
         />
 
         <StatCard
-          label="Gemiddelde score"
-          value={averageScore.toFixed(1)}
-          detail="Van alle gerangschikte bedrijven"
-          tone="gold"
-        />
-
-        <StatCard
-          label="Afbouwen / uitstappen"
-          value={
-            reducePositions.length +
-            exitPositions.length
+          label="Koersfouten"
+          value={portfolio.failedSymbols}
+          detail={
+            portfolio.failedSymbols === 0
+              ? "Alle symbolen beschikbaar"
+              : "Controle vereist"
           }
-          detail="Lagere prioriteit"
-          tone="red"
-        />
-
-        <StatCard
-          label="Nog beoordelen"
-          value={reviewPositions.length}
-          detail="Geen automatisch advies"
-          tone="gold"
+          tone={
+            portfolio.failedSymbols === 0
+              ? "green"
+              : "red"
+          }
         />
       </section>
 
@@ -127,24 +196,68 @@ export default function DashboardPage() {
         <article className="panel">
           <div className="panel-heading">
             <div>
-              <p className="eyebrow">SELECTIE</p>
+              <p className="eyebrow">
+                BUY QUEUE
+              </p>
 
-              <h3>Portefeuillevereenvoudiging</h3>
+              <h3>Hoogste koopprioriteit</h3>
+
+              <p>
+                Gebaseerd op Master Score en actuele
+                onderweging ten opzichte van de doelallocatie.
+              </p>
             </div>
+
+            <Link href="/optimizer">
+              Volledige optimizer
+            </Link>
           </div>
 
-          <div className="selection-grid">
-            {selectionSummary.map(
-              ({ group, count }) => (
-                <div
-                  className="selection-summary"
-                  key={group}
-                >
-                  <SelectionBadge group={group} />
+          <div className="company-list">
+            {buyQueue.length === 0 ? (
+              <p>
+                Er zijn momenteel geen berekende
+                koopkandidaten.
+              </p>
+            ) : (
+              buyQueue
+                .slice(0, 8)
+                .map((position) => (
+                  <div
+                    className="company-row"
+                    key={position.id}
+                  >
+                    <div>
+                      <strong>
+                        {position.rank !== null
+                          ? `#${position.rank} `
+                          : ""}
+                        {position.name}
+                      </strong>
 
-                  <strong>{count}</strong>
-                </div>
-              ),
+                      <small>
+                        Actueel{" "}
+                        {formatPercent(
+                          position.currentAllocation,
+                        )}{" "}
+                        · doel{" "}
+                        {position.targetAllocation.toFixed(
+                          1,
+                        )}
+                        % · waarde{" "}
+                        {formatEur(
+                          position.marketValueEur,
+                        )}
+                      </small>
+                    </div>
+
+                    <SelectionBadge
+                      group={adviceToSelectionGroup(
+                        position,
+                      )}
+                    />
+                  </div>
+                ))
             )}
           </div>
         </article>
@@ -152,40 +265,70 @@ export default function DashboardPage() {
         <article className="panel">
           <div className="panel-heading">
             <div>
-              <p className="eyebrow">TOP 5</p>
+              <p className="eyebrow">
+                SELL QUEUE
+              </p>
 
-              <h3>Hoogste overtuiging</h3>
+              <h3>Afbouwen en uitstappen</h3>
+
+              <p>
+                Verkoopkandidaten en posities boven hun
+                maximale allocatie.
+              </p>
             </div>
 
-            <Link href="/ranking">
-              Volledige ranking
+            <Link href="/optimizer">
+              Bekijk selectie
             </Link>
           </div>
 
-          <ol className="top-list">
-            {rankedCompanies
-              .slice(0, 5)
-              .map((company) => (
-                <li key={company.id}>
-                  <span className="rank-number">
-                    {company.rank}
-                  </span>
+          <div className="company-list">
+            {sellQueue.length === 0 ? (
+              <p>
+                Er zijn momenteel geen berekende
+                verkoopkandidaten.
+              </p>
+            ) : (
+              sellQueue
+                .slice(0, 8)
+                .map((position) => (
+                  <div
+                    className="company-row"
+                    key={position.id}
+                  >
+                    <div>
+                      <strong>
+                        {position.rank !== null
+                          ? `#${position.rank} `
+                          : ""}
+                        {position.name}
+                      </strong>
 
-                  <div>
-                    <strong>{company.name}</strong>
+                      <small>
+                        Actueel{" "}
+                        {formatPercent(
+                          position.currentAllocation,
+                        )}{" "}
+                        · doel{" "}
+                        {position.targetAllocation.toFixed(
+                          1,
+                        )}
+                        % · waarde{" "}
+                        {formatEur(
+                          position.marketValueEur,
+                        )}
+                      </small>
+                    </div>
 
-                    <small>
-                      Tier {company.tier} · doel{" "}
-                      {company.targetAllocation.toFixed(1)}%
-                    </small>
+                    <SelectionBadge
+                      group={adviceToSelectionGroup(
+                        position,
+                      )}
+                    />
                   </div>
-
-                  <b>
-                    {company.masterScore?.toFixed(1)}
-                  </b>
-                </li>
-              ))}
-          </ol>
+                ))
+            )}
+          </div>
         </article>
       </section>
 
@@ -193,11 +336,11 @@ export default function DashboardPage() {
         <div className="panel-heading">
           <div>
             <p className="eyebrow">
-              KERNSELECTIE
+              TOP 10 HOLDINGS
             </p>
 
             <h3>
-              Phoenix 20 – eerste overzicht
+              Grootste posities naar actuele marktwaarde
             </h3>
           </div>
 
@@ -207,63 +350,80 @@ export default function DashboardPage() {
         </div>
 
         <div className="compact-table-wrap">
-          <table className="data-table">
+          <table className="data-table wide-table">
             <thead>
               <tr>
-                <th>Rang</th>
                 <th>Bedrijf</th>
-                <th>Commodity</th>
-                <th>Score</th>
+                <th>Koers</th>
+                <th>Valuta</th>
+                <th>Waarde</th>
+                <th>Actueel</th>
                 <th>Doel</th>
-                <th>Selectie</th>
+                <th>Verschil</th>
+                <th>Advies</th>
               </tr>
             </thead>
 
             <tbody>
-              {rankedCompanies
-                .slice(0, 20)
-                .map((company) => {
-                  const group: SelectionGroup =
-                    company.status === "core"
-                      ? "Kernpositie"
-                      : company.status === "keep"
-                        ? "Behouden"
-                        : company.status === "reduce"
-                          ? "Afbouwen"
-                          : company.status === "review"
-                            ? "Nog beoordelen"
-                            : "Uitstappen / watchlist";
+              {topHoldings.map((position) => (
+                <tr key={position.id}>
+                  <td>
+                    <strong>
+                      {position.name}
+                    </strong>
+                  </td>
 
-                  return (
-                    <tr key={company.id}>
-                      <td>#{company.rank}</td>
+                  <td>
+                    {position.localPrice !== null
+                      ? position.localPrice.toLocaleString(
+                          "nl-NL",
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 4,
+                          },
+                        )
+                      : "—"}
+                  </td>
 
-                      <td>
-                        <strong>
-                          {company.name}
-                        </strong>
-                      </td>
+                  <td>{position.currency}</td>
 
-                      <td>
-                        {company.commodity}
-                      </td>
+                  <td>
+                    {formatEur(
+                      position.marketValueEur,
+                    )}
+                  </td>
 
-                      <td className="score-cell">
-                        {company.masterScore?.toFixed(1)}
-                      </td>
+                  <td>
+                    {formatPercent(
+                      position.currentAllocation,
+                    )}
+                  </td>
 
-                      <td>
-                        {company.targetAllocation.toFixed(1)}%
-                      </td>
+                  <td>
+                    {position.isEquity
+                      ? `${position.targetAllocation.toFixed(
+                          1,
+                        )}%`
+                      : "—"}
+                  </td>
 
-                      <td>
-                        <SelectionBadge
-                          group={group}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
+                  <td>
+                    {position.allocationDifference !== null
+                      ? `${position.allocationDifference.toFixed(
+                          2,
+                        )}%`
+                      : "—"}
+                  </td>
+
+                  <td>
+                    <SelectionBadge
+                      group={adviceToSelectionGroup(
+                        position,
+                      )}
+                    />
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
