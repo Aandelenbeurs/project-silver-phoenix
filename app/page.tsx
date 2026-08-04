@@ -1,3 +1,4 @@
+import AllocationPanel from "../components/AllocationPanel";
 import Link from "next/link";
 
 import StatCard from "../components/StatCard";
@@ -191,7 +192,7 @@ export default async function DashboardPage() {
           }
         />
       </section>
-
+<AllocationPanel totals={totals} />
       <section className="content-grid two-columns">
         <article className="panel">
           <div className="panel-heading">
