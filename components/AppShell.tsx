@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
+import WorkspaceSelector from './WorkspaceSwitcher';
+import WorkspaceSwitcher from './WorkspaceSwitcher';
 
 const nav = [
   { href: '/', label: 'Dashboard', icon: '◫' },
@@ -46,7 +48,19 @@ export default function AppShell({ children }: { children: ReactNode }) {
             <p className="eyebrow">PROJECT SILVER PHOENIX</p>
             <h1>{nav.find((item) => item.href === pathname)?.label ?? 'Dashboard'}</h1>
           </div>
-          <div className="topbar-badge">Ultimate Ranking v3.0</div>
+          <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+  }}
+>
+  <WorkspaceSwitcher/>
+
+  <div className="topbar-badge">
+    Ultimate Ranking v3.0
+  </div>
+</div>
         </header>
         <main className="page-content">{children}</main>
       </div>

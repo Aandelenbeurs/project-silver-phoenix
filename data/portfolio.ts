@@ -53,67 +53,111 @@ function getSafeStatus(
   return company.status;
 }
 
-export const portfolioPositions: PortfolioPosition[] = holdings.map(
-  (holding) => {
-    const company = holding.companyId
-      ? getCompanyById(holding.companyId)
-      : undefined;
+function buildPortfolioPosition(
+  holding: Holding,
+): PortfolioPosition {
+  const company = holding.companyId
+    ? getCompanyById(holding.companyId)
+    : undefined;
 
-    const hasValidScore =
-      company !== undefined &&
-      company.masterScore !== null &&
-      company.rank !== null &&
-      company.tier !== "REVIEW";
+  const hasValidScore =
+    company !== undefined &&
+    company.masterScore !== null &&
+    company.rank !== null &&
+    company.tier !== "REVIEW";
 
-    return {
+  return {
+    holding,
+    company,
+
+    id: holding.id,
+    name: company?.name ?? holding.name,
+    ticker: company?.ticker ?? holding.ticker,
+    quantity: holding.quantity,
+
+    rank: company?.rank ?? null,
+    masterScore: company?.masterScore ?? null,
+    tier: company?.tier ?? "APART",
+    targetAllocation:
+      company?.targetAllocation ?? 0,
+    maximumAllocation:
+      company?.maximumAllocation ?? 0,
+    status: getSafeStatus(
       holding,
       company,
+    ),
 
-      id: holding.id,
-      name: company?.name ?? holding.name,
-      ticker: company?.ticker ?? holding.ticker,
-      quantity: holding.quantity,
+    hasValidScore,
+    isEquity: holding.type === "equity",
+  };
+}
 
-      rank: company?.rank ?? null,
-      masterScore: company?.masterScore ?? null,
-      tier: company?.tier ?? "APART",
-      targetAllocation: company?.targetAllocation ?? 0,
-      maximumAllocation: company?.maximumAllocation ?? 0,
-      status: getSafeStatus(holding, company),
+/**
+ * Zet een willekeurige holdingslijst om naar
+ * volledige PortfolioPosition-objecten.
+ *
+ * Hierdoor kan dezelfde Portfolio Engine later werken met:
+ * - live holdings;
+ * - aangepaste holdings;
+ * - simulaties;
+ * - scenario-workspaces.
+ */
+export function buildPortfolioPositions(
+  sourceHoldings: Holding[],
+): PortfolioPosition[] {
+  return sourceHoldings.map(
+    buildPortfolioPosition,
+  );
+}
 
-      hasValidScore,
-      isEquity: holding.type === "equity",
-    };
-  },
-);
+/**
+ * Statische standaardportefeuille.
+ *
+ * Deze exports blijven bestaan voor Ranking en andere
+ * onderdelen die nog niet via de Workspace Manager lopen.
+ */
+export const portfolioPositions =
+  buildPortfolioPositions(holdings);
 
-export const equityPositions = portfolioPositions.filter(
-  (position) => position.isEquity,
-);
+export const equityPositions =
+  portfolioPositions.filter(
+    (position) => position.isEquity,
+  );
 
-export const separatePositions = portfolioPositions.filter(
-  (position) => !position.isEquity,
-);
+export const separatePositions =
+  portfolioPositions.filter(
+    (position) => !position.isEquity,
+  );
 
-export const corePositions = equityPositions.filter(
-  (position) => position.status === "core",
-);
+export const corePositions =
+  equityPositions.filter(
+    (position) =>
+      position.status === "core",
+  );
 
-export const keepPositions = equityPositions.filter(
-  (position) => position.status === "keep",
-);
+export const keepPositions =
+  equityPositions.filter(
+    (position) =>
+      position.status === "keep",
+  );
 
-export const reducePositions = equityPositions.filter(
-  (position) => position.status === "reduce",
-);
+export const reducePositions =
+  equityPositions.filter(
+    (position) =>
+      position.status === "reduce",
+  );
 
-export const exitPositions = equityPositions.filter(
-  (position) => position.status === "exit",
-);
+export const exitPositions =
+  equityPositions.filter(
+    (position) =>
+      position.status === "exit",
+  );
 
-export const reviewPositions = equityPositions.filter(
-  (position) => position.status === "review",
-);
+export const reviewPositions =
+  equityPositions.filter(
+    (position) =>
+      position.status === "review",
+  );
 
 export const rankedCompanies = [...companies]
   .filter(
@@ -123,36 +167,48 @@ export const rankedCompanies = [...companies]
   )
   .sort(
     (a, b) =>
-      (a.rank ?? Number.MAX_SAFE_INTEGER) -
-      (b.rank ?? Number.MAX_SAFE_INTEGER),
+      (a.rank ??
+        Number.MAX_SAFE_INTEGER) -
+      (b.rank ??
+        Number.MAX_SAFE_INTEGER),
   );
 
-export const unrankedCompanies = companies.filter(
-  (company) =>
-    company.rank === null ||
-    company.masterScore === null,
-);
+export const unrankedCompanies =
+  companies.filter(
+    (company) =>
+      company.rank === null ||
+      company.masterScore === null,
+  );
 
 export function getPositionByCompanyId(
   companyId: string,
 ): PortfolioPosition | undefined {
   return portfolioPositions.find(
-    (position) => position.company?.id === companyId,
+    (position) =>
+      position.company?.id === companyId,
   );
 }
 
 export function getPositionsByStatus(
-  status: CompanyStatus | "separate",
+  status:
+    | CompanyStatus
+    | "separate",
 ): PortfolioPosition[] {
   return portfolioPositions.filter(
-    (position) => position.status === status,
+    (position) =>
+      position.status === status,
   );
 }
 
 export const portfolioSummary = {
-  totalPositions: portfolioPositions.length,
-  equityPositions: equityPositions.length,
-  separatePositions: separatePositions.length,
+  totalPositions:
+    portfolioPositions.length,
+
+  equityPositions:
+    equityPositions.length,
+
+  separatePositions:
+    separatePositions.length,
 
   core: corePositions.length,
   keep: keepPositions.length,
@@ -160,6 +216,9 @@ export const portfolioSummary = {
   exit: exitPositions.length,
   review: reviewPositions.length,
 
-  rankedCompanies: rankedCompanies.length,
-  unrankedCompanies: unrankedCompanies.length,
+  rankedCompanies:
+    rankedCompanies.length,
+
+  unrankedCompanies:
+    unrankedCompanies.length,
 };

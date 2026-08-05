@@ -1056,3 +1056,196 @@ a {
     min-width: 90px;
   }
 }
+.workspace-selector {
+  min-width: 250px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.workspace-selector-copy {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.workspace-selector-label {
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.workspace-selector-copy strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-selector-copy small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.workspace-selector-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.workspace-selector-control select {
+  max-width: 170px;
+  padding: 8px 32px 8px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  outline: none;
+  color: var(--text);
+  background: var(--panel-soft);
+  cursor: pointer;
+}
+
+.workspace-selector-control select:focus {
+  border-color: rgba(221, 183, 75, 0.55);
+  box-shadow: 0 0 0 3px rgba(221, 183, 75, 0.1);
+}
+
+.workspace-status-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+.workspace-status-dot.is-live {
+  background: var(--green);
+  box-shadow: 0 0 10px rgba(99, 213, 154, 0.75);
+}
+
+.workspace-selector-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--red);
+  font-size: 10px;
+}
+
+@media (max-width: 900px) {
+  .workspace-selector-copy {
+    display: none;
+  }
+
+  .workspace-selector {
+    min-width: auto;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .workspace-selector {
+    display: none;
+  }
+}
+.workspace-create-button {
+  padding: 8px 10px;
+  border: 1px solid rgba(221, 183, 75, 0.28);
+  border-radius: 9px;
+  color: var(--gold-bright);
+  background: var(--gold-soft);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.workspace-create-button:hover:not(:disabled) {
+  border-color: rgba(221, 183, 75, 0.48);
+  background: rgba(221, 183, 75, 0.18);
+}
+
+.workspace-create-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.workspace-create-form {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(130px, 0.6fr);
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.workspace-create-form label {
+  display: grid;
+  gap: 5px;
+}
+
+.workspace-create-form label > span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.workspace-create-form input,
+.workspace-create-form select {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  outline: none;
+  color: var(--text);
+  background: var(--panel-soft);
+}
+
+.workspace-create-form input:focus,
+.workspace-create-form select:focus {
+  border-color: rgba(221, 183, 75, 0.55);
+  box-shadow: 0 0 0 3px rgba(221, 183, 75, 0.1);
+}
+
+.workspace-create-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+}
+
+.secondary-button {
+  padding: 9px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  color: var(--text-soft);
+  background: rgba(255, 255, 255, 0.035);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.secondary-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.065);
+}
+
+.secondary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.workspace-submit-button {
+  min-width: 110px;
+  padding: 9px 13px;
+}
+
+@media (max-width: 1050px) {
+  .workspace-create-form {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "activeWorkspaceId": "test-simulatie",
+  "workspaces": [
+    {
+      "id": "live",
+      "name": "Live Portfolio",
+      "type": "live",
+      "isReadOnly": false,
+      "createdAt": "2026-08-05T00:00:00Z",
+      "updatedAt": "2026-08-05T00:00:00Z"
+    },
+    {
+      "id": "silver-100",
+      "name": "silver 100",
+      "type": "simulation",
+      "isReadOnly": false,
+      "createdAt": "2026-08-05T10:21:03.054Z",
+      "updatedAt": "2026-08-05T10:21:03.054Z"
+    },
+    {
+      "id": "test-simulatie",
+      "name": "Test Simulatie",
+      "type": "simulation",
+      "isReadOnly": false,
+      "createdAt": "2026-08-05T10:23:31.492Z",
+      "updatedAt": "2026-08-05T10:23:31.492Z"
+    }
+  ]
+}

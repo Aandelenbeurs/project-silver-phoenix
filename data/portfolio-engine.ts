@@ -1,7 +1,11 @@
 import {
-  portfolioPositions,
+  buildPortfolioPositions,
   type PortfolioPosition,
 } from "./portfolio";
+
+import {
+  getWorkspaceHoldings,
+} from "./workspace-provider";
 
 import {
   calculateMarketValueEur,
@@ -291,8 +295,10 @@ export function calculatePriorityScore({
  * live koers en marktwaarde per positie.
  */
 function valuePositions({
+  positions,
   snapshot,
 }: {
+  positions: PortfolioPosition[];
   snapshot: YahooMarketSnapshot;
 }): Omit<
   ValuedPortfolioPosition,
@@ -301,58 +307,48 @@ function valuePositions({
   | "advice"
   | "priorityScore"
 >[] {
-  return portfolioPositions.map(
-    (position) => {
-      const quote =
-        getSnapshotQuote({
-          position,
-          snapshot,
-        });
+  return positions.map((position) => {
+    const quote = getSnapshotQuote({
+      position,
+      snapshot,
+    });
 
-      const currency =
-        quote.currency;
+    const currency = quote.currency;
 
-      let localPrice =
-        quote.price;
+    let localPrice = quote.price;
 
-      /**
-       * SI=F is een zilverfuture in USD per troy ounce.
-       * De fysieke holding wordt opgeslagen in gram.
-       *
-       * 1 troy ounce = 31,1034768 gram.
-       */
-      if (
-        position.holding.id ===
-          "holding-physical-silver" &&
-        localPrice !== null
-      ) {
-        localPrice =
-          localPrice / 31.1034768;
-      }
+    /**
+     * SI=F is een zilverfuture in USD per troy ounce.
+     * De fysieke holding wordt opgeslagen in gram.
+     *
+     * 1 troy ounce = 31,1034768 gram.
+     */
+    if (
+      position.holding.id ===
+        "holding-physical-silver" &&
+      localPrice !== null
+    ) {
+      localPrice =
+        localPrice / 31.1034768;
+    }
 
-      const marketValueEur =
-        calculateMarketValueEur({
-          quantity:
-            position.quantity,
-
-          localPrice,
-          currency,
-
-          exchangeRates:
-            snapshot.exchangeRates,
-        });
-
-      return {
-        ...position,
-
-        currency,
-        quote,
-
+    const marketValueEur =
+      calculateMarketValueEur({
+        quantity: position.quantity,
         localPrice,
-        marketValueEur,
-      };
-    },
-  );
+        currency,
+        exchangeRates:
+          snapshot.exchangeRates,
+      });
+
+    return {
+      ...position,
+      currency,
+      quote,
+      localPrice,
+      marketValueEur,
+    };
+  });
 }
 
 /**
@@ -376,12 +372,15 @@ function calculateTotalMarketValue(
  * op basis van één Yahoo-snapshot.
  */
 export function buildValuedPortfolio({
+  positions,
   snapshot,
 }: {
+  positions: PortfolioPosition[];
   snapshot: YahooMarketSnapshot;
 }): ValuedPortfolioPosition[] {
   const initialPositions =
     valuePositions({
+      positions,
       snapshot,
     });
 
@@ -575,13 +574,24 @@ export async function getLivePortfolio({
 }: {
   forceRefresh?: boolean;
 } = {}): Promise<LivePortfolio> {
-  const snapshot =
-    await getYahooMarketSnapshot({
+  const [
+    snapshot,
+    workspaceHoldings,
+  ] = await Promise.all([
+    getYahooMarketSnapshot({
       forceRefresh,
-    });
+    }),
+    getWorkspaceHoldings(),
+  ]);
+
+  const portfolioPositions =
+    buildPortfolioPositions(
+      workspaceHoldings,
+    );
 
   const positions =
     buildValuedPortfolio({
+      positions: portfolioPositions,
       snapshot,
     });
 
