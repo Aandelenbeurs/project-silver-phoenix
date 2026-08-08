@@ -3,6 +3,11 @@ import {
   writeWorkspaceFile,
 } from "./workspace-storage";
 
+import {
+  deleteWorkspaceData,
+  duplicateWorkspaceData,
+} from "./workspace-data-storage";
+
 export type WorkspaceType =
   | "live"
   | "simulation"
@@ -140,4 +145,152 @@ export async function createWorkspace({
   });
 
   return workspace;
+}
+
+export async function duplicateWorkspace({
+  sourceWorkspaceId,
+  name,
+}: {
+  sourceWorkspaceId: string;
+  name: string;
+}): Promise<Workspace> {
+  const trimmedName = name.trim();
+
+  if (trimmedName.length < 2) {
+    throw new Error(
+      "De naam van de workspace moet minimaal 2 tekens bevatten.",
+    );
+  }
+
+  const data =
+    await readWorkspaceFile();
+
+  const sourceWorkspace =
+    data.workspaces.find(
+      (workspace) =>
+        workspace.id ===
+        sourceWorkspaceId,
+    );
+
+  if (!sourceWorkspace) {
+    throw new Error(
+      `Bron-workspace '${sourceWorkspaceId}' bestaat niet.`,
+    );
+  }
+
+  const baseId =
+    createWorkspaceId(trimmedName);
+
+  let workspaceId = baseId;
+  let suffix = 2;
+
+  while (
+    data.workspaces.some(
+      (workspace) =>
+        workspace.id ===
+        workspaceId,
+    )
+  ) {
+    workspaceId =
+      `${baseId}-${suffix}`;
+
+    suffix += 1;
+  }
+
+  const now =
+    new Date().toISOString();
+
+  const workspace: Workspace = {
+    id: workspaceId,
+    name: trimmedName,
+
+    type:
+      sourceWorkspace.type === "live"
+        ? "simulation"
+        : sourceWorkspace.type,
+
+    isReadOnly: false,
+
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  await duplicateWorkspaceData({
+    sourceWorkspaceId,
+    targetWorkspace: workspace,
+  });
+
+  await writeWorkspaceFile({
+    activeWorkspaceId:
+      workspace.id,
+
+    workspaces: [
+      ...data.workspaces,
+      workspace,
+    ],
+  });
+
+  return workspace;
+}
+export async function deleteWorkspace(
+  workspaceId: string,
+): Promise<void> {
+  if (workspaceId === "live") {
+    throw new Error(
+      "De Live Portfolio workspace kan niet worden verwijderd.",
+    );
+  }
+
+  const data =
+    await readWorkspaceFile();
+
+  const workspace =
+    data.workspaces.find(
+      (item) =>
+        item.id === workspaceId,
+    );
+
+  if (!workspace) {
+    throw new Error(
+      `Workspace '${workspaceId}' bestaat niet.`,
+    );
+  }
+
+  if (workspace.type === "live") {
+    throw new Error(
+      "Een Live Portfolio workspace kan niet worden verwijderd.",
+    );
+  }
+
+  const remainingWorkspaces =
+    data.workspaces.filter(
+      (item) =>
+        item.id !== workspaceId,
+    );
+
+  const liveWorkspace =
+    remainingWorkspaces.find(
+      (item) =>
+        item.id === "live",
+    );
+
+  if (!liveWorkspace) {
+    throw new Error(
+      "Live Portfolio ontbreekt. Verwijderen is gestopt om gegevensverlies te voorkomen.",
+    );
+  }
+
+  await deleteWorkspaceData(
+    workspaceId,
+  );
+
+  await writeWorkspaceFile({
+    activeWorkspaceId:
+      data.activeWorkspaceId === workspaceId
+        ? "live"
+        : data.activeWorkspaceId,
+
+    workspaces:
+      remainingWorkspaces,
+  });
 }

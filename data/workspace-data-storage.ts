@@ -3,6 +3,7 @@ import "server-only";
 import {
   mkdir,
   readFile,
+  rm,
   writeFile,
 } from "node:fs/promises";
 
@@ -305,6 +306,87 @@ export async function initializeWorkspaceData({
       [],
     ),
   ]);
+}
+
+export async function duplicateWorkspaceData({
+  sourceWorkspaceId,
+  targetWorkspace,
+}: {
+  sourceWorkspaceId: string;
+  targetWorkspace: Workspace;
+}): Promise<void> {
+  const sourceData =
+    await readWorkspaceData(
+      sourceWorkspaceId,
+    );
+
+  if (!sourceData) {
+    throw new Error(
+      `Bron-workspace '${sourceWorkspaceId}' bestaat niet.`,
+    );
+  }
+
+  await mkdir(
+    getWorkspaceDirectory(
+      targetWorkspace.id,
+    ),
+    {
+      recursive: true,
+    },
+  );
+
+  await Promise.all([
+    writeWorkspaceMetadata(
+      targetWorkspace,
+    ),
+
+    writeWorkspaceHoldings(
+      targetWorkspace.id,
+      sourceData.holdings.map(
+        (holding) => ({
+          ...holding,
+        }),
+      ),
+    ),
+
+    writeWorkspaceSettings(
+      targetWorkspace.id,
+      {
+        ...sourceData.settings,
+        exchangeRateOverrides: {
+          ...sourceData.settings
+            .exchangeRateOverrides,
+        },
+      },
+    ),
+
+    writeWorkspaceTransactions(
+      targetWorkspace.id,
+      sourceData.transactions.map(
+        (transaction) => ({
+          ...transaction,
+        }),
+      ),
+    ),
+  ]);
+}
+
+export async function deleteWorkspaceData(
+  workspaceId: string,
+): Promise<void> {
+  if (workspaceId === "live") {
+    throw new Error(
+      "De Live Portfolio workspace kan niet worden verwijderd.",
+    );
+  }
+
+  await rm(
+    getWorkspaceDirectory(workspaceId),
+    {
+      recursive: true,
+      force: true,
+    },
+  );
 }
 
 export function isWorkspaceType(

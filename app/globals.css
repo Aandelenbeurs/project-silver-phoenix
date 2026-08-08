@@ -1249,3 +1249,235 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+.quantity-edit-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 9px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--text);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.quantity-edit-button:hover {
+  border-color: rgba(212, 167, 44, 0.35);
+  background: var(--gold-soft);
+  color: #ffe28a;
+}
+
+.quantity-edit-button span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.quantity-editor {
+  min-width: 260px;
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) auto auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.quantity-editor input {
+  min-width: 90px;
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid rgba(212, 167, 44, 0.45);
+  border-radius: 8px;
+  outline: none;
+  color: var(--text);
+  background: #0a1928;
+  font: inherit;
+  font-weight: 700;
+}
+
+.quantity-editor input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212, 167, 44, 0.12);
+}
+
+.quantity-save-button,
+.quantity-cancel-button {
+  padding: 7px 9px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.quantity-save-button {
+  border: 1px solid rgba(96, 211, 148, 0.35);
+  color: var(--green);
+  background: rgba(96, 211, 148, 0.1);
+}
+
+.quantity-save-button:hover:not(:disabled) {
+  background: rgba(96, 211, 148, 0.18);
+}
+
+.quantity-cancel-button {
+  border: 1px solid var(--line);
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.quantity-cancel-button:hover:not(:disabled) {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.quantity-save-button:disabled,
+.quantity-cancel-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity-error {
+  grid-column: 1 / -1;
+  color: var(--red);
+  font-size: 10px;
+}
+
+.quantity-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(1, 7, 13, 0.74);
+  backdrop-filter: blur(6px);
+}
+
+.quantity-confirm-dialog {
+  width: min(460px, 100%);
+  padding: 24px;
+  border: 1px solid #35556e;
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17, 36, 56, 0.99),
+      rgba(8, 22, 36, 0.99)
+    );
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.52),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.quantity-confirm-dialog h3 {
+  margin: 5px 0 20px;
+  font-size: 22px;
+}
+
+.quantity-confirm-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.quantity-confirm-grid span,
+.quantity-confirm-grid strong {
+  padding: 11px 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.quantity-confirm-grid span {
+  color: var(--muted);
+}
+
+.quantity-confirm-grid strong {
+  min-width: 120px;
+  text-align: right;
+}
+
+.quantity-confirm-grid span:nth-last-child(-n + 2),
+.quantity-confirm-grid strong:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.quantity-confirm-warning {
+  margin: 16px 0 0;
+  padding: 11px 12px;
+  border: 1px solid rgba(255, 179, 92, 0.25);
+  border-radius: 9px;
+  color: #d8c5ac;
+  background: rgba(255, 179, 92, 0.07);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.quantity-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 20px;
+}
+
+.quantity-confirm-actions .primary-button {
+  min-width: 120px;
+  border: 0;
+  cursor: pointer;
+}
+
+@media (max-width: 620px) {
+  .quantity-editor {
+    min-width: 210px;
+    grid-template-columns: 1fr;
+  }
+
+  .quantity-save-button,
+  .quantity-cancel-button {
+    width: 100%;
+  }
+}
+
+.workspace-delete-button {
+  padding: 7px 10px;
+  border: 1px solid rgba(239, 104, 104, 0.25);
+  border-radius: 8px;
+  background: rgba(239, 104, 104, 0.06);
+  color: #d98a8a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.workspace-delete-button:hover:not(:disabled) {
+  border-color: rgba(239, 104, 104, 0.5);
+  background: rgba(239, 104, 104, 0.12);
+  color: #ff9b9b;
+}
+
+.workspace-delete-confirm-button {
+  padding: 9px 14px;
+  border: 1px solid rgba(239, 104, 104, 0.45);
+  border-radius: 8px;
+  background: rgba(239, 104, 104, 0.14);
+  color: #ff9b9b;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.workspace-delete-confirm-button:hover:not(:disabled) {
+  background: rgba(239, 104, 104, 0.22);
+  border-color: rgba(239, 104, 104, 0.7);
+}
+
+.workspace-delete-button:disabled,
+.workspace-delete-confirm-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

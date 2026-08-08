@@ -24,6 +24,7 @@ type WorkspaceApiResponse = {
   activeWorkspaceId?: string;
   workspaces?: Workspace[];
   workspace?: Workspace;
+  sourceWorkspaceId?: string;
   error?: string;
 };
 
@@ -45,8 +46,19 @@ export default function WorkspaceSwitcher() {
   const [isCreateOpen, setIsCreateOpen] =
     useState(false);
 
+  const [isDuplicateOpen, setIsDuplicateOpen] =
+    useState(false);
+
+    const [isDeleteOpen, setIsDeleteOpen] =
+  useState(false);
+
   const [newWorkspaceName, setNewWorkspaceName] =
     useState("");
+
+  const [
+    duplicateWorkspaceName,
+    setDuplicateWorkspaceName,
+  ] = useState("");
 
   const [
     newWorkspaceType,
@@ -254,6 +266,138 @@ export default function WorkspaceSwitcher() {
     }
   }
 
+  async function handleDuplicateWorkspace(
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> {
+    event.preventDefault();
+
+    const trimmedName =
+      duplicateWorkspaceName.trim();
+
+    if (trimmedName.length < 2) {
+      setError(
+        "De naam moet minimaal 2 tekens bevatten.",
+      );
+
+      return;
+    }
+
+    if (isSaving) {
+      return;
+    }
+
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        "/api/workspaces/duplicate",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            name: trimmedName,
+          }),
+        },
+      );
+
+      const data =
+        (await response.json()) as WorkspaceApiResponse;
+
+      if (
+        !response.ok ||
+        !data.success ||
+        !data.workspace
+      ) {
+        throw new Error(
+          data.error ??
+            "Workspace kon niet worden gedupliceerd.",
+        );
+      }
+
+      setWorkspaces((current) => [
+        ...current,
+        data.workspace as Workspace,
+      ]);
+
+      setActiveWorkspaceId(
+        data.workspace.id,
+      );
+
+      setDuplicateWorkspaceName("");
+      setIsDuplicateOpen(false);
+
+      window.location.reload();
+    } catch (duplicateError) {
+      setError(
+        duplicateError instanceof Error
+          ? duplicateError.message
+          : "Onbekende fout bij het dupliceren van de workspace.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+async function handleDeleteWorkspace(): Promise<void> {
+  if (
+    !activeWorkspace ||
+    activeWorkspace.type === "live" ||
+    isSaving
+  ) {
+    return;
+  }
+
+  setIsSaving(true);
+  setError(null);
+
+  try {
+    const response = await fetch(
+      "/api/workspaces",
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          workspaceId:
+            activeWorkspace.id,
+        }),
+      },
+    );
+
+    const data =
+      (await response.json()) as {
+        success?: boolean;
+        activeWorkspaceId?: string;
+        error?: string;
+      };
+
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.error ??
+          "Workspace kon niet worden verwijderd.",
+      );
+    }
+
+    setIsDeleteOpen(false);
+
+    window.location.reload();
+  } catch (deleteError) {
+    setError(
+      deleteError instanceof Error
+        ? deleteError.message
+        : "Onbekende fout bij het verwijderen van de workspace.",
+    );
+  } finally {
+    setIsSaving(false);
+  }
+}
+
   function closeCreateForm(): void {
     if (isSaving) {
       return;
@@ -265,12 +409,54 @@ export default function WorkspaceSwitcher() {
     setError(null);
   }
 
+  function closeDuplicateForm(): void {
+    if (isSaving) {
+      return;
+    }
+
+    setIsDuplicateOpen(false);
+    setDuplicateWorkspaceName("");
+    setError(null);
+  }
+
   const activeWorkspace =
     workspaces.find(
       (workspace) =>
         workspace.id ===
         activeWorkspaceId,
     );
+
+  function openCreateForm(): void {
+    if (isSaving) {
+      return;
+    }
+
+    setIsDuplicateOpen(false);
+    setDuplicateWorkspaceName("");
+    setIsCreateOpen((current) => !current);
+    setError(null);
+  }
+
+  function openDuplicateForm(): void {
+    if (
+      isSaving ||
+      !activeWorkspace
+    ) {
+      return;
+    }
+
+    setIsCreateOpen(false);
+    setNewWorkspaceName("");
+    setIsDuplicateOpen((current) => !current);
+
+    if (!isDuplicateOpen) {
+      setDuplicateWorkspaceName(
+        `${activeWorkspace.name} kopie`,
+      );
+    }
+
+    setError(null);
+  }
 
   return (
     <div className="workspace-selector">
@@ -341,11 +527,7 @@ export default function WorkspaceSwitcher() {
         <button
           type="button"
           className="workspace-create-button"
-          onClick={() =>
-            setIsCreateOpen(
-              (current) => !current,
-            )
-          }
+          onClick={openCreateForm}
           disabled={
             isLoading || isSaving
           }
@@ -353,6 +535,40 @@ export default function WorkspaceSwitcher() {
         >
           + Nieuw
         </button>
+
+        <button
+          type="button"
+          className="workspace-create-button"
+          onClick={openDuplicateForm}
+          disabled={
+            isLoading ||
+            isSaving ||
+            !activeWorkspace
+          }
+          aria-expanded={isDuplicateOpen}
+        >
+          ⧉ Dupliceren
+        </button>
+
+        {activeWorkspace &&
+  activeWorkspace.type !== "live" && (
+    <button
+      type="button"
+      className="workspace-delete-button"
+      onClick={() => {
+        setIsCreateOpen(false);
+        setIsDuplicateOpen(false);
+        setIsDeleteOpen(true);
+        setError(null);
+      }}
+      disabled={
+        isLoading || isSaving
+      }
+      aria-expanded={isDeleteOpen}
+    >
+      Verwijderen
+    </button>
+  )}
 
         {isSaving && (
           <small>Bezig...</small>
@@ -434,6 +650,135 @@ export default function WorkspaceSwitcher() {
           </div>
         </form>
       )}
+
+      {isDuplicateOpen && activeWorkspace && (
+        <form
+          className="workspace-create-form"
+          onSubmit={(event) =>
+            void handleDuplicateWorkspace(
+              event,
+            )
+          }
+        >
+          <label>
+            <span>Nieuwe naam</span>
+
+            <input
+              type="text"
+              value={duplicateWorkspaceName}
+              onChange={(event) =>
+                setDuplicateWorkspaceName(
+                  event.target.value,
+                )
+              }
+              placeholder="Bijvoorbeeld Silver $100"
+              autoFocus
+              disabled={isSaving}
+            />
+          </label>
+
+          <div>
+            <span className="workspace-selector-label">
+              Bron
+            </span>
+
+            <strong
+              style={{
+                display: "block",
+                marginTop: "7px",
+              }}
+            >
+              {activeWorkspace.name}
+            </strong>
+
+            <small
+              style={{
+                color: "var(--muted)",
+              }}
+            >
+              Holdings, instellingen en transacties
+              worden gekopieerd.
+            </small>
+          </div>
+
+          <div className="workspace-create-actions">
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={closeDuplicateForm}
+              disabled={isSaving}
+            >
+              Annuleren
+            </button>
+
+            <button
+              type="submit"
+              className="primary-button workspace-submit-button"
+              disabled={
+                isSaving ||
+                duplicateWorkspaceName.trim().length < 2
+              }
+            >
+              {isSaving
+                ? "Dupliceren..."
+                : "Dupliceren"}
+            </button>
+          </div>
+        </form>
+      )}
+
+{isDeleteOpen &&
+  activeWorkspace &&
+  activeWorkspace.type !== "live" && (
+    <div className="quantity-confirm-backdrop">
+      <div
+        className="quantity-confirm-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-workspace-title"
+      >
+        <p className="eyebrow">
+          WORKSPACE VERWIJDEREN
+        </p>
+
+        <h3 id="delete-workspace-title">
+          {activeWorkspace.name} verwijderen?
+        </h3>
+
+        <div className="quantity-confirm-warning">
+          Deze actie verwijdert de volledige workspace,
+          inclusief holdings, instellingen en transacties.
+          Dit kan niet ongedaan worden gemaakt.
+        </div>
+
+        <div className="quantity-confirm-actions">
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() =>
+              setIsDeleteOpen(false)
+            }
+            disabled={isSaving}
+          >
+            Annuleren
+          </button>
+
+          <button
+            type="button"
+            className="workspace-delete-confirm-button"
+            onClick={() =>
+              void handleDeleteWorkspace()
+            }
+            disabled={isSaving}
+          >
+            {isSaving
+              ? "Verwijderen..."
+              : "Definitief verwijderen"}
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
 
       {error && (
         <p className="workspace-selector-error">

@@ -120,6 +120,28 @@ export default function HoldingsTable({
   const [sortDirection, setSortDirection] =
     useState<SortDirection>("desc");
 
+    const [editingHoldingId, setEditingHoldingId] =
+  useState<string | null>(null);
+
+const [editingQuantity, setEditingQuantity] =
+  useState("");
+
+const [isSavingQuantity, setIsSavingQuantity] =
+  useState(false);
+
+const [quantityError, setQuantityError] =
+  useState<string | null>(null);
+
+const [
+  pendingQuantityChange,
+  setPendingQuantityChange,
+] = useState<{
+  holdingId: string;
+  name: string;
+  oldQuantity: number;
+  newQuantity: number;
+} | null>(null);
+
   const filteredPositions = useMemo(() => {
     const normalizedSearch =
       search.trim().toLowerCase();
@@ -275,6 +297,126 @@ export default function HoldingsTable({
     setSortKey("value");
     setSortDirection("desc");
   }
+
+  function startEditing(
+  position: ValuedPortfolioPosition,
+): void {
+  setEditingHoldingId(position.holding.id);
+
+  setEditingQuantity(
+    String(position.quantity),
+  );
+
+  setQuantityError(null);
+}
+
+function cancelEditing(): void {
+  if (isSavingQuantity) {
+    return;
+  }
+
+  setEditingHoldingId(null);
+  setEditingQuantity("");
+  setQuantityError(null);
+}
+
+function prepareQuantityChange(
+  position: ValuedPortfolioPosition,
+): void {
+  const normalizedQuantity =
+    editingQuantity
+      .trim()
+      .replace(",", ".");
+
+  const quantity =
+    Number(normalizedQuantity);
+
+  if (
+    normalizedQuantity.length === 0 ||
+    !Number.isFinite(quantity) ||
+    quantity < 0
+  ) {
+    setQuantityError(
+      "Vul een geldig aantal van 0 of hoger in.",
+    );
+
+    return;
+  }
+
+  if (quantity === position.quantity) {
+    setEditingHoldingId(null);
+    setEditingQuantity("");
+    setQuantityError(null);
+
+    return;
+  }
+
+  setPendingQuantityChange({
+    holdingId: position.holding.id,
+    name: position.name,
+    oldQuantity: position.quantity,
+    newQuantity: quantity,
+  });
+
+  setQuantityError(null);
+}
+
+async function confirmQuantityChange(): Promise<void> {
+  if (
+    pendingQuantityChange === null ||
+    isSavingQuantity
+  ) {
+    return;
+  }
+
+  setIsSavingQuantity(true);
+  setQuantityError(null);
+
+  try {
+    const response = await fetch(
+      "/api/workspaces/holdings",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          holdingId:
+            pendingQuantityChange.holdingId,
+          quantity:
+            pendingQuantityChange.newQuantity,
+        }),
+      },
+    );
+
+    const data = (await response.json()) as {
+      success?: boolean;
+      error?: string;
+    };
+
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.error ??
+          "Het aantal kon niet worden opgeslagen.",
+      );
+    }
+
+    setPendingQuantityChange(null);
+    setEditingHoldingId(null);
+    setEditingQuantity("");
+
+    window.location.reload();
+  } catch (saveError) {
+    setQuantityError(
+      saveError instanceof Error
+        ? saveError.message
+        : "Onbekende fout bij het opslaan.",
+    );
+  } finally {
+    setIsSavingQuantity(false);
+  }
+}
 
   return (
     <>
@@ -563,10 +705,69 @@ export default function HoldingsTable({
                     </td>
 
                     <td>
-                      {formatQuantity(
-                        position.quantity,
-                      )}
-                    </td>
+  {editingHoldingId ===
+  position.holding.id ? (
+    <div className="quantity-editor">
+      <input
+        type="text"
+        inputMode="decimal"
+        value={editingQuantity}
+        onChange={(event) =>
+          setEditingQuantity(
+            event.target.value,
+          )
+        }
+        disabled={isSavingQuantity}
+        aria-label={`Aantal ${position.name}`}
+        autoFocus
+      />
+
+      <button
+        type="button"
+        className="quantity-save-button"
+        onClick={() =>
+          prepareQuantityChange(position)
+        }
+        disabled={isSavingQuantity}
+        title="Doorgaan naar bevestiging"
+      >
+        Doorgaan
+      </button>
+
+      <button
+        type="button"
+        className="quantity-cancel-button"
+        onClick={cancelEditing}
+        disabled={isSavingQuantity}
+        title="Annuleren"
+      >
+        Annuleren
+      </button>
+
+      {quantityError && (
+        <small className="quantity-error">
+          {quantityError}
+        </small>
+      )}
+    </div>
+  ) : (
+    <button
+      type="button"
+      className="quantity-edit-button"
+      onClick={() =>
+        startEditing(position)
+      }
+      title="Aantal aanpassen"
+    >
+      {formatQuantity(
+        position.quantity,
+      )}
+      <span aria-hidden="true">
+        ✎
+      </span>
+    </button>
+  )}
+</td>
 
                     <td>
                       {formatLocalPrice(
@@ -639,6 +840,92 @@ export default function HoldingsTable({
           </tbody>
         </table>
       </div>
+
+      {pendingQuantityChange && (
+        <div
+          className="quantity-confirm-backdrop"
+          role="presentation"
+        >
+          <div
+            className="quantity-confirm-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="quantity-confirm-title"
+          >
+            <p className="eyebrow">
+              WIJZIGING BEVESTIGEN
+            </p>
+
+            <h3 id="quantity-confirm-title">
+              {pendingQuantityChange.name}
+            </h3>
+
+            <div className="quantity-confirm-grid">
+              <span>Huidig aantal</span>
+              <strong>
+                {formatQuantity(
+                  pendingQuantityChange.oldQuantity,
+                )}
+              </strong>
+
+              <span>Nieuw aantal</span>
+              <strong>
+                {formatQuantity(
+                  pendingQuantityChange.newQuantity,
+                )}
+              </strong>
+
+              <span>Verschil</span>
+              <strong>
+                {formatQuantity(
+                  pendingQuantityChange.newQuantity -
+                    pendingQuantityChange.oldQuantity,
+                )}
+              </strong>
+            </div>
+
+            <p className="quantity-confirm-warning">
+              Controleer het nieuwe aantal zorgvuldig.
+              Na bevestigen wordt de actieve workspace
+              direct aangepast.
+            </p>
+
+            {quantityError && (
+              <p className="workspace-selector-error">
+                {quantityError}
+              </p>
+            )}
+
+            <div className="quantity-confirm-actions">
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => {
+                  if (!isSavingQuantity) {
+                    setPendingQuantityChange(null);
+                  }
+                }}
+                disabled={isSavingQuantity}
+              >
+                Annuleren
+              </button>
+
+              <button
+                type="button"
+                className="primary-button"
+                onClick={() =>
+                  void confirmQuantityChange()
+                }
+                disabled={isSavingQuantity}
+              >
+                {isSavingQuantity
+                  ? "Opslaan..."
+                  : "Bevestigen"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
