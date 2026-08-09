@@ -1,5 +1,5 @@
 {
-  "activeWorkspaceId": "test-simulatie",
+  "activeWorkspaceId": "silver-100",
   "workspaces": [
     {
       "id": "live",
@@ -24,6 +24,14 @@
       "isReadOnly": false,
       "createdAt": "2026-08-05T10:23:31.492Z",
       "updatedAt": "2026-08-05T10:23:31.492Z"
+    },
+    {
+      "id": "silver-300",
+      "name": "Silver 300",
+      "type": "simulation",
+      "isReadOnly": false,
+      "createdAt": "2026-08-08T12:05:33.662Z",
+      "updatedAt": "2026-08-08T12:05:33.662Z"
     }
   ]
 }

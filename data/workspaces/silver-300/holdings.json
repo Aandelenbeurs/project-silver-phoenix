@@ -166,7 +166,7 @@
     "companyId": "silver-dollar",
     "name": "Silver Dollar Resources",
     "ticker": "4YW",
-    "quantity": 7000,
+    "quantity": 15000,
     "type": "equity",
     "unit": "shares"
   },
@@ -310,7 +310,7 @@
     "companyId": "kootenay-silver",
     "name": "Kootenay Silver Inc",
     "ticker": "KTN",
-    "quantity": 2133,
+    "quantity": 1210,
     "type": "equity",
     "unit": "shares"
   },
@@ -328,7 +328,7 @@
     "companyId": "nord-precious-metals",
     "name": "Nord Precious Metals Mining",
     "ticker": "NTH",
-    "quantity": 0,
+    "quantity": 4000,
     "type": "equity",
     "unit": "shares"
   },

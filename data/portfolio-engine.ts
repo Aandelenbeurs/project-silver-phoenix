@@ -5,7 +5,13 @@ import {
 
 import {
   getWorkspaceHoldings,
-} from "./workspace-provider";
+} from "./workspace-provider";import {
+  getCurrentWorkspace,
+} from "./workspace";
+
+import {
+  readWorkspaceSettings,
+} from "./workspace-data-storage";
 
 import {
   calculateMarketValueEur,
@@ -14,6 +20,10 @@ import {
   type PriceQuote,
   type SupportedCurrency,
 } from "./prices";
+
+import {
+  calculateMetalScenario,
+} from "./scenario-engine";
 
 import {
   getYahooMarketSnapshot,
@@ -183,6 +193,58 @@ function getSnapshotQuote({
   });
 }
 
+function getReferenceSilverPriceUsd(
+  snapshot: YahooMarketSnapshot,
+): number | null {
+  const silverInstrument =
+    snapshot.instruments[
+      "physical-silver"
+    ];
+
+  if (!silverInstrument) {
+    return null;
+  }
+
+  const price =
+    silverInstrument.quote.price;
+
+  if (
+    price === null ||
+    !Number.isFinite(price) ||
+    price <= 0
+  ) {
+    return null;
+  }
+
+  return price;
+}
+
+function getReferenceGoldPriceUsd(
+  snapshot: YahooMarketSnapshot,
+): number | null {
+  const goldInstrument =
+    snapshot.instruments[
+      "physical-gold"
+    ];
+
+  if (!goldInstrument) {
+    return null;
+  }
+
+  const price =
+    goldInstrument.quote.price;
+
+  if (
+    price === null ||
+    !Number.isFinite(price) ||
+    price <= 0
+  ) {
+    return null;
+  }
+
+  return price;
+}
+
 /**
  * Bepaalt het portefeuilleadvies.
  *
@@ -297,9 +359,13 @@ export function calculatePriorityScore({
 function valuePositions({
   positions,
   snapshot,
+  silverPriceUsd = null,
+  goldPriceUsd = null,
 }: {
   positions: PortfolioPosition[];
   snapshot: YahooMarketSnapshot;
+  silverPriceUsd?: number | null;
+  goldPriceUsd?: number | null;
 }): Omit<
   ValuedPortfolioPosition,
   | "currentAllocation"
@@ -307,6 +373,16 @@ function valuePositions({
   | "advice"
   | "priorityScore"
 >[] {
+  const referenceSilverPriceUsd =
+    getReferenceSilverPriceUsd(
+      snapshot,
+    );
+
+  const referenceGoldPriceUsd =
+    getReferenceGoldPriceUsd(
+      snapshot,
+    );
+
   return positions.map((position) => {
     const quote = getSnapshotQuote({
       position,
@@ -318,18 +394,53 @@ function valuePositions({
     let localPrice = quote.price;
 
     /**
-     * SI=F is een zilverfuture in USD per troy ounce.
-     * De fysieke holding wordt opgeslagen in gram.
-     *
-     * 1 troy ounce = 31,1034768 gram.
+     * Fysiek zilver.
      */
     if (
       position.holding.id ===
-        "holding-physical-silver" &&
-      localPrice !== null
+      "holding-physical-silver"
     ) {
+      const silverPricePerOunce =
+        silverPriceUsd ??
+        quote.price;
+
       localPrice =
-        localPrice / 31.1034768;
+        silverPricePerOunce !== null
+          ? silverPricePerOunce /
+            31.1034768
+          : null;
+    }
+
+    /**
+     * Gecombineerde Silver + Gold
+     * Scenario Engine voor bedrijven.
+     */
+    if (
+      position.company &&
+      quote.price !== null &&
+      (
+        silverPriceUsd !== null ||
+        goldPriceUsd !== null
+      )
+    ) {
+      const scenario =
+        calculateMetalScenario({
+          company: position.company,
+
+          referenceSilverPriceUsd,
+          scenarioSilverPriceUsd:
+            silverPriceUsd,
+
+          referenceGoldPriceUsd,
+          scenarioGoldPriceUsd:
+            goldPriceUsd,
+        });
+
+      if (scenario.isScenarioApplied) {
+        localPrice =
+          quote.price *
+          scenario.estimatedPriceMultiplier;
+      }
     }
 
     const marketValueEur =
@@ -374,14 +485,20 @@ function calculateTotalMarketValue(
 export function buildValuedPortfolio({
   positions,
   snapshot,
+  silverPriceUsd = null,
+  goldPriceUsd = null,
 }: {
   positions: PortfolioPosition[];
   snapshot: YahooMarketSnapshot;
+  silverPriceUsd?: number | null;
+  goldPriceUsd?: number | null;
 }): ValuedPortfolioPosition[] {
   const initialPositions =
     valuePositions({
       positions,
       snapshot,
+      silverPriceUsd,
+      goldPriceUsd,
     });
 
   const totalMarketValueEur =
@@ -574,15 +691,22 @@ export async function getLivePortfolio({
 }: {
   forceRefresh?: boolean;
 } = {}): Promise<LivePortfolio> {
-  const [
-    snapshot,
-    workspaceHoldings,
-  ] = await Promise.all([
-    getYahooMarketSnapshot({
-      forceRefresh,
-    }),
-    getWorkspaceHoldings(),
-  ]);
+  const currentWorkspace =
+  await getCurrentWorkspace();
+
+const [
+  snapshot,
+  workspaceHoldings,
+  workspaceSettings,
+] = await Promise.all([
+  getYahooMarketSnapshot({
+    forceRefresh,
+  }),
+  getWorkspaceHoldings(),
+  readWorkspaceSettings(
+    currentWorkspace.id,
+  ),
+]);
 
   const portfolioPositions =
     buildPortfolioPositions(
@@ -590,10 +714,14 @@ export async function getLivePortfolio({
     );
 
   const positions =
-    buildValuedPortfolio({
-      positions: portfolioPositions,
-      snapshot,
-    });
+  buildValuedPortfolio({
+    positions: portfolioPositions,
+    snapshot,
+    silverPriceUsd:
+      workspaceSettings.silverPriceUsd,
+    goldPriceUsd:
+      workspaceSettings.goldPriceUsd,
+  });
 
   const totals =
     calculatePortfolioTotals(

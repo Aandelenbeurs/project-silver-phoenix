@@ -116,6 +116,13 @@ const additionalInstruments: YahooInstrument[] = [
     type: "physical",
     currencyOverride: "USD",
   },
+
+  {
+  id: "physical-gold",
+  symbol: "GC=F",
+  type: "physical",
+  currencyOverride: "USD",
+},
 ];
 
 const currencyInstruments: YahooInstrument[] = [
