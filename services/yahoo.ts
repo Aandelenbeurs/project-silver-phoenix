@@ -437,52 +437,173 @@ function normalizeQuoteResponse(
  * Met circa 50 symbolen blijven we onder de standaardlimiet
  * van 100 symbolen per Yahoo-request.
  */
-async function fetchBatchQuotes(
+
+async function fetchSingleChartQuote(
+  symbol: string,
+): Promise<YahooQuote> {
+  const chart =
+    (await yahooFinance.chart(
+      symbol,
+      {
+        period1: new Date(
+          Date.now() -
+            7 *
+              24 *
+              60 *
+              60 *
+              1000,
+        ),
+      },
+      {
+        validateResult: false,
+      },
+    )) as {
+      meta: {
+        regularMarketPrice?: number;
+        chartPreviousClose?: number;
+        currency?: string;
+        regularMarketTime?:
+          | Date
+          | string
+          | number;
+        exchangeName?: string;
+        instrumentType?: string;
+        shortName?: string;
+      };
+    };
+
+  const meta = chart.meta;
+
+  const regularMarketPrice =
+    safeNumber(
+      meta.regularMarketPrice,
+    );
+
+  const previousClose =
+    safeNumber(
+      meta.chartPreviousClose,
+    );
+
+  return {
+    symbol,
+
+    currency:
+      typeof meta.currency === "string"
+        ? meta.currency
+        : undefined,
+
+    regularMarketPrice:
+      regularMarketPrice ?? undefined,
+
+    regularMarketPreviousClose:
+      previousClose ?? undefined,
+
+    regularMarketChange:
+      regularMarketPrice !== null &&
+      previousClose !== null
+        ? regularMarketPrice -
+          previousClose
+        : undefined,
+
+    regularMarketChangePercent:
+      regularMarketPrice !== null &&
+      previousClose !== null &&
+      previousClose !== 0
+        ? ((regularMarketPrice -
+            previousClose) /
+            previousClose) *
+          100
+        : undefined,
+
+    regularMarketTime:
+      meta.regularMarketTime,
+
+    exchange:
+      typeof meta.exchangeName ===
+      "string"
+        ? meta.exchangeName
+        : undefined,
+
+    quoteType:
+      typeof meta.instrumentType ===
+      "string"
+        ? meta.instrumentType
+        : undefined,
+
+    shortName:
+      typeof meta.shortName ===
+      "string"
+        ? meta.shortName
+        : undefined,
+  };
+}
+
+  async function fetchBatchQuotes(
   symbols: string[],
 ): Promise<Record<string, YahooQuote>> {
   if (symbols.length === 0) {
     return {};
   }
 
-  const response =
-    await yahooFinance.quote(
-      symbols,
-      {
-        return: "object",
-        fields: [
-          "symbol",
-          "currency",
-          "regularMarketPrice",
-          "regularMarketPreviousClose",
-          "regularMarketChange",
-          "regularMarketChangePercent",
-          "regularMarketTime",
-          "marketCap",
-          "exchange",
-          "fullExchangeName",
-          "quoteType",
-          "shortName",
-          "longName",
-        ],
-      },
-      {
-        /**
-         * Valuta, futures en sommige microcaps kunnen velden
-         * teruggeven die niet exact overeenkomen met het
-         * yahoo-finance2-schema.
-         *
-         * PSP normaliseert de relevante velden daarom zelf
-         * in mapYahooQuote().
-         */
-        validateResult: false,
-      },
+  const firstAttempt =
+    await Promise.allSettled(
+      symbols.map((symbol) =>
+        fetchSingleChartQuote(symbol),
+      ),
     );
 
-  return normalizeQuoteResponse(
-    response as
-      | YahooQuote[]
-      | Record<string, YahooQuote>,
+  const quotes: Record<
+    string,
+    YahooQuote
+  > = {};
+
+  const failedSymbols: string[] = [];
+
+  firstAttempt.forEach(
+    (result, index) => {
+      const symbol = symbols[index];
+
+      if (result.status === "fulfilled") {
+        quotes[symbol] = result.value;
+      } else {
+        failedSymbols.push(symbol);
+      }
+    },
   );
+
+  /**
+   * Eén retry voor symbolen die bij de
+   * eerste parallelle fetch mislukten.
+   */
+  if (failedSymbols.length > 0) {
+    const retry =
+      await Promise.allSettled(
+        failedSymbols.map((symbol) =>
+          fetchSingleChartQuote(symbol),
+        ),
+      );
+
+    retry.forEach(
+      (result, index) => {
+        if (result.status !== "fulfilled") {
+          return;
+        }
+
+        const symbol =
+          failedSymbols[index];
+
+        quotes[symbol] = result.value;
+      },
+    );
+  }
+
+  if (Object.keys(quotes).length === 0) {
+    throw new Error(
+      "Alle Yahoo chart-aanvragen zijn mislukt.",
+    );
+  }
+
+  return quotes;
 }
 
 /**

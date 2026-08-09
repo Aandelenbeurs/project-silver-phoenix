@@ -47,6 +47,14 @@ export type ValuedPortfolioPosition = PortfolioPosition & {
   localPrice: number | null;
   marketValueEur: number | null;
 
+  scenarioApplied: boolean;
+  scenarioUpsidePercent: number | null;
+  scenarioDriver:
+  | "silver"
+  | "gold"
+  | "silver+gold"
+  | null;
+
   currentAllocation: number | null;
   allocationDifference: number | null;
 
@@ -392,6 +400,16 @@ function valuePositions({
     const currency = quote.currency;
 
     let localPrice = quote.price;
+    let scenarioApplied = false;
+
+let scenarioUpsidePercent:
+  number | null = null;
+
+let scenarioDriver:
+  | "silver"
+  | "gold"
+  | "silver+gold"
+  | null = null;
 
     /**
      * Fysiek zilver.
@@ -410,6 +428,110 @@ function valuePositions({
             31.1034768
           : null;
     }
+
+/**
+ * Zilver ETF / ETC scenario.
+ *
+ * PHAG en 8PSB volgen fysiek zilver 1-op-1.
+ * SLVR is een silver miners ETF en krijgt
+ * een conservatieve leverage van 1.5x.
+ */
+if (
+  silverPriceUsd !== null &&
+  referenceSilverPriceUsd !== null &&
+  referenceSilverPriceUsd > 0 &&
+  quote.price !== null
+) {
+  let silverLeverage: number | null = null;
+
+  switch (position.holding.id) {
+    case "holding-phag":
+    case "holding-8psb":
+      silverLeverage = 1;
+      break;
+
+    case "holding-slvr":
+      silverLeverage = 1.5;
+      break;
+  }
+
+  if (silverLeverage !== null) {
+    const silverChange =
+      silverPriceUsd /
+        referenceSilverPriceUsd -
+      1;
+
+    const multiplier =
+      Math.max(
+        0,
+        1 +
+          silverChange *
+            silverLeverage,
+      );
+
+    localPrice =
+      quote.price * multiplier;
+
+    scenarioApplied = true;
+
+    scenarioUpsidePercent =
+      (multiplier - 1) * 100;
+
+    scenarioDriver = "silver";
+  }
+}
+
+/**
+ * Zilver ETF / ETC scenario.
+ *
+ * PHAG en 8PSB volgen zilver 1-op-1.
+ * SLVR is een silver miners ETF
+ * en krijgt 1.5x leverage.
+ */
+if (
+  silverPriceUsd !== null &&
+  referenceSilverPriceUsd !== null &&
+  referenceSilverPriceUsd > 0 &&
+  quote.price !== null
+) {
+  let silverLeverage: number | null = null;
+
+  switch (position.holding.id) {
+    case "holding-phag":
+    case "holding-8psb":
+      silverLeverage = 1;
+      break;
+
+    case "holding-slvr":
+      silverLeverage = 1.5;
+      break;
+  }
+
+  if (silverLeverage !== null) {
+    const silverChange =
+      silverPriceUsd /
+        referenceSilverPriceUsd -
+      1;
+
+    const multiplier =
+      Math.max(
+        0,
+        1 +
+          silverChange *
+            silverLeverage,
+      );
+
+    localPrice =
+      quote.price * multiplier;
+
+    scenarioApplied = true;
+
+    scenarioUpsidePercent =
+      (multiplier - 1) * 100;
+
+    scenarioDriver = "silver";
+  }
+}
 
     /**
      * Gecombineerde Silver + Gold
@@ -437,11 +559,35 @@ function valuePositions({
         });
 
       if (scenario.isScenarioApplied) {
-        localPrice =
-          quote.price *
-          scenario.estimatedPriceMultiplier;
-      }
-    }
+  localPrice =
+    quote.price *
+    scenario.estimatedPriceMultiplier;
+
+  scenarioApplied = true;
+
+  scenarioUpsidePercent =
+    (
+      scenario.estimatedPriceMultiplier -
+      1
+    ) * 100;
+
+  const hasSilverDriver =
+    scenario.silverLeverage > 0;
+
+  const hasGoldDriver =
+    scenario.goldLeverage > 0;
+
+  scenarioDriver =
+    hasSilverDriver &&
+    hasGoldDriver
+      ? "silver+gold"
+      : hasSilverDriver
+        ? "silver"
+        : hasGoldDriver
+          ? "gold"
+          : null;
+ }
+  }
 
     const marketValueEur =
       calculateMarketValueEur({
@@ -453,12 +599,16 @@ function valuePositions({
       });
 
     return {
-      ...position,
-      currency,
-      quote,
-      localPrice,
-      marketValueEur,
-    };
+  ...position,
+  currency,
+  quote,
+  localPrice,
+  marketValueEur,
+
+  scenarioApplied,
+  scenarioUpsidePercent,
+  scenarioDriver,
+};
   });
 }
 

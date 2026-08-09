@@ -593,7 +593,10 @@ async function confirmQuantityChange(): Promise<void> {
 
               <th>Ticker</th>
               <th>Aantal</th>
-              <th>Koers</th>
+              <th>Live koers</th>
+              <th>Scenario</th>
+              <th>Upside</th>
+              <th>Driver</th>
               <th>Valuta</th>
 
               <th>
@@ -770,14 +773,41 @@ async function confirmQuantityChange(): Promise<void> {
 </td>
 
                     <td>
-                      {formatLocalPrice(
-                        position.localPrice,
-                      )}
-                    </td>
+  {formatLocalPrice(
+    position.quote.price,
+  )}
+</td>
 
-                    <td>
-                      {position.currency}
-                    </td>
+<td>
+  {position.scenarioApplied
+    ? formatLocalPrice(
+        position.localPrice,
+      )
+    : "—"}
+</td>
+
+<td>
+  {position.scenarioUpsidePercent !== null
+    ? `${position.scenarioUpsidePercent >= 0 ? "+" : ""}${position.scenarioUpsidePercent.toFixed(
+        1,
+      )}%`
+    : "—"}
+</td>
+
+<td>
+  {position.scenarioDriver === "silver"
+    ? "Silver"
+    : position.scenarioDriver === "gold"
+      ? "Gold"
+      : position.scenarioDriver ===
+          "silver+gold"
+        ? "Silver + Gold"
+        : "—"}
+</td>
+
+<td>
+  {position.currency}
+</td>
 
                     <td>
                       {formatEur(
