@@ -470,6 +470,9 @@ async function fetchSingleChartQuote(
         instrumentType?: string;
         shortName?: string;
       };
+      quotes: Array<{
+  close?: number;
+}>;
     };
 
   const meta = chart.meta;
@@ -479,10 +482,18 @@ async function fetchSingleChartQuote(
       meta.regularMarketPrice,
     );
 
-  const previousClose =
-    safeNumber(
+  const previousQuote =
+  chart.quotes.length >= 2
+    ? chart.quotes[
+        chart.quotes.length - 2
+      ]
+    : null;
+
+const previousClose =
+  safeNumber(
+    previousQuote?.close ??
       meta.chartPreviousClose,
-    );
+  );
 
   return {
     symbol,
