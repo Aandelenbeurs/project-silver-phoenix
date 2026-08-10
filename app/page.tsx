@@ -64,6 +64,62 @@ export default async function DashboardPage() {
     sellQueue,
   } = portfolio;
 
+  const isScenario =
+  positions.some(
+    (position) =>
+      position.scenarioApplied,
+  );
+
+const liveReferenceValueEur =
+  positions.reduce(
+    (total, position) => {
+      if (
+        position.marketValueEur === null
+      ) {
+        return total;
+      }
+
+      if (
+        !position.scenarioApplied ||
+        position.scenarioUpsidePercent ===
+          null
+      ) {
+        return (
+          total +
+          position.marketValueEur
+        );
+      }
+
+      const multiplier =
+        1 +
+        position.scenarioUpsidePercent /
+          100;
+
+      if (multiplier <= 0) {
+        return total;
+      }
+
+      return (
+        total +
+        position.marketValueEur /
+          multiplier
+      );
+    },
+    0,
+  );
+
+const scenarioDifferenceEur =
+  totals.totalMarketValueEur -
+  liveReferenceValueEur;
+
+const scenarioReturnPercent =
+  liveReferenceValueEur > 0
+    ? (
+        scenarioDifferenceEur /
+        liveReferenceValueEur
+      ) * 100
+    : 0;
+
   const equities = positions.filter(
     (position) => position.isEquity,
   );
@@ -115,10 +171,12 @@ export default async function DashboardPage() {
           </p>
 
           <h2>
-            {formatEur(
-              totals.totalMarketValueEur,
-            )}
-          </h2>
+  {formatEur(
+    isScenario
+      ? liveReferenceValueEur
+      : totals.totalMarketValueEur,
+  )}
+</h2>
 
           <p>
             Gebaseerd op {portfolio.successfulSymbols} van{" "}
@@ -135,6 +193,31 @@ export default async function DashboardPage() {
           Open optimizer →
         </Link>
       </section>
+
+      {isScenario && (
+  <section className="stats-grid">
+    <StatCard
+      label="Scenario portefeuillewaarde"
+      value={formatEur(
+        totals.totalMarketValueEur,
+      )}
+    />
+
+    <StatCard
+      label="Verschil vs live"
+      value={formatEur(
+        scenarioDifferenceEur,
+      )}
+    />
+
+    <StatCard
+      label="Scenario rendement"
+      value={formatPercent(
+        scenarioReturnPercent,
+      )}
+    />
+  </section>
+)}
 
       <section className="stats-grid">
         <StatCard

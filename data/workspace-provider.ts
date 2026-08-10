@@ -23,15 +23,18 @@ import type {
  * Bestaande workspaces zonder eigen holdingsbestand worden
  * automatisch geïnitialiseerd met een kopie van Live.
  */
-export async function getWorkspaceHoldings(): Promise<
-  Holding[]
-> {
+export async function getWorkspaceHoldings(
+  workspaceId?: string,
+): Promise<Holding[]> {
   const currentWorkspace =
     await getCurrentWorkspace();
 
+  const targetWorkspaceId =
+    workspaceId ?? currentWorkspace.id;
+
   const currentHoldings =
     await readWorkspaceHoldings(
-      currentWorkspace.id,
+      targetWorkspaceId,
     );
 
   if (currentHoldings.length > 0) {
@@ -42,7 +45,7 @@ export async function getWorkspaceHoldings(): Promise<
    * Wanneer Live nog geen opgeslagen holdings heeft,
    * migreren we automatisch de oorspronkelijke portefeuille.
    */
-  if (currentWorkspace.id === "live") {
+  if (targetWorkspaceId === "live") {
     const effectiveHoldings =
       await getEffectiveHoldings();
 

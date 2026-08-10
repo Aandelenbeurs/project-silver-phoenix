@@ -1,5 +1,5 @@
 {
-  "activeWorkspaceId": "silver-100",
+  "activeWorkspaceId": "live",
   "workspaces": [
     {
       "id": "live",
@@ -12,7 +12,7 @@
     {
       "id": "silver-100",
       "name": "silver 100",
-      "type": "simulation",
+      "type": "scenario",
       "isReadOnly": false,
       "createdAt": "2026-08-05T10:21:03.054Z",
       "updatedAt": "2026-08-05T10:21:03.054Z"
@@ -20,7 +20,7 @@
     {
       "id": "test-simulatie",
       "name": "Test Simulatie",
-      "type": "simulation",
+      "type": "scenario",
       "isReadOnly": false,
       "createdAt": "2026-08-05T10:23:31.492Z",
       "updatedAt": "2026-08-05T10:23:31.492Z"
@@ -28,7 +28,7 @@
     {
       "id": "silver-300",
       "name": "Silver 300",
-      "type": "simulation",
+      "type": "scenario",
       "isReadOnly": false,
       "createdAt": "2026-08-08T12:05:33.662Z",
       "updatedAt": "2026-08-08T12:05:33.662Z"

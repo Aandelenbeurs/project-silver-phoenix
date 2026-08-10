@@ -5,7 +5,9 @@ import {
 
 import {
   getWorkspaceHoldings,
-} from "./workspace-provider";import {
+} from "./workspace-provider";
+
+import {
   getCurrentWorkspace,
 } from "./workspace";
 
@@ -427,6 +429,22 @@ let scenarioDriver:
           ? silverPricePerOunce /
             31.1034768
           : null;
+          if (
+  silverPriceUsd !== null &&
+  referenceSilverPriceUsd !== null &&
+  referenceSilverPriceUsd > 0
+) {
+  scenarioApplied = true;
+
+  scenarioUpsidePercent =
+    (
+      silverPriceUsd /
+        referenceSilverPriceUsd -
+      1
+    ) * 100;
+
+  scenarioDriver = "silver";
+}
     }
 
 /**
@@ -852,7 +870,9 @@ const [
   getYahooMarketSnapshot({
     forceRefresh,
   }),
-  getWorkspaceHoldings(),
+  currentWorkspace.type === "scenario"
+  ? getWorkspaceHoldings("live")
+  : getWorkspaceHoldings(),
   readWorkspaceSettings(
     currentWorkspace.id,
   ),
