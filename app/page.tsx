@@ -9,6 +9,7 @@ import SelectionBadge, {
 
 import {
   getLivePortfolio,
+  getScenarioComparison,
   type ValuedPortfolioPosition,
 } from "../data/portfolio-engine";
 
@@ -55,7 +56,13 @@ function formatUpdatedAt(value: string): string {
 }
 
 export default async function DashboardPage() {
-  const portfolio = await getLivePortfolio();
+  const [
+  portfolio,
+  scenarioComparison,
+] = await Promise.all([
+  getLivePortfolio(),
+  getScenarioComparison(),
+]);
 
   const {
     positions,
@@ -119,6 +126,56 @@ const scenarioReturnPercent =
         liveReferenceValueEur
       ) * 100
     : 0;
+
+    const scenarioContributions =
+  positions
+    .filter(
+      (position) =>
+        position.scenarioApplied &&
+        position.marketValueEur !== null &&
+        position.scenarioUpsidePercent !== null,
+    )
+    .map((position) => {
+      const multiplier =
+        1 +
+        position.scenarioUpsidePercent! / 100;
+
+      const liveValue =
+        multiplier > 0
+          ? position.marketValueEur! /
+            multiplier
+          : position.marketValueEur!;
+
+      const contributionEur =
+  position.marketValueEur! -
+  liveValue;
+
+return {
+  id: position.holding.id,
+  name: position.holding.name,
+  contributionEur,
+  contributionPercent:
+    scenarioDifferenceEur > 0
+      ? (
+          contributionEur /
+          scenarioDifferenceEur
+        ) * 100
+      : 0,
+};
+    })
+    .sort(
+      (a, b) =>
+        b.contributionEur -
+        a.contributionEur,
+    )
+    .slice(0, 5);
+
+    const topScenarioContributionPercent =
+  scenarioContributions.reduce(
+    (total, item) =>
+      total + item.contributionPercent,
+    0,
+  );
 
   const equities = positions.filter(
     (position) => position.isEquity,
@@ -211,13 +268,156 @@ const scenarioReturnPercent =
     />
 
     <StatCard
-      label="Scenario rendement"
-      value={formatPercent(
-        scenarioReturnPercent,
+  label="Scenario rendement"
+  value={formatPercent(
+    scenarioReturnPercent,
+  )}
+/>
+</section>
+)}
+
+{isScenario &&
+  scenarioContributions.length > 0 && (
+    <section className="panel">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">
+            SCENARIO BIJDRAGEN
+          </p>
+
+          <h3>
+            Grootste bijdragers aan de
+            scenariogroei
+          </h3>
+        </div>
+      </div>
+
+      <div className="scenario-contribution-list">
+        {scenarioContributions.map(
+          (item, index) => (
+            <div
+  key={item.id}
+  className="scenario-contribution-row"
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "24px",
+    padding: "10px 0",
+  }}
+>
+              <span>
+                {index + 1}. {item.name}
+              </span>
+
+              <div
+  style={{
+    textAlign: "right",
+    flexShrink: 0,
+  }}
+>
+  <strong>
+    +{formatEur(
+      item.contributionEur,
+    )}
+  </strong>
+
+  <div
+    style={{
+      fontSize: "12px",
+      color: "var(--muted)",
+      marginTop: "2px",
+    }}
+  >
+    {formatPercent(
+      item.contributionPercent,
+    )}{" "}
+    van totale groei
+  </div>
+</div>
+            </div>
+          ),
+        )}
+      </div>
+
+      <div
+  style={{
+    marginTop: "16px",
+    paddingTop: "14px",
+    borderTop:
+      "1px solid var(--border)",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "24px",
+  }}
+>
+  <span
+    style={{
+      color: "var(--muted)",
+    }}
+  >
+    Aandeel Top 5 in totale
+    scenariogroei
+  </span>
+
+  <strong>
+    {formatPercent(
+      topScenarioContributionPercent,
+    )}
+  </strong>
+</div>
+
+    </section>
+  )}
+
+  <section className="panel">
+  <div className="panel-heading">
+    <div>
+      <p className="eyebrow">
+        SCENARIOVERGELIJKING
+      </p>
+
+      <h3>
+        Live vs Silver $100 vs Silver $300
+      </h3>
+    </div>
+  </div>
+
+  <div className="stats-grid">
+    <StatCard
+      label="Live"
+      value={formatEur(
+        scenarioComparison.liveValueEur,
       )}
     />
-  </section>
-)}
+
+    <StatCard
+  label="Silver $100"
+  value={formatEur(
+    scenarioComparison.silver100ValueEur,
+  )}
+  detail={`+${formatEur(
+    scenarioComparison.silver100DifferenceEur,
+  )} · ${formatPercent(
+    scenarioComparison.silver100ReturnPercent,
+  )} vs live`}
+/>
+
+    <StatCard
+  label="Silver $300"
+  value={formatEur(
+    scenarioComparison.silver300ValueEur,
+  )}
+  detail={`+${formatEur(
+    scenarioComparison.silver300DifferenceEur,
+  )} · ${formatPercent(
+    scenarioComparison.silver300ReturnPercent,
+  )} vs live`}
+/>
+  </div>
+</section>
+
 
       <section className="stats-grid">
         <StatCard

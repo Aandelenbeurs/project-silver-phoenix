@@ -99,6 +99,18 @@ export type LivePortfolio = {
   errors: Record<string, string>;
 };
 
+export type ScenarioComparison = {
+  liveValueEur: number;
+  silver100ValueEur: number;
+  silver300ValueEur: number;
+
+  silver100DifferenceEur: number;
+  silver300DifferenceEur: number;
+
+  silver100ReturnPercent: number;
+  silver300ReturnPercent: number;
+};
+
 /**
  * ID waarmee de Yahoo-snapshot een positie koppelt.
  */
@@ -931,5 +943,95 @@ const [
 
     errors:
       snapshot.errors,
+  };
+}
+
+export async function getScenarioComparison({
+  forceRefresh = false,
+}: {
+  forceRefresh?: boolean;
+} = {}): Promise<ScenarioComparison> {
+  const [snapshot, liveHoldings] =
+    await Promise.all([
+      getYahooMarketSnapshot({
+        forceRefresh,
+      }),
+      getWorkspaceHoldings("live"),
+    ]);
+
+  const portfolioPositions =
+    buildPortfolioPositions(
+      liveHoldings,
+    );
+
+  const livePositions =
+    buildValuedPortfolio({
+      positions: portfolioPositions,
+      snapshot,
+    });
+
+  const silver100Positions =
+    buildValuedPortfolio({
+      positions: portfolioPositions,
+      snapshot,
+      silverPriceUsd: 100,
+    });
+
+  const silver300Positions =
+    buildValuedPortfolio({
+      positions: portfolioPositions,
+      snapshot,
+      silverPriceUsd: 300,
+    });
+
+  const liveValueEur =
+    calculatePortfolioTotals(
+      livePositions,
+    ).totalMarketValueEur;
+
+  const silver100ValueEur =
+    calculatePortfolioTotals(
+      silver100Positions,
+    ).totalMarketValueEur;
+
+  const silver300ValueEur =
+    calculatePortfolioTotals(
+      silver300Positions,
+    ).totalMarketValueEur;
+
+  const silver100DifferenceEur =
+    silver100ValueEur -
+    liveValueEur;
+
+  const silver300DifferenceEur =
+    silver300ValueEur -
+    liveValueEur;
+
+  const silver100ReturnPercent =
+    liveValueEur > 0
+      ? (
+          silver100DifferenceEur /
+          liveValueEur
+        ) * 100
+      : 0;
+
+  const silver300ReturnPercent =
+    liveValueEur > 0
+      ? (
+          silver300DifferenceEur /
+          liveValueEur
+        ) * 100
+      : 0;
+
+  return {
+    liveValueEur,
+    silver100ValueEur,
+    silver300ValueEur,
+
+    silver100DifferenceEur,
+    silver300DifferenceEur,
+
+    silver100ReturnPercent,
+    silver300ReturnPercent,
   };
 }
