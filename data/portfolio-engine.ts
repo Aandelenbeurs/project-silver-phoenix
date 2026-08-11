@@ -111,6 +111,21 @@ export type ScenarioComparison = {
   silver300ReturnPercent: number;
 };
 
+export type MetalScenarioInput = {
+  silverPriceUsd?: number | null;
+  goldPriceUsd?: number | null;
+};
+
+export type MetalScenarioResult = {
+  silverPriceUsd: number | null;
+  goldPriceUsd: number | null;
+
+  liveValueEur: number;
+  scenarioValueEur: number;
+  differenceEur: number;
+  returnPercent: number;
+};
+
 /**
  * ID waarmee de Yahoo-snapshot een positie koppelt.
  */
@@ -511,57 +526,6 @@ if (
   }
 }
 
-/**
- * Zilver ETF / ETC scenario.
- *
- * PHAG en 8PSB volgen zilver 1-op-1.
- * SLVR is een silver miners ETF
- * en krijgt 1.5x leverage.
- */
-if (
-  silverPriceUsd !== null &&
-  referenceSilverPriceUsd !== null &&
-  referenceSilverPriceUsd > 0 &&
-  quote.price !== null
-) {
-  let silverLeverage: number | null = null;
-
-  switch (position.holding.id) {
-    case "holding-phag":
-    case "holding-8psb":
-      silverLeverage = 1;
-      break;
-
-    case "holding-slvr":
-      silverLeverage = 1.5;
-      break;
-  }
-
-  if (silverLeverage !== null) {
-    const silverChange =
-      silverPriceUsd /
-        referenceSilverPriceUsd -
-      1;
-
-    const multiplier =
-      Math.max(
-        0,
-        1 +
-          silverChange *
-            silverLeverage,
-      );
-
-    localPrice =
-      quote.price * multiplier;
-
-    scenarioApplied = true;
-
-    scenarioUpsidePercent =
-      (multiplier - 1) * 100;
-
-    scenarioDriver = "silver";
-  }
-}
 
     /**
      * Gecombineerde Silver + Gold
@@ -943,6 +907,68 @@ const [
 
     errors:
       snapshot.errors,
+  };
+}
+
+export async function getMetalScenario({
+  silverPriceUsd = null,
+  goldPriceUsd = null,
+  forceRefresh = false,
+}: MetalScenarioInput & {
+  forceRefresh?: boolean;
+} = {}): Promise<MetalScenarioResult> {
+  const [snapshot, liveHoldings] =
+    await Promise.all([
+      getYahooMarketSnapshot({
+        forceRefresh,
+      }),
+      getWorkspaceHoldings("live"),
+    ]);
+
+  const portfolioPositions =
+    buildPortfolioPositions(
+      liveHoldings,
+    );
+
+  const livePositions =
+    buildValuedPortfolio({
+      positions: portfolioPositions,
+      snapshot,
+    });
+
+  const scenarioPositions =
+    buildValuedPortfolio({
+      positions: portfolioPositions,
+      snapshot,
+      silverPriceUsd,
+      goldPriceUsd,
+    });
+
+  const liveValueEur =
+    calculatePortfolioTotals(
+      livePositions,
+    ).totalMarketValueEur;
+
+  const scenarioValueEur =
+    calculatePortfolioTotals(
+      scenarioPositions,
+    ).totalMarketValueEur;
+
+  const differenceEur =
+    scenarioValueEur - liveValueEur;
+
+  const returnPercent =
+    liveValueEur > 0
+      ? (differenceEur / liveValueEur) * 100
+      : 0;
+
+  return {
+    silverPriceUsd,
+    goldPriceUsd,
+    liveValueEur,
+    scenarioValueEur,
+    differenceEur,
+    returnPercent,
   };
 }
 

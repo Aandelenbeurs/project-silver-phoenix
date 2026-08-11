@@ -1481,3 +1481,123 @@ a {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Metal scenario calculator */
+
+.metal-scenario-form {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 1fr)
+    minmax(180px, 1fr)
+    auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.metal-scenario-field {
+  display: grid;
+  gap: 6px;
+}
+
+.metal-scenario-field > span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.metal-scenario-input-wrap {
+  position: relative;
+}
+
+.metal-scenario-currency {
+  position: absolute;
+  top: 50%;
+  left: 13px;
+  color: var(--gold);
+  font-weight: 850;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.metal-scenario-input {
+  width: 100%;
+  padding: 11px 12px 11px 30px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  outline: none;
+  color: var(--text);
+  background: var(--panel-soft);
+  font-weight: 700;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background 150ms ease;
+}
+
+.metal-scenario-input:hover {
+  border-color: rgba(137, 172, 202, 0.4);
+}
+
+.metal-scenario-input:focus {
+  border-color: rgba(221, 183, 75, 0.55);
+  background: #11273b;
+  box-shadow:
+    0 0 0 3px rgba(221, 183, 75, 0.1);
+}
+
+.metal-scenario-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.metal-scenario-actions .primary-button {
+  min-width: 160px;
+  border: 1px solid rgba(255, 232, 158, 0.42);
+  cursor: pointer;
+}
+
+.metal-scenario-actions .secondary-button {
+  min-width: 80px;
+}
+
+.metal-scenario-error {
+  margin: 16px 0 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 131, 139, 0.22);
+  border-radius: 9px;
+  color: var(--red);
+  background: var(--red-soft);
+  font-size: 12px;
+}
+
+.metal-scenario-results {
+  margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .metal-scenario-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .metal-scenario-actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .metal-scenario-form {
+    grid-template-columns: 1fr;
+  }
+
+  .metal-scenario-actions {
+    grid-column: auto;
+    flex-direction: column;
+  }
+
+  .metal-scenario-actions .primary-button,
+  .metal-scenario-actions .secondary-button {
+    width: 100%;
+  }
+}
