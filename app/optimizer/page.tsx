@@ -1,4 +1,5 @@
 import StatCard from "../../components/StatCard";
+import NewMoneyOptimizerV2 from "../../components/NewMoneyOptimizerV2";
 
 import SelectionBadge, {
   type SelectionGroup,
@@ -13,6 +14,10 @@ import {
   equityPositions,
   type PortfolioPosition,
 } from "../../data/portfolio";
+
+import {
+  getLivePortfolio,
+} from "../../data/portfolio-engine";
 
 function sortByRank(
   positions: PortfolioPosition[],
@@ -89,7 +94,27 @@ function PositionRow({
   );
 }
 
-export default function OptimizerPage() {
+export default async function OptimizerPage() {
+  const portfolio =
+  await getLivePortfolio();
+  const portfolioV2 =
+  portfolio.portfolioV2;
+
+const optimizerV2Positions =
+  portfolio.positions
+    .filter(
+      (position) =>
+        position.isEquity &&
+        position.company &&
+        position.marketValueEur !== null,
+    )
+    .map((position) => ({
+      companyId:
+        position.company!.id,
+
+      marketValueEur:
+        position.marketValueEur!,
+    }));
   const core = sortByRank(corePositions);
   const keep = sortByRank(keepPositions);
   const reduce = sortByRank(reducePositions);
@@ -99,7 +124,87 @@ export default function OptimizerPage() {
   const targetPortfolio = [...core, ...keep];
 
   return (
-    <>
+  <>
+    <section className="panel">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">
+            PHOENIX PORTFOLIO
+          </p>
+
+          <h3>
+            Portfolio Score
+          </h3>
+
+          <p>
+            Actuele portefeuille-analyse op basis van Phoenix V2.
+          </p>
+        </div>
+      </div>
+
+      <div className="stats-grid">
+        <StatCard
+          label="Portfolio Score"
+          value={
+            portfolioV2.partialPortfolioScore !== null
+              ? portfolioV2.partialPortfolioScore.toFixed(1)
+              : "—"
+          }
+          detail="Phoenix V2"
+          tone="green"
+        />
+
+        <StatCard
+          label="Opportunity Quality"
+          value={
+            portfolioV2.components.opportunityQuality !== null
+              ? portfolioV2.components.opportunityQuality.toFixed(1)
+              : "—"
+          }
+        />
+
+        <StatCard
+          label="Allocation Efficiency"
+          value={
+            portfolioV2.components.allocationEfficiency !== null
+              ? portfolioV2.components.allocationEfficiency.toFixed(1)
+              : "—"
+          }
+        />
+
+        <StatCard
+          label="Position Sizing"
+          value={
+            portfolioV2.components.positionSizingDiscipline !== null
+              ? portfolioV2.components.positionSizingDiscipline.toFixed(1)
+              : "—"
+          }
+        />
+
+        <StatCard
+          label="Risk & Concentration"
+          value={
+            portfolioV2.components.riskAndConcentration !== null
+              ? portfolioV2.components.riskAndConcentration.toFixed(1)
+              : "—"
+          }
+        />
+
+        <StatCard
+          label="Portfolio Balance"
+          value={
+            portfolioV2.components.portfolioBalance !== null
+              ? portfolioV2.components.portfolioBalance.toFixed(1)
+              : "—"
+          }
+        />
+      </div>
+    </section>
+
+    <NewMoneyOptimizerV2
+      positions={optimizerV2Positions}
+    />
+
       <section className="stats-grid">
         <StatCard
           label="Huidige aandelenposities"

@@ -94,6 +94,9 @@ export type LivePortfolio = {
 
   portfolioV2: PortfolioV2Result;
 
+  referenceSilverPriceUsd: number | null;
+  referenceGoldPriceUsd: number | null;
+
   exchangeRates: ExchangeRates;
 
   fetchedAt: string;
@@ -904,8 +907,17 @@ const portfolioV2 =
           position.marketValueEur!,
       })),
   );
+const referenceSilverPriceUsd =
+  getReferenceSilverPriceUsd(
+    snapshot,
+  );
 
-return {
+const referenceGoldPriceUsd =
+  getReferenceGoldPriceUsd(
+    snapshot,
+  );
+
+  return {
     positions,
     totals,
 
@@ -913,6 +925,9 @@ return {
     sellQueue,
 
     portfolioV2,
+
+    referenceSilverPriceUsd,
+referenceGoldPriceUsd,
 
     exchangeRates:
       snapshot.exchangeRates,
