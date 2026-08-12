@@ -419,7 +419,7 @@ export const companies: Company[] = [
     id: "walhalla-gold",
     name: "Walhalla Gold Corp",
     ticker: "WAU",
-    yahooSymbol: "WAU.AX",
+    yahooSymbol: "WAU.CN",
     commodity: "gold",
     stage: "explorer",
     goldExposure: 0.95,

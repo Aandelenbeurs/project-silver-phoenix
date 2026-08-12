@@ -28,6 +28,11 @@ import {
 } from "./scenario-engine";
 
 import {
+  calculatePortfolioV2,
+  type PortfolioV2Result,
+} from "./portfolio-v2";
+
+import {
   getYahooMarketSnapshot,
   type YahooMarketSnapshot,
 } from "../services/yahoo";
@@ -86,6 +91,8 @@ export type LivePortfolio = {
 
   buyQueue: ValuedPortfolioPosition[];
   sellQueue: ValuedPortfolioPosition[];
+
+  portfolioV2: PortfolioV2Result;
 
   exchangeRates: ExchangeRates;
 
@@ -870,22 +877,42 @@ const [
   });
 
   const totals =
-    calculatePortfolioTotals(
-      positions,
-    );
+  calculatePortfolioTotals(
+    positions,
+  );
 
-  const buyQueue =
-    getBuyQueue(positions);
+const buyQueue =
+  getBuyQueue(positions);
 
-  const sellQueue =
-    getSellQueue(positions);
+const sellQueue =
+  getSellQueue(positions);
 
-  return {
+const portfolioV2 =
+  calculatePortfolioV2(
+    positions
+      .filter(
+        (position) =>
+          position.isEquity &&
+          position.company &&
+          position.marketValueEur !== null,
+      )
+      .map((position) => ({
+        companyId:
+          position.company!.id,
+
+        marketValueEur:
+          position.marketValueEur!,
+      })),
+  );
+
+return {
     positions,
     totals,
 
     buyQueue,
     sellQueue,
+
+    portfolioV2,
 
     exchangeRates:
       snapshot.exchangeRates,

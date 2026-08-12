@@ -70,6 +70,7 @@ export default async function DashboardPage() {
     totals,
     buyQueue,
     sellQueue,
+    portfolioV2,
   } = portfolio;
 
   const isScenario =
@@ -477,6 +478,237 @@ return {
         />
       </section>
 <AllocationPanel totals={totals} />
+
+<section className="panel">
+  <div className="panel-heading">
+    <div>
+      <p className="eyebrow">
+        PHOENIX V2 TEST
+      </p>
+
+      <h3>
+        Portfolio Score Engine v2
+      </h3>
+
+      <p>
+  Portfolio-analyse op basis van Phoenix V2.
+</p>
+    </div>
+  </div>
+
+  <div className="stats-grid">
+    <StatCard
+      label="Portfolio Score"
+      value={
+        portfolioV2.partialPortfolioScore !== null
+          ? portfolioV2.partialPortfolioScore.toFixed(1)
+          : "—"
+      }
+      detail="Phoenix V2 Portfolio Score"
+      tone="green"
+    />
+
+    <StatCard
+      label="V2 Data Coverage"
+      value={`${portfolioV2.dataCoveragePercent.toFixed(
+        1,
+      )}%`}
+      detail={`${portfolioV2.scoredPositions} van ${portfolioV2.totalPositions} aandelen gescoord`}
+    />
+
+    <StatCard
+      label="Opportunity Quality"
+      value={
+        portfolioV2.components.opportunityQuality !== null
+          ? portfolioV2.components.opportunityQuality.toFixed(
+              1,
+            )
+          : "—"
+      }
+    />
+
+    <StatCard
+      label="Allocation Efficiency"
+      value={
+        portfolioV2.components.allocationEfficiency !== null
+          ? portfolioV2.components.allocationEfficiency.toFixed(
+              1,
+            )
+          : "—"
+      }
+    />
+
+    <StatCard
+      label="Capital Efficiency"
+      value={
+        portfolioV2.components.capitalEfficiency !== null
+          ? portfolioV2.components.capitalEfficiency.toFixed(
+              1,
+            )
+          : "—"
+      }
+    />
+
+    <StatCard
+      label="Position Sizing"
+      value={
+        portfolioV2.components.positionSizingDiscipline !== null
+          ? portfolioV2.components.positionSizingDiscipline.toFixed(
+              1,
+            )
+          : "—"
+      }
+    />
+
+    <StatCard
+      label="Risk & Concentration"
+      value={
+        portfolioV2.components.riskAndConcentration !== null
+          ? portfolioV2.components.riskAndConcentration.toFixed(
+              1,
+            )
+          : "—"
+      }
+    />
+
+    <StatCard
+      label="Portfolio Balance"
+      value={
+        portfolioV2.components.portfolioBalance !== null
+          ? portfolioV2.components.portfolioBalance.toFixed(
+              1,
+            )
+          : "—"
+      }
+    />
+
+    <StatCard
+      label="Cycle Positioning"
+      value={
+        portfolioV2.components.cyclePositioning !== null
+          ? portfolioV2.components.cyclePositioning.toFixed(
+              1,
+            )
+          : "—"
+      }
+      detail="Tijdelijk neutraal op 70"
+    />
+  </div>
+
+  <div
+    className="compact-table-wrap"
+    style={{
+      marginTop: "24px",
+    }}
+  >
+    <table className="data-table wide-table">
+      <thead>
+        <tr>
+          <th>Bedrijf</th>
+          <th>Opportunity</th>
+          <th>Actueel</th>
+          <th>Ideal band</th>
+          <th>Hard max</th>
+          <th>Allocation fit</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {portfolioV2.positions
+          
+          .sort(
+            (a, b) =>
+              b.marketValueEur -
+              a.marketValueEur,
+          )
+          .map((position) => {
+            const livePosition =
+              positions.find(
+                (item) =>
+                  item.company?.id ===
+                  position.companyId,
+              );
+
+            let allocationStatus =
+              "Binnen band";
+
+            if (position.isAboveHardMax) {
+              allocationStatus =
+                "BOVEN HARD MAX";
+            } else if (
+              position.isAboveIdeal
+            ) {
+              allocationStatus =
+                "Boven ideal";
+            } else if (
+              position.isBelowIdeal
+            ) {
+              allocationStatus =
+                "Onder ideal";
+            }
+
+            return (
+              <tr key={position.companyId}>
+                <td>
+                  <strong>
+                    {livePosition?.name ??
+                      position.companyId}
+                  </strong>
+                </td>
+
+                <td>
+                  {position.opportunity?.toFixed(
+                    1,
+                  ) ?? "—"}
+                </td>
+
+                <td>
+                  {formatPercent(
+                    position.allocationPercent,
+                  )}
+                </td>
+
+                <td>
+                  {position.idealMin !== null &&
+                  position.idealMax !== null
+                    ? `${position.idealMin.toFixed(
+                        1,
+                      )}% – ${position.idealMax.toFixed(
+                        1,
+                      )}%`
+                    : "—"}
+                </td>
+
+                <td>
+                  {position.hardMax !== null
+                    ? `${position.hardMax.toFixed(
+                        1,
+                      )}%`
+                    : "—"}
+                </td>
+
+                <td>
+                  {position.allocationFitScore !== null
+                    ? position.allocationFitScore.toFixed(
+                        1,
+                      )
+                    : "—"}
+                </td>
+
+                <td>
+                  <strong>
+                    {allocationStatus}
+                  </strong>
+                </td>
+              </tr>
+            );
+          })}
+      </tbody>
+    </table>
+  </div>
+</section>
+
       <section className="content-grid two-columns">
         <article className="panel">
           <div className="panel-heading">
