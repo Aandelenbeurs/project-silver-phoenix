@@ -20,6 +20,11 @@ import {
 
 type Props = {
   positions: PortfolioV2PositionInput[];
+
+  liveMetalPrices: {
+    silverPriceUsd: number;
+    goldPriceUsd: number;
+  } | null;
 };
 
 
@@ -64,7 +69,9 @@ function formatScore(
 
 export default function NewMoneyOptimizerV2({
   positions,
+  liveMetalPrices,
 }: Props) {
+
   const [
     amount,
     setAmount,
@@ -119,7 +126,18 @@ export default function NewMoneyOptimizerV2({
         newMoneyEur:
           parsedAmount,
 
-        maxPositions: 3,
+          liveMetalPrices:
+          liveMetalPrices ?? undefined,
+
+
+        maxPositions:
+  parsedAmount <= 5000
+    ? 3
+    : parsedAmount <= 15000
+      ? 4
+      : parsedAmount <= 50000
+        ? 6
+        : 10,
 
         minimumOrderEur: 500,
       });

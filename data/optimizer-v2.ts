@@ -8,6 +8,10 @@ import {
   getPhoenixCompanyV2,
 } from "./phoenix-v2";
 
+import {
+  buildPhoenixScenarioRanking,
+  type LiveMetalPrices,
+} from "./scenario-upside";
 
 export type NewMoneyOptimizerInput = {
   /**
@@ -35,6 +39,9 @@ export type NewMoneyOptimizerInput = {
    * 3000
    */
   newMoneyEur: number;
+
+    liveMetalPrices?: 
+    LiveMetalPrices;
 
   /**
    * Maximaal aantal verschillende
@@ -112,28 +119,12 @@ const DEFAULT_MINIMUM_ORDER_EUR = 500;
  * Phoenix verdeelt kapitaal daarom in
  * praktische blokken.
  */
+
 function determineStepSize(
   newMoneyEur: number,
 ): number {
-  if (newMoneyEur <= 1000) {
-    return 100;
-  }
-
-  if (newMoneyEur <= 5000) {
-    return 250;
-  }
-
-  if (newMoneyEur <= 15000) {
-    return 500;
-  }
-
-  if (newMoneyEur <= 50000) {
-    return 1000;
-  }
-
-  return 2500;
+  return 250;
 }
-
 
 function getPortfolioScore(
   portfolio: PortfolioV2Result,
@@ -278,6 +269,7 @@ function canAddMoney({
 function isEligibleCandidate(
   companyId: string,
 ): boolean {
+  
   const phoenix =
     getPhoenixCompanyV2(
       companyId,
@@ -352,6 +344,33 @@ export function optimizeNewMoneyV2(
     getPortfolioScore(
       portfolioBefore,
     );
+
+      const scenarioRanking =
+    input.liveMetalPrices
+      ? buildPhoenixScenarioRanking({
+          livePrices:
+            input.liveMetalPrices,
+        })
+      : [];
+      const bestAvailableInvestmentScore =
+  scenarioRanking.reduce(
+    (best, item) =>
+      Math.max(
+        best,
+        item.investmentScore ?? -Infinity,
+      ),
+    -Infinity,
+  );
+
+const INVESTMENT_SCORE_RANGE = 8;
+
+const minimumEligibleInvestmentScore =
+  Number.isFinite(
+    bestAvailableInvestmentScore,
+  )
+    ? bestAvailableInvestmentScore -
+      INVESTMENT_SCORE_RANGE
+    : -Infinity;
 
   if (
     newMoneyEur <= 0 ||
@@ -439,12 +458,15 @@ export function optimizeNewMoneyV2(
       break;
     }
 
-    let bestCompanyId:
-      | string
-      | null = null;
+   let bestCompanyId:
+  | string
+  | null = null;
 
-    let bestScore =
-      currentScore;
+let bestScore =
+  currentScore;
+
+let bestInvestmentScore =
+  -Infinity;
 
     for (
       const companyId of
@@ -508,17 +530,88 @@ export function optimizeNewMoneyV2(
         continue;
       }
 
-      if (
-        simulatedScore >
-        bestScore
-      ) {
-        bestScore =
-          simulatedScore;
+      const scenarioData =
+  scenarioRanking.find(
+    (item) =>
+      item.companyId ===
+      companyId,
+  );
 
-        bestCompanyId =
-          companyId;
-      }
-    }
+ const investmentScore =
+  scenarioData?.investmentScore ??
+  getPhoenixCompanyV2(companyId)
+    ?.scores.opportunity ??
+  0;
+
+if (
+  investmentScore <
+  minimumEligibleInvestmentScore
+) {
+  continue;
+}
+
+const alreadySelectedInPhase2 =
+  allocations.has(
+    companyId,
+  );
+
+if (
+  !alreadySelectedInPhase2 &&
+  allocations.size >=
+    maxPositions
+) {
+  continue;
+}
+
+/**
+ * Portfolio Score is leidend.
+ *
+ * Investment Score wordt alleen gebruikt
+ * als tie-breaker wanneer twee kandidaten
+ * vrijwel dezelfde Portfolio Score opleveren.
+ */
+const scoreImprovement =
+  simulatedScore -
+  currentScore;
+
+const bestScoreImprovement =
+  bestScore -
+  currentScore;
+
+const TIE_THRESHOLD = 0.01;
+
+const isBetterPortfolioResult =
+  scoreImprovement >
+  bestScoreImprovement +
+    TIE_THRESHOLD;
+
+const isNearTie =
+  Math.abs(
+    scoreImprovement -
+    bestScoreImprovement,
+  ) <= TIE_THRESHOLD;
+
+const winsTieBreaker =
+  isNearTie &&
+  scoreImprovement >=
+    -TIE_THRESHOLD &&
+  investmentScore >
+    bestInvestmentScore;
+
+if (
+  isBetterPortfolioResult ||
+  winsTieBreaker
+) {
+  bestScore =
+    simulatedScore;
+
+  bestInvestmentScore =
+    investmentScore;
+
+  bestCompanyId =
+    companyId;
+}
+}
 
     /**
      * Als geen enkel aandeel de score
@@ -528,6 +621,24 @@ export function optimizeNewMoneyV2(
      * geld alleen omdat het beschikbaar
      * is.
      */
+
+    if (!bestCompanyId) {
+  alert(
+    JSON.stringify(
+      {
+        remainingMoney,
+        currentScore,
+        allocations:
+          Object.fromEntries(
+            allocations,
+          ),
+      },
+      null,
+      2,
+    ),
+  );
+}
+
     if (!bestCompanyId) {
       break;
     }
@@ -562,20 +673,529 @@ export function optimizeNewMoneyV2(
    * ----------------------------------
    * FASE 2
    *
+   * TARGET FILLING
+   *
+   * Fase 1 heeft bepaald welke bedrijven
+   * daadwerkelijk aantrekkelijk genoeg
+   * zijn voor nieuw kapitaal.
+   *
+   * Met resterend geld proberen we sterke
+   * kandidaten verder richting hun ideale
+   * allocatie te brengen.
+   *
+   * We kopen hier GEEN zwakke aandelen
+   * alleen vanwege portefeuillebalans.
+   * ----------------------------------
+   */
+
+  const phase1SelectedCompanyIds =
+  new Set(
+    Array.from(
+      allocations.entries(),
+    )
+      .filter(
+        ([, amountEur]) =>
+          amountEur >=
+          minimumOrderEur,
+      )
+      .map(
+        ([companyId]) =>
+          companyId,
+      ),
+  );
+
+  while (
+    remainingMoney >=
+    minimumOrderEur
+  ) {
+    const currentPortfolio =
+      calculatePortfolioV2(
+        workingPositions,
+      );
+
+    let bestCompanyId:
+      | string
+      | null = null;
+
+    let bestPriority =
+      -Infinity;
+
+    for (
+      const companyId of
+      candidateCompanyIds
+    ) {
+if (
+  !phase1SelectedCompanyIds.has(
+    companyId,
+  )
+) {
+  continue;
+}
+
+      const phoenix =
+        getPhoenixCompanyV2(
+          companyId,
+        );
+
+      if (!phoenix) {
+        continue;
+      }
+
+      const idealMin =
+  phoenix.portfolio.idealMin;
+
+const idealMax =
+  phoenix.portfolio.idealMax;
+
+if (
+  idealMin === null ||
+  idealMax === null
+) {
+  continue;
+}
+
+      /**
+       * Gebruik dezelfde Investment Score
+       * als in de ranking wanneer beschikbaar.
+       */
+      const scenarioData =
+        scenarioRanking.find(
+          (item) =>
+            item.companyId ===
+            companyId,
+        );
+
+      const investmentScore =
+        scenarioData
+          ?.investmentScore ??
+        phoenix.scores
+          .opportunity ??
+        0;
+
+      /**
+       * Alleen kwalitatief sterke
+       * kandidaten mogen in deze fase
+       * extra kapitaal krijgen.
+       *
+       * Hiermee voorkomen we bijvoorbeeld
+       * dat Silver Hammer wordt gekocht
+       * puur vanwege portefeuillebalans.
+       */
+      if (
+       investmentScore <
+       minimumEligibleInvestmentScore
+      ) {
+      continue;
+      }
+
+      const position =
+        getPositionFromPortfolio(
+          currentPortfolio,
+          companyId,
+        );
+
+      const currentAllocation =
+        position
+          ?.allocationPercent ??
+        0;
+
+      /**
+       * Fase 2 vult maximaal tot idealMax.
+       *
+       * HardMax blijft een veiligheidsgrens,
+       * maar is hier bewust NIET het doel.
+       */
+      if (
+        currentAllocation >=
+        idealMax
+      ) {
+        continue;
+      }
+
+      const totalPortfolioValueEur =
+  currentPortfolio.positions.reduce(
+    (total, position) =>
+      total +
+      position.marketValueEur,
+    0,
+  );
+
+const currentPositionValueEur =
+  position
+    ?.marketValueEur ??
+  0;
+
+const idealMaxFraction =
+  idealMax / 100;
+
+const roomToIdealMaxEur =
+  Math.max(
+    0,
+    (
+      idealMaxFraction *
+        totalPortfolioValueEur -
+      currentPositionValueEur
+    ) /
+      (
+        1 -
+        idealMaxFraction
+      ),
+  );
+
+const amountToAllocate =
+  Math.min(
+    stepSize,
+    remainingMoney,
+    roomToIdealMaxEur,
+  );
+
+if (
+  amountToAllocate <= 0
+) {
+  continue;
+}
+
+if (
+  !canAddMoney({
+    positions:
+      workingPositions,
+
+    companyId,
+
+    amountEur:
+      amountToAllocate,
+  })
+) {
+  continue;
+}
+
+      /**
+       * Bedrijven onder idealMin krijgen
+       * prioriteit.
+       *
+       * Daarna bepaalt Investment Score
+       * welke kandidaat eerst wordt gevuld.
+       */
+      const belowIdealMin =
+        currentAllocation <
+        idealMin;
+
+      const distanceToIdealMin =
+        Math.max(
+          0,
+          idealMin -
+            currentAllocation,
+        );
+
+      const distanceToIdealMax =
+        Math.max(
+          0,
+          idealMax -
+            currentAllocation,
+        );
+
+      const priority =
+        (
+          belowIdealMin
+            ? 1000
+            : 0
+        ) +
+        investmentScore +
+        distanceToIdealMin *
+          10 +
+        distanceToIdealMax;
+
+      if (
+        priority >
+        bestPriority
+      ) {
+        bestPriority =
+          priority;
+
+        bestCompanyId =
+          companyId;
+      }
+    }
+
+    if (!bestCompanyId) {
+      break;
+    }
+
+  const bestPhoenix =
+  getPhoenixCompanyV2(
+    bestCompanyId,
+  );
+
+const bestPosition =
+  getPositionFromPortfolio(
+    currentPortfolio,
+    bestCompanyId,
+  );
+
+if (
+  !bestPhoenix ||
+  bestPhoenix.portfolio.idealMax === null
+) {
+  break;
+}
+
+const bestIdealMax =
+  bestPhoenix.portfolio.idealMax;
+
+const totalPortfolioValueEur =
+  currentPortfolio.positions.reduce(
+    (total, position) =>
+      total +
+      position.marketValueEur,
+    0,
+  );
+
+const currentPositionValueEur =
+  bestPosition
+    ?.marketValueEur ??
+  0;
+
+const bestIdealMaxFraction =
+  bestIdealMax / 100;
+
+const roomToIdealMaxEur =
+  Math.max(
+    0,
+    (
+      bestIdealMaxFraction *
+        totalPortfolioValueEur -
+      currentPositionValueEur
+    ) /
+      (
+        1 -
+        bestIdealMaxFraction
+      ),
+  );
+
+const rawAmountToAllocate =
+  Math.min(
+    stepSize,
+    remainingMoney,
+    roomToIdealMaxEur,
+  );
+
+const amountToAllocate =
+  Math.floor(
+    rawAmountToAllocate / 50,
+  ) * 50;
+
+if (
+  amountToAllocate <= 0
+) {
+  break;
+}
+
+    workingPositions =
+      addMoneyToCompany({
+        positions:
+          workingPositions,
+
+        companyId:
+          bestCompanyId,
+
+        amountEur:
+          amountToAllocate,
+      });
+
+    allocations.set(
+      bestCompanyId,
+
+      (
+        allocations.get(
+          bestCompanyId,
+        ) ?? 0
+      ) +
+        amountToAllocate,
+    );
+
+    remainingMoney -=
+      amountToAllocate;
+  }
+
+  alert(
+    JSON.stringify(
+      {
+        fase2Allocations:
+          Object.fromEntries(
+            allocations,
+          ),
+
+        remainingMoney,
+      },
+      null,
+      2,
+    ),
+  );
+
+  /**
+   * ----------------------------------
+   * FASE 3
+   *
    * Anti-pietluttigheid.
    *
    * Verwijder kleine losse orders.
    * ----------------------------------
    */
 
+  alert(
+  JSON.stringify(
+    {
+      fase1Allocations:
+        Object.fromEntries(
+          allocations,
+        ),
+    },
+    null,
+    2,
+  ),
+);
+
   const meaningfulAllocations =
-    Array.from(
-      allocations.entries(),
-    ).filter(
-      ([, amountEur]) =>
-        amountEur >=
+  Array.from(
+    allocations.entries(),
+  ).filter(
+    ([, amountEur]) =>
+      amountEur >=
         minimumOrderEur,
+  );
+
+const discardedMoneyEur =
+  Array.from(
+    allocations.entries(),
+  )
+    .filter(
+      ([, amountEur]) =>
+        amountEur <
+        minimumOrderEur,
+    )
+    .reduce(
+      (total, [, amountEur]) =>
+        total + amountEur,
+      0,
     );
+
+    let moneyToRedistribute =
+  discardedMoneyEur;
+
+while (
+  moneyToRedistribute >=
+  minimumOrderEur
+) {
+  let bestCompanyId:
+    | string
+    | null = null;
+
+  let bestScore =
+    -Infinity;
+
+  for (
+    const [
+      companyId,
+    ] of meaningfulAllocations
+  ) {
+    const testPositions =
+      clonePositions(
+        input.positions,
+      );
+
+    let rebuiltPositions =
+      testPositions;
+
+    for (
+      const [
+        existingCompanyId,
+        existingAmountEur,
+      ] of meaningfulAllocations
+    ) {
+      rebuiltPositions =
+        addMoneyToCompany({
+          positions:
+            rebuiltPositions,
+
+          companyId:
+            existingCompanyId,
+
+          amountEur:
+            existingAmountEur,
+        });
+    }
+
+    if (
+      !canAddMoney({
+        positions:
+          rebuiltPositions,
+
+        companyId,
+
+        amountEur:
+          minimumOrderEur,
+      })
+    ) {
+      continue;
+    }
+
+    const simulatedPositions =
+      addMoneyToCompany({
+        positions:
+          rebuiltPositions,
+
+        companyId,
+
+        amountEur:
+          minimumOrderEur,
+      });
+
+    const simulatedPortfolio =
+      calculatePortfolioV2(
+        simulatedPositions,
+      );
+
+    const simulatedScore =
+      getPortfolioScore(
+        simulatedPortfolio,
+      );
+
+    if (
+      simulatedScore !== null &&
+      simulatedScore >
+        bestScore
+    ) {
+      bestScore =
+        simulatedScore;
+
+      bestCompanyId =
+        companyId;
+    }
+  }
+
+  if (!bestCompanyId) {
+    break;
+  }
+
+  const existingIndex =
+    meaningfulAllocations.findIndex(
+      ([companyId]) =>
+        companyId ===
+        bestCompanyId,
+    );
+
+  if (existingIndex === -1) {
+    break;
+  }
+
+  meaningfulAllocations[
+    existingIndex
+  ][1] +=
+    minimumOrderEur;
+
+  moneyToRedistribute -=
+    minimumOrderEur;
+}
 
   /**
    * We bouwen de portefeuille opnieuw

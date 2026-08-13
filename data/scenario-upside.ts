@@ -137,19 +137,14 @@ export function calculateScenarioUpside({
    * rawScenarioPower ~4 of hoger
    * benadert de maximale score.
    */
-  const normalized =
-    Math.sqrt(
-      clamp(
-        rawScenarioPower / 4,
-        0,
-        1,
-      ),
-    );
-
-
   const scenarioUpsideScore =
-    normalized * 100;
-
+  100 *
+  (
+    1 -
+    Math.exp(
+      -rawScenarioPower / 3,
+    )
+  );
 
   return {
     companyId,
@@ -195,8 +190,11 @@ const scenarioUpside =
 const investmentScore =
   opportunity !== null &&
   scenarioUpside !== null
-    ? opportunity * 0.7 +
-      scenarioUpside * 0.3
+    ? Math.min(
+        100,
+        opportunity +
+          (scenarioUpside / 100) * 5,
+      )
     : opportunity;
 
 return {

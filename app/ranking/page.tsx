@@ -111,6 +111,8 @@ const liveGoldPrice =
           <th>Investment Score</th>
           <th>Opportunity</th>
           <th>Scenario Upside</th>
+          <th>Exposure</th>
+          <th>Leverage</th>
           <th>Quality</th>
           <th>Growth</th>
           <th>Valuation</th>
@@ -160,6 +162,22 @@ const liveGoldPrice =
     (scenarioItem) =>
       scenarioItem.companyId === item.companyId,
   )?.scenarioUpside?.toFixed(1) ?? "—"}
+</td>
+
+<td>
+  Ag{" "}
+  {(item.company?.silverExposure ?? 0).toFixed(2)}
+  {" · "}
+  Au{" "}
+  {(item.company?.goldExposure ?? 0).toFixed(2)}
+</td>
+
+<td>
+  Ag{" "}
+  {(item.company?.scenarioLeverage ?? 1).toFixed(2)}
+  {" · "}
+  Au{" "}
+  {(item.company?.goldScenarioLeverage ?? 1).toFixed(2)}
 </td>
 
               <td>

@@ -97,6 +97,19 @@ function PositionRow({
 export default async function OptimizerPage() {
   const portfolio =
   await getLivePortfolio();
+
+  const liveMetalPrices =
+  portfolio.referenceSilverPriceUsd !== null &&
+  portfolio.referenceGoldPriceUsd !== null
+    ? {
+        silverPriceUsd:
+          portfolio.referenceSilverPriceUsd,
+
+        goldPriceUsd:
+          portfolio.referenceGoldPriceUsd,
+      }
+    : null;
+
   const portfolioV2 =
   portfolio.portfolioV2;
 
@@ -202,8 +215,9 @@ const optimizerV2Positions =
     </section>
 
     <NewMoneyOptimizerV2
-      positions={optimizerV2Positions}
-    />
+  positions={optimizerV2Positions}
+  liveMetalPrices={liveMetalPrices}
+/>
 
       <section className="stats-grid">
         <StatCard
