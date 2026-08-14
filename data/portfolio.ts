@@ -159,27 +159,6 @@ export const reviewPositions =
       position.status === "review",
   );
 
-export const rankedCompanies = [...companies]
-  .filter(
-    (company) =>
-      company.rank !== null &&
-      company.masterScore !== null,
-  )
-  .sort(
-    (a, b) =>
-      (a.rank ??
-        Number.MAX_SAFE_INTEGER) -
-      (b.rank ??
-        Number.MAX_SAFE_INTEGER),
-  );
-
-export const unrankedCompanies =
-  companies.filter(
-    (company) =>
-      company.rank === null ||
-      company.masterScore === null,
-  );
-
 export function getPositionByCompanyId(
   companyId: string,
 ): PortfolioPosition | undefined {
@@ -215,10 +194,4 @@ export const portfolioSummary = {
   reduce: reducePositions.length,
   exit: exitPositions.length,
   review: reviewPositions.length,
-
-  rankedCompanies:
-    rankedCompanies.length,
-
-  unrankedCompanies:
-    unrankedCompanies.length,
 };

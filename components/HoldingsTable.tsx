@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  determinePortfolioAdviceV2,
+} from "../data/portfolio-advice-v2";
+
 import { useMemo, useState } from "react";
 
 import SelectionBadge, {
@@ -18,7 +22,6 @@ import {
 type SortKey =
   | "value"
   | "rank"
-  | "score"
   | "allocation"
   | "difference"
   | "name";
@@ -27,8 +30,15 @@ type SortDirection =
   | "asc"
   | "desc";
 
+import type {
+  PortfolioV2Result,
+} from "../data/portfolio-v2";
+
 type HoldingsTableProps = {
   positions: ValuedPortfolioPosition[];
+  portfolioV2: PortfolioV2Result;
+  investmentScores:
+    Record<string, number | null>;
 };
 
 function adviceToSelectionGroup(
@@ -102,6 +112,8 @@ function compareNullableNumbers(
 
 export default function HoldingsTable({
   positions,
+  portfolioV2,
+  investmentScores,
 }: HoldingsTableProps) {
   const [search, setSearch] = useState("");
 
@@ -142,6 +154,39 @@ const [
   newQuantity: number;
 } | null>(null);
 
+function getPhoenixAdvice(
+  position: ValuedPortfolioPosition,
+) {
+
+  if (!position.isEquity) {
+  return "APART";
+}
+
+  const phoenixPosition =
+    portfolioV2.positions.find(
+      (item) =>
+        item.companyId ===
+        position.company?.id,
+    );
+
+  const investmentScore =
+    position.company?.id
+      ? investmentScores[position.company.id] ?? null
+      : null;
+
+  return determinePortfolioAdviceV2({
+    currentAllocation:
+      phoenixPosition?.allocationPercent ?? null,
+    idealMin:
+      phoenixPosition?.idealMin ?? null,
+    idealMax:
+      phoenixPosition?.idealMax ?? null,
+    hardMax:
+      phoenixPosition?.hardMax ?? null,
+    investmentScore,
+  });
+}
+
   const filteredPositions = useMemo(() => {
     const normalizedSearch =
       search.trim().toLowerCase();
@@ -171,9 +216,9 @@ const [
             typeFilter;
 
         const matchesAdvice =
-          adviceFilter === "all" ||
-          position.advice ===
-            adviceFilter;
+  adviceFilter === "all" ||
+  getPhoenixAdvice(position) ===
+    adviceFilter;
 
         return (
           matchesSearch &&
@@ -194,14 +239,6 @@ const [
               compareNullableNumbers(
                 a.rank,
                 b.rank,
-              );
-            break;
-
-          case "score":
-            comparison =
-              compareNullableNumbers(
-                a.masterScore,
-                b.masterScore,
               );
             break;
 
@@ -531,10 +568,6 @@ async function confirmQuantityChange(): Promise<void> {
               Afbouwen
             </option>
 
-            <option value="UITSTAPPEN">
-              Uitstappen
-            </option>
-
             <option value="NOG BEOORDELEN">
               Nog beoordelen
             </option>
@@ -565,18 +598,6 @@ async function confirmQuantityChange(): Promise<void> {
         <table className="data-table wide-table">
           <thead>
             <tr>
-              <th>
-                <button
-                  type="button"
-                  className="table-sort-button"
-                  onClick={() =>
-                    toggleSort("rank")
-                  }
-                >
-                  Rang
-                  {sortIndicator("rank")}
-                </button>
-              </th>
 
               <th>
                 <button
@@ -591,13 +612,8 @@ async function confirmQuantityChange(): Promise<void> {
                 </button>
               </th>
 
-              <th>Ticker</th>
               <th>Aantal</th>
               <th>Live koers</th>
-              <th>Scenario</th>
-              <th>Upside</th>
-              <th>Driver</th>
-              <th>Valuta</th>
 
               <th>
                 <button
@@ -628,49 +644,46 @@ async function confirmQuantityChange(): Promise<void> {
                   )}
                 </button>
               </th>
-
-              <th>Doel</th>
-
-              <th>
-                <button
-                  type="button"
-                  className="table-sort-button"
-                  onClick={() =>
-                    toggleSort(
-                      "difference",
-                    )
-                  }
-                >
-                  Verschil
-                  {sortIndicator(
-                    "difference",
-                  )}
-                </button>
-              </th>
-
-              <th>Dag</th>
-
-              <th>
-                <button
-                  type="button"
-                  className="table-sort-button"
-                  onClick={() =>
-                    toggleSort("score")
-                  }
-                >
-                  Score
-                  {sortIndicator("score")}
-                </button>
-              </th>
-
-              <th>Tier</th>
-              <th>Advies</th>
+<th>Opportunity</th>
+<th>Investment</th>
+<th>Ideal band</th>
+<th>Hard max</th>
+<th>Phoenix advies</th>
             </tr>
           </thead>
 
           <tbody>
             {filteredPositions.map(
               (position) => {
+                const phoenixPosition =
+  portfolioV2.positions.find(
+    (item) =>
+      item.companyId ===
+      position.company?.id,
+  );
+
+  const investmentScore =
+  position.company?.id
+    ? investmentScores[position.company.id] ?? null
+    : null;
+
+const phoenixAdvice =
+  determinePortfolioAdviceV2({
+    currentAllocation:
+      phoenixPosition?.allocationPercent ?? null,
+
+    idealMin:
+      phoenixPosition?.idealMin ?? null,
+
+    idealMax:
+      phoenixPosition?.idealMax ?? null,
+
+    hardMax:
+      phoenixPosition?.hardMax ?? null,
+
+    investmentScore,
+  });
+
                 const group =
                   adviceToSelectionGroup(
                     position,
@@ -678,11 +691,6 @@ async function confirmQuantityChange(): Promise<void> {
 
                 return (
                   <tr key={position.id}>
-                    <td className="rank-cell">
-                      {position.rank !== null
-                        ? `#${position.rank}`
-                        : "—"}
-                    </td>
 
                     <td>
                       <strong>
@@ -699,12 +707,10 @@ async function confirmQuantityChange(): Promise<void> {
                                 .type === "etf"
                             ? "ETF / ETC"
                             : "Fysiek"}
+                              {" - "}
+                             {position.ticker ?? "—"}
+  
                       </small>
-                    </td>
-
-                    <td>
-                      {position.ticker ??
-                        "—"}
                     </td>
 
                     <td>
@@ -778,37 +784,6 @@ async function confirmQuantityChange(): Promise<void> {
   )}
 </td>
 
-<td>
-  {position.scenarioApplied
-    ? formatLocalPrice(
-        position.localPrice,
-      )
-    : "—"}
-</td>
-
-<td>
-  {position.scenarioUpsidePercent !== null
-    ? `${position.scenarioUpsidePercent >= 0 ? "+" : ""}${position.scenarioUpsidePercent.toFixed(
-        1,
-      )}%`
-    : "—"}
-</td>
-
-<td>
-  {position.scenarioDriver === "silver"
-    ? "Silver"
-    : position.scenarioDriver === "gold"
-      ? "Gold"
-      : position.scenarioDriver ===
-          "silver+gold"
-        ? "Silver + Gold"
-        : "—"}
-</td>
-
-<td>
-  {position.currency}
-</td>
-
                     <td>
                       {formatEur(
                         position.marketValueEur,
@@ -821,48 +796,49 @@ async function confirmQuantityChange(): Promise<void> {
                       )}
                     </td>
 
-                    <td>
-                      {position.isEquity
-                        ? `${position.targetAllocation.toFixed(
-                            1,
-                          )}%`
-                        : "—"}
-                    </td>
+<td className="score-cell">
+  {phoenixPosition?.opportunity !== null &&
+  phoenixPosition?.opportunity !== undefined
+    ? phoenixPosition.opportunity.toFixed(1)
+    : "—"}
+</td>
 
-                    <td>
-                      {position.allocationDifference !==
-                      null
-                        ? `${position.allocationDifference.toFixed(
-                            2,
-                          )}%`
-                        : "—"}
-                    </td>
+<td className="score-cell">
+  {position.company?.id &&
+  investmentScores[
+    position.company.id
+  ] !== null &&
+  investmentScores[
+    position.company.id
+  ] !== undefined
+    ? investmentScores[
+        position.company.id
+      ]!.toFixed(1)
+    : "—"}
+</td>
 
-                    <td>
-                      {formatPercent(
-                        position.quote
-                          .dayChangePercent,
-                      )}
-                    </td>
+<td>
+  {phoenixPosition?.idealMin !== null &&
+  phoenixPosition?.idealMin !== undefined &&
+  phoenixPosition?.idealMax !== null &&
+  phoenixPosition?.idealMax !== undefined
+    ? `${phoenixPosition.idealMin.toFixed(1)}% – ${phoenixPosition.idealMax.toFixed(1)}%`
+    : "—"}
+</td>
 
-                    <td className="score-cell">
-                      {position.masterScore !==
-                      null
-                        ? position.masterScore.toFixed(
-                            1,
-                          )
-                        : "—"}
-                    </td>
+<td>
+  {phoenixPosition?.hardMax !== null &&
+  phoenixPosition?.hardMax !== undefined
+    ? `${phoenixPosition.hardMax.toFixed(1)}%`
+    : "—"}
+</td>
 
-                    <td>
-                      {position.tier}
-                    </td>
+<td>
+  <strong>
+    {phoenixAdvice}
+  </strong>
+</td>
 
-                    <td>
-                      <SelectionBadge
-                        group={group}
-                      />
-                    </td>
                   </tr>
                 );
               },

@@ -58,7 +58,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
   <WorkspaceSwitcher/>
 
   <div className="topbar-badge">
-    Ultimate Ranking v3.0
+    Phoenix Ranking V2
   </div>
 </div>
         </header>

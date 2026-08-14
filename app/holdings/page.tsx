@@ -1,3 +1,7 @@
+import {
+  buildPhoenixScenarioRanking,
+} from "../../data/scenario-upside";
+
 import StatCard from "../../components/StatCard";
 import HoldingsTable from "../../components/HoldingsTable";
 
@@ -18,6 +22,36 @@ export default async function HoldingsPage() {
     totals,
     portfolioV2,
   } = portfolio;
+
+const liveSilverPrice =
+  portfolio.referenceSilverPriceUsd;
+
+const liveGoldPrice =
+  portfolio.referenceGoldPriceUsd;
+
+const scenarioRanking =
+  liveSilverPrice !== null &&
+  liveGoldPrice !== null
+    ? buildPhoenixScenarioRanking({
+        livePrices: {
+          silverPriceUsd:
+            liveSilverPrice,
+
+          goldPriceUsd:
+            liveGoldPrice,
+        },
+      })
+    : [];
+
+const investmentScores =
+  Object.fromEntries(
+    scenarioRanking.map(
+      (item) => [
+        item.companyId,
+        item.investmentScore,
+      ],
+    ),
+  );
 
   const equityPositions = positions.filter(
     (position) => position.isEquity,
@@ -77,144 +111,12 @@ export default async function HoldingsPage() {
         </div>
 
         <HoldingsTable
-          positions={positions}
-        />
+  positions={positions}
+  portfolioV2={portfolioV2}
+  investmentScores={investmentScores}
+/>
       </section>
 
-      <section className="panel">
-  <div className="panel-heading">
-    <div>
-      <p className="eyebrow">
-        PHOENIX V2
-      </p>
-
-      <h2>
-        Opportunity & allocatie
-      </h2>
-
-      <p>
-        Phoenix V2 analyse per aandeel op basis van
-        Opportunity Score, actuele weging en position sizing.
-      </p>
-    </div>
-  </div>
-
-  <div className="compact-table-wrap">
-    <table className="data-table wide-table">
-      <thead>
-        <tr>
-          <th>Bedrijf</th>
-          <th>Opportunity</th>
-          <th>Actueel</th>
-          <th>Ideal band</th>
-          <th>Hard max</th>
-          <th>Allocation fit</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {portfolioV2.positions
-          .sort(
-            (a, b) =>
-              b.marketValueEur -
-              a.marketValueEur,
-          )
-          .map((position) => {
-            const livePosition =
-              positions.find(
-                (item) =>
-                  item.company?.id ===
-                  position.companyId,
-              );
-
-            let allocationStatus =
-              "Binnen band";
-
-            if (
-              position.opportunity === null
-            ) {
-              allocationStatus =
-                "Nog niet gescoord";
-            } else if (
-              position.isAboveHardMax
-            ) {
-              allocationStatus =
-                "BOVEN HARD MAX";
-            } else if (
-              position.isAboveIdeal
-            ) {
-              allocationStatus =
-                "Boven ideal";
-            } else if (
-              position.isBelowIdeal
-            ) {
-              allocationStatus =
-                "Onder ideal";
-            }
-
-            return (
-              <tr key={position.companyId}>
-                <td>
-                  <strong>
-                    {livePosition?.name ??
-                      position.companyId}
-                  </strong>
-                </td>
-
-                <td>
-                  {position.opportunity !== null
-                    ? position.opportunity.toFixed(
-                        1,
-                      )
-                    : "—"}
-                </td>
-
-                <td>
-                  {formatPercent(
-                    position.allocationPercent,
-                  )}
-                </td>
-
-                <td>
-                  {position.idealMin !== null &&
-                  position.idealMax !== null
-                    ? `${position.idealMin.toFixed(
-                        1,
-                      )}% – ${position.idealMax.toFixed(
-                        1,
-                      )}%`
-                    : "—"}
-                </td>
-
-                <td>
-                  {position.hardMax !== null
-                    ? `${position.hardMax.toFixed(
-                        1,
-                      )}%`
-                    : "—"}
-                </td>
-
-                <td>
-                  {position.allocationFitScore !== null
-                    ? position.allocationFitScore.toFixed(
-                        1,
-                      )
-                    : "—"}
-                </td>
-
-                <td>
-                  <strong>
-                    {allocationStatus}
-                  </strong>
-                </td>
-              </tr>
-            );
-          })}
-      </tbody>
-    </table>
-  </div>
-</section>
     </>
   );
 }

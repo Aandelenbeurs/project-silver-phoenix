@@ -365,6 +365,92 @@ export function determinePortfolioAdvice({
   return "OP DOEL";
 }
 
+export function determinePortfolioAdviceV2({
+  currentAllocation,
+  idealMin,
+  idealMax,
+  hardMax,
+  investmentScore,
+}: {
+  currentAllocation: number | null;
+  idealMin: number | null;
+  idealMax: number | null;
+  hardMax: number | null;
+  investmentScore: number | null;
+}): PortfolioAdvice {
+  /**
+   * Geen bruikbare allocatie- of
+   * Phoenix-data beschikbaar.
+   */
+  if (
+    currentAllocation === null ||
+    idealMin === null ||
+    idealMax === null ||
+    hardMax === null ||
+    investmentScore === null
+  ) {
+    return "NOG BEOORDELEN";
+  }
+
+  /**
+   * Absolute risicogrens.
+   */
+  if (
+    currentAllocation >
+    hardMax
+  ) {
+    return "AFBOUWEN";
+  }
+
+  /**
+   * Boven de ideale band, maar nog
+   * onder hard max.
+   *
+   * Geen nieuwe aankopen.
+   */
+  if (
+    currentAllocation >
+    idealMax
+  ) {
+    return "NIET BIJKOPEN";
+  }
+
+  /**
+   * Binnen de ideale band.
+   */
+  if (
+    currentAllocation >=
+      idealMin &&
+    currentAllocation <=
+      idealMax
+  ) {
+    return "OP DOEL";
+  }
+
+  /**
+   * Onder idealMin:
+   * Investment Score bepaalt hoe
+   * aantrekkelijk bijkopen is.
+   */
+  if (
+    investmentScore >= 90
+  ) {
+    return "STERK BIJKOPEN";
+  }
+
+  if (
+    investmentScore >= 85
+  ) {
+    return "BIJKOPEN";
+  }
+
+  /**
+   * Onder idealMin, maar onvoldoende
+   * aantrekkelijk om actief bij te kopen.
+   */
+  return "NIET BIJKOPEN";
+}
+
 /**
  * Phoenix Priority Score.
  *
