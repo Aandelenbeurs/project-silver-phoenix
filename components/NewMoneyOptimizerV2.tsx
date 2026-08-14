@@ -346,6 +346,7 @@ export default function NewMoneyOptimizerV2({
                   <th>Bedrijf</th>
                   <th>Bedrag</th>
                   <th>Opportunity</th>
+                  <th>Investment</th>
                   <th>Voor</th>
                   <th>Na</th>
                   <th>Ideal</th>
@@ -357,7 +358,7 @@ export default function NewMoneyOptimizerV2({
               <tbody>
                 {result.allocations.length === 0 ? (
                   <tr>
-                    <td colSpan={8}>
+                    <td colSpan={9}>
                       Phoenix vond geen praktische
                       nieuwe allocatie.
                     </td>
@@ -389,6 +390,12 @@ export default function NewMoneyOptimizerV2({
                             1,
                           )}
                         </td>
+
+                        <td>
+  {allocation.investmentScore.toFixed(
+    1,
+  )}
+</td>
 
                         <td>
                           {formatPercent(

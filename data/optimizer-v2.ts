@@ -70,6 +70,7 @@ export type NewMoneyAllocation = {
   allocationAfterPercent: number;
 
   opportunity: number;
+  investmentScore: number;
 
   idealMin: number;
   idealMax: number;
@@ -123,7 +124,15 @@ const DEFAULT_MINIMUM_ORDER_EUR = 500;
 function determineStepSize(
   newMoneyEur: number,
 ): number {
-  return 250;
+  if (newMoneyEur <= 5_000) {
+    return 250;
+  }
+
+  if (newMoneyEur <= 25_000) {
+    return 500;
+  }
+
+  return 1_000;
 }
 
 function getPortfolioScore(
@@ -574,11 +583,17 @@ const scoreImprovement =
   simulatedScore -
   currentScore;
 
+  if (
+  newMoneyEur === 10_000 &&
+  remainingMoney === 10_000
+) {
+}
+
 const bestScoreImprovement =
   bestScore -
   currentScore;
 
-const TIE_THRESHOLD = 0.01;
+const TIE_THRESHOLD = 0.015;
 
 const isBetterPortfolioResult =
   scoreImprovement >
@@ -623,20 +638,6 @@ if (
      */
 
     if (!bestCompanyId) {
-  alert(
-    JSON.stringify(
-      {
-        remainingMoney,
-        currentScore,
-        allocations:
-          Object.fromEntries(
-            allocations,
-          ),
-      },
-      null,
-      2,
-    ),
-  );
 }
 
     if (!bestCompanyId) {
@@ -669,40 +670,22 @@ if (
       amountToAllocate;
   }
 
-  /**
+    /**
    * ----------------------------------
    * FASE 2
    *
    * TARGET FILLING
    *
-   * Fase 1 heeft bepaald welke bedrijven
-   * daadwerkelijk aantrekkelijk genoeg
-   * zijn voor nieuw kapitaal.
+   * Alleen serieuze kandidaten die in
+   * Fase 1 al geselecteerd zijn worden
+   * verder richting idealMax gevuld.
    *
-   * Met resterend geld proberen we sterke
-   * kandidaten verder richting hun ideale
-   * allocatie te brengen.
-   *
-   * We kopen hier GEEN zwakke aandelen
-   * alleen vanwege portefeuillebalans.
+   * We simuleren iedere volgende stap.
+   * Alleen wanneer de positie NA de
+   * aankoop niet boven idealMax komt,
+   * mag de aankoop worden uitgevoerd.
    * ----------------------------------
    */
-
-  const phase1SelectedCompanyIds =
-  new Set(
-    Array.from(
-      allocations.entries(),
-    )
-      .filter(
-        ([, amountEur]) =>
-          amountEur >=
-          minimumOrderEur,
-      )
-      .map(
-        ([companyId]) =>
-          companyId,
-      ),
-  );
 
   while (
     remainingMoney >=
@@ -724,13 +707,10 @@ if (
       const companyId of
       candidateCompanyIds
     ) {
-if (
-  !phase1SelectedCompanyIds.has(
-    companyId,
-  )
-) {
-  continue;
-}
+      /**
+       * Fase 2 mag geen nieuwe namen
+       * introduceren.
+       */
 
       const phoenix =
         getPhoenixCompanyV2(
@@ -742,22 +722,18 @@ if (
       }
 
       const idealMin =
-  phoenix.portfolio.idealMin;
+        phoenix.portfolio.idealMin;
 
-const idealMax =
-  phoenix.portfolio.idealMax;
+      const idealMax =
+        phoenix.portfolio.idealMax;
 
-if (
-  idealMin === null ||
-  idealMax === null
-) {
-  continue;
-}
+      if (
+        idealMin === null ||
+        idealMax === null
+      ) {
+        continue;
+      }
 
-      /**
-       * Gebruik dezelfde Investment Score
-       * als in de ranking wanneer beschikbaar.
-       */
       const scenarioData =
         scenarioRanking.find(
           (item) =>
@@ -773,19 +749,14 @@ if (
         0;
 
       /**
-       * Alleen kwalitatief sterke
-       * kandidaten mogen in deze fase
-       * extra kapitaal krijgen.
-       *
-       * Hiermee voorkomen we bijvoorbeeld
-       * dat Silver Hammer wordt gekocht
-       * puur vanwege portefeuillebalans.
+       * Zelfde relatieve kwaliteitsfilter
+       * als Fase 1.
        */
       if (
-       investmentScore <
-       minimumEligibleInvestmentScore
+        investmentScore <
+        minimumEligibleInvestmentScore
       ) {
-      continue;
+        continue;
       }
 
       const position =
@@ -799,12 +770,6 @@ if (
           ?.allocationPercent ??
         0;
 
-      /**
-       * Fase 2 vult maximaal tot idealMax.
-       *
-       * HardMax blijft een veiligheidsgrens,
-       * maar is hier bewust NIET het doel.
-       */
       if (
         currentAllocation >=
         idealMax
@@ -812,69 +777,78 @@ if (
         continue;
       }
 
-      const totalPortfolioValueEur =
-  currentPortfolio.positions.reduce(
-    (total, position) =>
-      total +
-      position.marketValueEur,
-    0,
-  );
+      const amountToAllocate =
+        Math.min(
+          stepSize,
+          remainingMoney,
+        );
 
-const currentPositionValueEur =
-  position
-    ?.marketValueEur ??
-  0;
+      if (
+        !canAddMoney({
+          positions:
+            workingPositions,
 
-const idealMaxFraction =
-  idealMax / 100;
+          companyId,
 
-const roomToIdealMaxEur =
-  Math.max(
-    0,
-    (
-      idealMaxFraction *
-        totalPortfolioValueEur -
-      currentPositionValueEur
-    ) /
-      (
-        1 -
-        idealMaxFraction
-      ),
-  );
-
-const amountToAllocate =
-  Math.min(
-    stepSize,
-    remainingMoney,
-    roomToIdealMaxEur,
-  );
-
-if (
-  amountToAllocate <= 0
-) {
-  continue;
-}
-
-if (
-  !canAddMoney({
-    positions:
-      workingPositions,
-
-    companyId,
-
-    amountEur:
-      amountToAllocate,
-  })
-) {
-  continue;
-}
+          amountEur:
+            amountToAllocate,
+        })
+      ) {
+        continue;
+      }
 
       /**
-       * Bedrijven onder idealMin krijgen
-       * prioriteit.
+       * SIMULATIE:
        *
-       * Daarna bepaalt Investment Score
-       * welke kandidaat eerst wordt gevuld.
+       * Voeg de volgende stap tijdelijk
+       * toe en controleer de daadwerkelijke
+       * allocatie na de aankoop.
+       */
+      const simulatedPositions =
+        addMoneyToCompany({
+          positions:
+            workingPositions,
+
+          companyId,
+
+          amountEur:
+            amountToAllocate,
+        });
+
+      const simulatedPortfolio =
+        calculatePortfolioV2(
+          simulatedPositions,
+        );
+
+      const simulatedPosition =
+        getPositionFromPortfolio(
+          simulatedPortfolio,
+          companyId,
+        );
+
+      if (!simulatedPosition) {
+        continue;
+      }
+
+      /**
+       * Geen overshoot van idealMax.
+       *
+       * Kleine floating-point marge om
+       * 7.0000000001% niet foutief af
+       * te wijzen.
+       */
+      if (
+        simulatedPosition
+          .allocationPercent >
+        idealMax + 0.0001
+      ) {
+        continue;
+      }
+
+      /**
+       * Onder idealMin krijgt voorrang.
+       * Daarna Investment Score en afstand
+       * tot de ideale band.
        */
       const belowIdealMin =
         currentAllocation <
@@ -917,78 +891,19 @@ if (
       }
     }
 
+    /**
+     * Alle geselecteerde sterke posities
+     * zitten dan praktisch tegen idealMax.
+     */
     if (!bestCompanyId) {
       break;
     }
 
-  const bestPhoenix =
-  getPhoenixCompanyV2(
-    bestCompanyId,
-  );
-
-const bestPosition =
-  getPositionFromPortfolio(
-    currentPortfolio,
-    bestCompanyId,
-  );
-
-if (
-  !bestPhoenix ||
-  bestPhoenix.portfolio.idealMax === null
-) {
-  break;
-}
-
-const bestIdealMax =
-  bestPhoenix.portfolio.idealMax;
-
-const totalPortfolioValueEur =
-  currentPortfolio.positions.reduce(
-    (total, position) =>
-      total +
-      position.marketValueEur,
-    0,
-  );
-
-const currentPositionValueEur =
-  bestPosition
-    ?.marketValueEur ??
-  0;
-
-const bestIdealMaxFraction =
-  bestIdealMax / 100;
-
-const roomToIdealMaxEur =
-  Math.max(
-    0,
-    (
-      bestIdealMaxFraction *
-        totalPortfolioValueEur -
-      currentPositionValueEur
-    ) /
-      (
-        1 -
-        bestIdealMaxFraction
-      ),
-  );
-
-const rawAmountToAllocate =
-  Math.min(
-    stepSize,
-    remainingMoney,
-    roomToIdealMaxEur,
-  );
-
-const amountToAllocate =
-  Math.floor(
-    rawAmountToAllocate / 50,
-  ) * 50;
-
-if (
-  amountToAllocate <= 0
-) {
-  break;
-}
+    const amountToAllocate =
+      Math.min(
+        stepSize,
+        remainingMoney,
+      );
 
     workingPositions =
       addMoneyToCompany({
@@ -1017,21 +932,6 @@ if (
       amountToAllocate;
   }
 
-  alert(
-    JSON.stringify(
-      {
-        fase2Allocations:
-          Object.fromEntries(
-            allocations,
-          ),
-
-        remainingMoney,
-      },
-      null,
-      2,
-    ),
-  );
-
   /**
    * ----------------------------------
    * FASE 3
@@ -1041,19 +941,6 @@ if (
    * Verwijder kleine losse orders.
    * ----------------------------------
    */
-
-  alert(
-  JSON.stringify(
-    {
-      fase1Allocations:
-        Object.fromEntries(
-          allocations,
-        ),
-    },
-    null,
-    2,
-  ),
-);
 
   const meaningfulAllocations =
   Array.from(
@@ -1314,6 +1201,13 @@ while (
               after.allocationPercent,
 
             opportunity,
+            investmentScore:
+  scenarioRanking.find(
+    (item) =>
+      item.companyId ===
+      companyId,
+  )?.investmentScore ??
+  opportunity,
 
             idealMin:
               phoenix.portfolio
