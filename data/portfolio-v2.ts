@@ -349,7 +349,7 @@ function calculatePositionSizingDiscipline(
         position.hardMax;
 
       penalty +=
-        6 + excess * 3;
+        excess * 6;
     } else if (
       position.isAboveIdeal
     ) {
@@ -399,9 +399,17 @@ function calculateRiskAndConcentration({
         ) * 3;
     }
 
-    if (position.isAboveHardMax) {
-      penalty += 6;
-    }
+    if (
+  position.isAboveHardMax &&
+  position.hardMax !== null
+) {
+  const excess =
+    position.allocationPercent -
+    position.hardMax;
+
+  penalty +=
+    excess * 6;
+}
   }
 
   return clampScore(

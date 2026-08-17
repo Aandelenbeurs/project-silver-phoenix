@@ -6,7 +6,8 @@ import {
 
 import {
   getPhoenixCompanyV2,
-} from "./phoenix-v2";
+  phoenixCompaniesV2,
+} from "./phoenix-v2";;
 
 import {
   buildPhoenixScenarioRanking,
@@ -327,6 +328,30 @@ function isEligibleCandidate(
  * uitgebreidere combinatorial optimizer
  * bouwen.
  */
+
+export function getOptimizerPracticalSettings(
+  amountEur: number,
+) {
+  return {
+    maxPositions:
+      amountEur <= 5_000
+        ? 3
+        : amountEur <= 15_000
+          ? 4
+          : amountEur <= 50_000
+            ? 6
+            : 10,
+
+    minimumOrderEur: 500,
+  };
+}
+
+export function getOptimizerCandidateCompanyIds(): string[] {
+  return phoenixCompaniesV2.map(
+    (company) => company.companyId,
+  );
+}
+
 export function optimizeNewMoneyV2(
   input: NewMoneyOptimizerInput,
 ): NewMoneyOptimizerResult {

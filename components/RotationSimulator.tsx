@@ -39,7 +39,7 @@ type RotationSimulationResponse = {
     }[];
 
     moneyUnallocatedEur: number;
-  };
+};
 };
 
 export default function RotationSimulator({

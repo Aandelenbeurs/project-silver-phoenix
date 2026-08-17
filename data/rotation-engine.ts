@@ -1,5 +1,7 @@
 import {
   optimizeNewMoneyV2,
+  getOptimizerCandidateCompanyIds,
+  getOptimizerPracticalSettings,
   type NewMoneyOptimizerResult,
 } from "./optimizer-v2";
 
@@ -184,6 +186,7 @@ export type RankedRotationSellCandidate =
     NewMoneyOptimizerResult;
 
   scoreBeforeRotation: number | null;
+  scoreAfterSales: number | null;
   scoreAfterRotation: number | null;
   totalScoreImprovement: number | null;
 };
@@ -358,7 +361,6 @@ function applySellPlanToPositions({
 export function simulateRotation({
   positions,
   investmentScores,
-  candidateCompanyIds,
   liveMetalPrices,
   maxSellPositions = 4,
   selectedSellCompanyIds,
@@ -367,9 +369,6 @@ export function simulateRotation({
 
   investmentScores:
     Map<string, number>;
-
-  candidateCompanyIds:
-    string[];
 
   liveMetalPrices?:
     LiveMetalPrices;
@@ -431,18 +430,34 @@ const sellPlan =
       sellPlan,
     });
 
-  const buyResult =
-    optimizeNewMoneyV2({
-      positions:
-        portfolioAfterSales,
+    const portfolioResultAfterSales =
+  calculatePortfolioV2(
+    portfolioAfterSales,
+  );
 
-      candidateCompanyIds,
+const scoreAfterSales =
+  portfolioResultAfterSales.partialPortfolioScore;
 
-      newMoneyEur:
-        freedCapitalEur,
+const practicalSettings =
+  getOptimizerPracticalSettings(
+    freedCapitalEur,
+  );
 
-      liveMetalPrices,
-    });
+const buyResult =
+  optimizeNewMoneyV2({
+    positions:
+      portfolioAfterSales,
+
+    candidateCompanyIds:
+      getOptimizerCandidateCompanyIds(),
+
+    newMoneyEur:
+      freedCapitalEur,
+
+    liveMetalPrices,
+
+    ...practicalSettings,
+  });
 
     const scoreAfterRotation =
   buyResult.scoreAfter;
@@ -464,6 +479,7 @@ const totalScoreImprovement =
   buyResult,
 
   scoreBeforeRotation,
+  scoreAfterSales,
   scoreAfterRotation,
   totalScoreImprovement,
 };

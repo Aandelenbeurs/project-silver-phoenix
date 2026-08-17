@@ -6,6 +6,8 @@ import {
 
 import {
   optimizeNewMoneyV2,
+  getOptimizerCandidateCompanyIds,
+getOptimizerPracticalSettings,
   type NewMoneyOptimizerResult,
 } from "../data/optimizer-v2";
 
@@ -111,36 +113,28 @@ export default function NewMoneyOptimizerV2({
       return;
     }
 
-    const candidateCompanyIds =
-      phoenixCompaniesV2.map(
-        (company) =>
-          company.companyId,
-      );
+   const candidateCompanyIds =
+  getOptimizerCandidateCompanyIds();
 
-    const optimizerResult =
-      optimizeNewMoneyV2({
-        positions,
+const practicalSettings =
+  getOptimizerPracticalSettings(
+    parsedAmount,
+  );
 
-        candidateCompanyIds,
+   const optimizerResult =
+  optimizeNewMoneyV2({
+    positions,
 
-        newMoneyEur:
-          parsedAmount,
+    candidateCompanyIds,
 
-          liveMetalPrices:
-          liveMetalPrices ?? undefined,
+    newMoneyEur:
+      parsedAmount,
 
+    liveMetalPrices:
+      liveMetalPrices ?? undefined,
 
-        maxPositions:
-  parsedAmount <= 5000
-    ? 3
-    : parsedAmount <= 15000
-      ? 4
-      : parsedAmount <= 50000
-        ? 6
-        : 10,
-
-        minimumOrderEur: 500,
-      });
+    ...practicalSettings,
+  });
 
     setResult(
       optimizerResult,

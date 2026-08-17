@@ -1,4 +1,8 @@
 import {
+  phoenixCompaniesV2,
+} from "../../../data/phoenix-v2";
+
+import {
   NextResponse,
 } from "next/server";
 
@@ -85,10 +89,10 @@ export async function POST(
       );
 
     const candidateCompanyIds =
-      scenarioRanking.map(
-        (item) =>
-          item.companyId,
-      );
+  phoenixCompaniesV2.map(
+    (company) =>
+      company.companyId,
+  );
 
     const simulation =
       simulateRotation({
@@ -96,8 +100,6 @@ export async function POST(
           optimizerV2Positions,
 
         investmentScores,
-
-        candidateCompanyIds,
 
         liveMetalPrices,
 

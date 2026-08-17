@@ -4,6 +4,7 @@ import {
 
 import {
   getPhoenixCompanyV2,
+  phoenixCompaniesV2,
 } from "../../data/phoenix-v2";
 
 import StatCard from "../../components/StatCard";
@@ -258,8 +259,9 @@ const investmentScores =
   );
 
   const candidateCompanyIds =
-  scenarioRanking.map(
-    (item) => item.companyId,
+  phoenixCompaniesV2.map(
+    (company) =>
+      company.companyId,
   );
 
 const rotationSellTest =
