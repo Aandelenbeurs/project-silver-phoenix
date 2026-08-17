@@ -12,6 +12,11 @@ type MetalScenarioResult = {
   scenarioValueEur: number;
   differenceEur: number;
   returnPercent: number;
+   drivers: {
+    id: string;
+    name: string;
+    contributionEur: number;
+  }[];
 };
 
 function formatEur(
@@ -129,110 +134,110 @@ export default function MetalScenarioCalculator() {
       setLoading(false);
     }
   }
-
-  return (
-    <section className="panel">
-      <div className="panel-heading">
-        <div>
-          <p className="eyebrow">
-            METAALSCENARIO
-          </p>
-
-          <h3>
-            Dynamische Silver + Gold calculator
-          </h3>
-
-          <p>
-            Vul een zilverprijs, goudprijs
-            of beide in. Een leeg veld blijft
-            op de actuele marktprijs.
-          </p>
-        </div>
-      </div>
-
-      <div className="metal-scenario-form">
-        <label className="metal-scenario-field">
-          <span>
-            Silver price (USD)
-          </span>
-
-          <div className="metal-scenario-input-wrap">
-            <span className="metal-scenario-currency">
-              $
-            </span>
-
-            <input
-              className="metal-scenario-input"
-              type="number"
-              min="0"
-              step="1"
-              placeholder="bijv. 250"
-              value={silverPrice}
-              onChange={(event) =>
-                setSilverPrice(
-                  event.target.value,
-                )
-              }
-            />
-          </div>
-        </label>
-
-        <label className="metal-scenario-field">
-          <span>
-            Gold price (USD)
-          </span>
-
-          <div className="metal-scenario-input-wrap">
-            <span className="metal-scenario-currency">
-              $
-            </span>
-
-            <input
-              className="metal-scenario-input"
-              type="number"
-              min="0"
-              step="1"
-              placeholder="bijv. 5500"
-              value={goldPrice}
-              onChange={(event) =>
-                setGoldPrice(
-                  event.target.value,
-                )
-              }
-            />
-          </div>
-        </label>
-
-        <div className="metal-scenario-actions">
-          <button
-            type="button"
-            className="primary-button"
-            onClick={calculateScenario}
-            disabled={loading}
-          >
-            {loading
-              ? "Berekenen..."
-              : "Bereken scenario"}
-          </button>
-
-          <button
-            type="button"
-            className="secondary-button"
-            onClick={resetScenario}
-            disabled={loading}
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-
-      {error && (
-        <p className="metal-scenario-error">
-          {error}
+return (
+  <section className="panel">
+    <div className="panel-heading">
+      <div>
+        <p className="eyebrow">
+          METAALSCENARIO
         </p>
-      )}
 
-      {result && (
+        <h3>
+          Dynamische Silver + Gold calculator
+        </h3>
+
+        <p>
+          Vul een zilverprijs, goudprijs
+          of beide in. Een leeg veld blijft
+          op de actuele marktprijs.
+        </p>
+      </div>
+    </div>
+
+    <div className="metal-scenario-form">
+      <label className="metal-scenario-field">
+        <span>
+          Silver price (USD)
+        </span>
+
+        <div className="metal-scenario-input-wrap">
+          <span className="metal-scenario-currency">
+            $
+          </span>
+
+          <input
+            className="metal-scenario-input"
+            type="number"
+            min="0"
+            step="1"
+            placeholder="bijv. 250"
+            value={silverPrice}
+            onChange={(event) =>
+              setSilverPrice(
+                event.target.value,
+              )
+            }
+          />
+        </div>
+      </label>
+
+      <label className="metal-scenario-field">
+        <span>
+          Gold price (USD)
+        </span>
+
+        <div className="metal-scenario-input-wrap">
+          <span className="metal-scenario-currency">
+            $
+          </span>
+
+          <input
+            className="metal-scenario-input"
+            type="number"
+            min="0"
+            step="1"
+            placeholder="bijv. 5500"
+            value={goldPrice}
+            onChange={(event) =>
+              setGoldPrice(
+                event.target.value,
+              )
+            }
+          />
+        </div>
+      </label>
+
+      <div className="metal-scenario-actions">
+        <button
+          type="button"
+          className="primary-button"
+          onClick={calculateScenario}
+          disabled={loading}
+        >
+          {loading
+            ? "Berekenen..."
+            : "Bereken scenario"}
+        </button>
+
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={resetScenario}
+          disabled={loading}
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+
+    {error && (
+      <p className="metal-scenario-error">
+        {error}
+      </p>
+    )}
+
+    {result && (
+      <>
         <div className="stats-grid metal-scenario-results">
           <div className="stat-card">
             <span className="stat-label">
@@ -328,7 +333,46 @@ export default function MetalScenarioCalculator() {
             </small>
           </div>
         </div>
-      )}
-    </section>
-  );
+
+        {result.drivers.length > 0 && (
+          <div
+            style={{
+              marginTop: "20px",
+            }}
+          >
+            <p className="eyebrow">
+              GROOTSTE SCENARIO-DRIVERS
+            </p>
+
+            <div className="company-list compact">
+              {result.drivers.map(
+                (driver, index) => (
+                  <div
+                    className="company-row"
+                    key={driver.id}
+                  >
+                    <div>
+                      <strong>
+                        {index + 1}. {driver.name}
+                      </strong>
+                    </div>
+
+                    <strong>
+                      {driver.contributionEur >= 0
+                        ? "+"
+                        : ""}
+                      {formatEur(
+                        driver.contributionEur,
+                      )}
+                    </strong>
+                  </div>
+                ),
+              )}
+            </div>
+          </div>
+        )}
+      </>
+    )}
+  </section>
+);
 }

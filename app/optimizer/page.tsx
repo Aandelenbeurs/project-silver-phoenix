@@ -28,6 +28,13 @@ import {
   determinePortfolioAdviceV2,
 } from "../../data/portfolio-engine";
 
+import {
+  getTopRotationSellPlan,
+  simulateRotation,
+} from "../../data/rotation-engine";
+
+import RotationSimulator from "../../components/RotationSimulator";
+
 function sortByRank(
   positions: PortfolioPosition[],
 ): PortfolioPosition[] {
@@ -88,14 +95,10 @@ function PositionRow({
         </strong>
 
         <small>
-          {position.masterScore !== null
-            ? `Score ${position.masterScore.toFixed(1)}`
-            : "Nog geen Master Score"}
-
-          {position.isEquity
-            ? ` · doel ${position.targetAllocation.toFixed(1)}%`
-            : ""}
-        </small>
+  {position.isEquity
+    ? `Doel ${position.targetAllocation.toFixed(1)}%`
+    : ""}
+</small>
       </div>
 
       <SelectionBadge group={group} />
@@ -243,6 +246,44 @@ const optimizerV2Positions =
       marketValueEur:
         position.marketValueEur!,
     }));
+
+const investmentScores =
+  new Map(
+    scenarioRanking.map(
+      (item) => [
+        item.companyId,
+        item.investmentScore ?? 0,
+      ],
+    ),
+  );
+
+  const candidateCompanyIds =
+  scenarioRanking.map(
+    (item) => item.companyId,
+  );
+
+const rotationSellTest =
+  getTopRotationSellPlan({
+    positions: optimizerV2Positions,
+    investmentScores,
+    limit: 10,
+  });
+
+  const rotationSimulation =
+  simulateRotation({
+    positions:
+      optimizerV2Positions,
+
+    investmentScores,
+
+    candidateCompanyIds,
+
+    liveMetalPrices:
+      liveMetalPrices ?? undefined,
+
+    maxSellPositions: 4,
+  });
+
   const core = sortByRank(corePositions);
   const keep = sortByRank(keepPositions);
   const reduce = sortByRank(reducePositions);
@@ -253,6 +294,86 @@ const optimizerV2Positions =
 
   return (
   <>
+
+  <section className="panel">
+  <div className="panel-heading">
+    <div>
+      <p className="eyebrow">
+        ROTATION ENGINE TEST
+      </p>
+
+      <h3>Top 10 verkoopkandidaten</h3>
+    </div>
+  </div>
+
+  <div className="company-list">
+    {rotationSellTest.map(
+      (item, index) => (
+        <div
+          className="company-row"
+          key={item.companyId}
+        >
+          <div>
+            <strong>
+              {index + 1}. {item.name}
+            </strong>
+
+            <small>
+              Allocatie{" "}
+              {item.currentAllocation.toFixed(2)}%
+              {" · "}
+              Investment{" "}
+              {item.investmentScore.toFixed(1)}
+              {" · "}
+              {item.sellReason}
+            </small>
+          </div>
+
+          <strong>
+  Verkoop{" "}
+  €{item.proposedSellAmountEur.toLocaleString(
+    "nl-NL",
+    {
+      maximumFractionDigits: 0,
+    },
+  )}
+</strong>
+
+        </div>
+      ),
+    )}
+  </div>
+</section>
+<section className="panel">
+  <div className="panel-heading">
+    <div>
+      <p className="eyebrow">
+        ROTATION SIMULATION
+      </p>
+
+      <h3>
+        Verkoop → herallocatie
+      </h3>
+
+      <p>
+        Selecteer welke verkoopkandidaten je daadwerkelijk
+        wilt meenemen. Phoenix berekent daarna de herallocatie
+        opnieuw.
+      </p>
+    </div>
+  </div>
+
+ <RotationSimulator
+  sellOptions={
+    rotationSimulation.sellPlan
+  }
+  initialSimulation={
+    rotationSimulation
+  }
+/>
+
+</section>
+
     <section className="panel">
       <div className="panel-heading">
         <div>

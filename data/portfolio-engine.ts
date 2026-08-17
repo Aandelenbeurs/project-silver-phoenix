@@ -66,7 +66,6 @@ export type ValuedPortfolioPosition = PortfolioPosition & {
   allocationDifference: number | null;
 
   advice: PortfolioAdvice;
-  priorityScore: number;
 };
 
 export type PortfolioTotals = {
@@ -88,9 +87,6 @@ export type PortfolioTotals = {
 export type LivePortfolio = {
   positions: ValuedPortfolioPosition[];
   totals: PortfolioTotals;
-
-  buyQueue: ValuedPortfolioPosition[];
-  sellQueue: ValuedPortfolioPosition[];
 
   portfolioV2: PortfolioV2Result;
 
@@ -134,6 +130,11 @@ export type MetalScenarioResult = {
   scenarioValueEur: number;
   differenceEur: number;
   returnPercent: number;
+  drivers: {
+  id: string;
+  name: string;
+  contributionEur: number;
+}[];
 };
 
 /**
@@ -452,40 +453,6 @@ export function determinePortfolioAdviceV2({
 }
 
 /**
- * Phoenix Priority Score.
- *
- * Hogere Master Score en grotere onderweging
- * leveren een hogere koopprioriteit op.
- */
-export function calculatePriorityScore({
-  position,
-  currentAllocation,
-}: {
-  position: PortfolioPosition;
-  currentAllocation: number | null;
-}): number {
-  if (
-    !position.isEquity ||
-    !position.hasValidScore ||
-    position.masterScore === null ||
-    currentAllocation === null ||
-    position.targetAllocation <=
-      currentAllocation
-  ) {
-    return 0;
-  }
-
-  const underweight =
-    position.targetAllocation -
-    currentAllocation;
-
-  return (
-    position.masterScore *
-    underweight
-  );
-}
-
-/**
  * Eerste berekeningsronde:
  * live koers en marktwaarde per positie.
  */
@@ -504,7 +471,6 @@ function valuePositions({
   | "currentAllocation"
   | "allocationDifference"
   | "advice"
-  | "priorityScore"
 >[] {
   const referenceSilverPriceUsd =
     getReferenceSilverPriceUsd(
@@ -770,12 +736,6 @@ export function buildValuedPortfolio({
           currentAllocation,
         });
 
-      const priorityScore =
-        calculatePriorityScore({
-          position,
-          currentAllocation,
-        });
-
       return {
         ...position,
 
@@ -783,7 +743,6 @@ export function buildValuedPortfolio({
         allocationDifference,
 
         advice,
-        priorityScore,
       };
     },
   );
@@ -860,66 +819,6 @@ export function calculatePortfolioTotals(
 }
 
 /**
- * Hoogste koopprioriteit eerst.
- */
-export function getBuyQueue(
-  positions: ValuedPortfolioPosition[],
-): ValuedPortfolioPosition[] {
-  return [...positions]
-    .filter(
-      (position) =>
-        position.priorityScore > 0 &&
-        (
-          position.advice ===
-            "STERK BIJKOPEN" ||
-          position.advice ===
-            "BIJKOPEN"
-        ),
-    )
-    .sort(
-      (a, b) =>
-        b.priorityScore -
-        a.priorityScore,
-    );
-}
-
-/**
- * Verkoop- en afbouwkandidaten.
- */
-export function getSellQueue(
-  positions: ValuedPortfolioPosition[],
-): ValuedPortfolioPosition[] {
-  return [...positions]
-    .filter(
-      (position) =>
-        position.advice ===
-          "AFBOUWEN" ||
-        position.advice ===
-          "UITSTAPPEN",
-    )
-    .sort((a, b) => {
-      if (
-        a.advice === "UITSTAPPEN" &&
-        b.advice !== "UITSTAPPEN"
-      ) {
-        return -1;
-      }
-
-      if (
-        b.advice === "UITSTAPPEN" &&
-        a.advice !== "UITSTAPPEN"
-      ) {
-        return 1;
-      }
-
-      return (
-        (a.allocationDifference ?? 0) -
-        (b.allocationDifference ?? 0)
-      );
-    });
-}
-
-/**
  * Centrale live-portefeuillefunctie.
  *
  * Pagina's roepen voortaan deze functie aan:
@@ -970,12 +869,6 @@ const [
     positions,
   );
 
-const buyQueue =
-  getBuyQueue(positions);
-
-const sellQueue =
-  getSellQueue(positions);
-
 const portfolioV2 =
   calculatePortfolioV2(
     positions
@@ -1006,9 +899,6 @@ const referenceGoldPriceUsd =
   return {
     positions,
     totals,
-
-    buyQueue,
-    sellQueue,
 
     portfolioV2,
 
@@ -1090,6 +980,61 @@ export async function getMetalScenario({
       ? (differenceEur / liveValueEur) * 100
       : 0;
 
+      const drivers =
+  scenarioPositions
+    .map((scenarioPosition) => {
+      const livePosition =
+        livePositions.find(
+          (position) =>
+            position.holding.id ===
+            scenarioPosition.holding.id,
+        );
+
+      if (
+        !livePosition ||
+        livePosition.marketValueEur === null ||
+        scenarioPosition.marketValueEur === null
+      ) {
+        return null;
+      }
+
+      const contributionEur =
+        scenarioPosition.marketValueEur -
+        livePosition.marketValueEur;
+
+      if (
+        Math.abs(contributionEur) <
+        0.01
+      ) {
+        return null;
+      }
+
+      return {
+        id:
+          scenarioPosition.holding.id,
+
+        name:
+          scenarioPosition.name,
+
+        contributionEur,
+      };
+    })
+    .filter(
+      (
+        item,
+      ): item is {
+        id: string;
+        name: string;
+        contributionEur: number;
+      } => item !== null,
+    )
+    .sort(
+      (a, b) =>
+        Math.abs(b.contributionEur) -
+        Math.abs(a.contributionEur),
+    )
+    .slice(0, 5);
+
   return {
     silverPriceUsd,
     goldPriceUsd,
@@ -1097,6 +1042,7 @@ export async function getMetalScenario({
     scenarioValueEur,
     differenceEur,
     returnPercent,
+    drivers,
   };
 }
 

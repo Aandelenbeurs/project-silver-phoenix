@@ -6,10 +6,6 @@ import {
 
 import { useMemo, useState } from "react";
 
-import SelectionBadge, {
-  type SelectionGroup,
-} from "./SelectionBadge";
-
 import {
   type ValuedPortfolioPosition,
 } from "../data/portfolio-engine";
@@ -40,35 +36,6 @@ type HoldingsTableProps = {
   investmentScores:
     Record<string, number | null>;
 };
-
-function adviceToSelectionGroup(
-  position: ValuedPortfolioPosition,
-): SelectionGroup {
-  if (position.advice === "NOG BEOORDELEN") {
-    return "Nog beoordelen";
-  }
-
-  if (position.advice === "APART") {
-    return "Apart";
-  }
-
-  if (position.advice === "UITSTAPPEN") {
-    return "Uitstappen / watchlist";
-  }
-
-  if (
-    position.advice === "AFBOUWEN" ||
-    position.advice === "NIET BIJKOPEN"
-  ) {
-    return "Afbouwen";
-  }
-
-  if (position.status === "core") {
-    return "Kernpositie";
-  }
-
-  return "Behouden";
-}
 
 function formatLocalPrice(
   value: number | null,
@@ -683,11 +650,6 @@ const phoenixAdvice =
 
     investmentScore,
   });
-
-                const group =
-                  adviceToSelectionGroup(
-                    position,
-                  );
 
                 return (
                   <tr key={position.id}>
