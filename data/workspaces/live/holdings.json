@@ -130,7 +130,7 @@
     "companyId": "silver-x",
     "name": "Silver X Mining",
     "ticker": "AGX",
-    "quantity": 33300,
+    "quantity": 21500,
     "type": "equity",
     "unit": "shares"
   },
@@ -220,7 +220,7 @@
     "companyId": "blackrock-silver",
     "name": "Blackrock Silver Corp",
     "ticker": "AHZ0",
-    "quantity": 1150,
+    "quantity": 9725,
     "type": "equity",
     "unit": "shares"
   },

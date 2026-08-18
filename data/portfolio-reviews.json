@@ -1,0 +1,16 @@
+{
+  "reviews": [
+    {
+      "reviewDate": "2026-08-18",
+      "companies": {
+        "vista-gold": {
+          "companyId": "vista-gold",
+          "reviewDate": "2026-08-18",
+          "investmentScore": 87.59363613934964,
+          "thesisHealth": "INTACT",
+          "thesisNote": "Maandelijkse review test"
+        }
+      }
+    }
+  ]
+}

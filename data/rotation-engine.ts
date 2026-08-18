@@ -18,6 +18,11 @@ import {
   type LiveMetalPrices,
 } from "./scenario-upside";
 
+export type RotationRecommendation =
+  | "AANBEVOLEN"
+  | "OPTIONEEL"
+  | "NIET ZINVOL";
+
 export type RotationAction =
   | "SELL"
   | "BUY";
@@ -186,9 +191,14 @@ export type RankedRotationSellCandidate =
     NewMoneyOptimizerResult;
 
   scoreBeforeRotation: number | null;
-  scoreAfterSales: number | null;
   scoreAfterRotation: number | null;
   totalScoreImprovement: number | null;
+
+  recommendation:
+  RotationRecommendation;
+
+improvementPer1000Eur:
+  number | null;
 };
 
   const MIN_ROTATION_EXCESS_EUR = 1_000;
@@ -430,14 +440,6 @@ const sellPlan =
       sellPlan,
     });
 
-    const portfolioResultAfterSales =
-  calculatePortfolioV2(
-    portfolioAfterSales,
-  );
-
-const scoreAfterSales =
-  portfolioResultAfterSales.partialPortfolioScore;
-
 const practicalSettings =
   getOptimizerPracticalSettings(
     freedCapitalEur,
@@ -469,6 +471,36 @@ const totalScoreImprovement =
       scoreBeforeRotation
     : null;
 
+    const improvementPer1000Eur =
+  totalScoreImprovement !== null &&
+  freedCapitalEur > 0
+    ? totalScoreImprovement /
+      (freedCapitalEur / 1_000)
+    : null;
+
+let recommendation:
+  RotationRecommendation =
+    "NIET ZINVOL";
+
+if (
+  totalScoreImprovement !== null &&
+  improvementPer1000Eur !== null
+) {
+  if (
+    totalScoreImprovement >= 1 &&
+    improvementPer1000Eur >= 0.15
+  ) {
+    recommendation =
+      "AANBEVOLEN";
+  } else if (
+    totalScoreImprovement >= 0.25 &&
+    improvementPer1000Eur >= 0.05
+  ) {
+    recommendation =
+      "OPTIONEEL";
+  }
+}
+
  return {
   sellPlan,
 
@@ -479,9 +511,10 @@ const totalScoreImprovement =
   buyResult,
 
   scoreBeforeRotation,
-  scoreAfterSales,
   scoreAfterRotation,
   totalScoreImprovement,
+  recommendation,
+  improvementPer1000Eur,
 };
 }
 

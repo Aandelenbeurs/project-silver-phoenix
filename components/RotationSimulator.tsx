@@ -31,6 +31,14 @@ type RotationSimulationResponse = {
     proposedSellAmountEur: number;
   }[];
 
+   recommendation:
+    | "AANBEVOLEN"
+    | "OPTIONEEL"
+    | "NIET ZINVOL";
+
+  improvementPer1000Eur:
+    number | null;
+
   buyResult: {
     allocations: {
       companyId: string;
@@ -243,6 +251,34 @@ return (
           </div>
         </div>
 
+<div
+  className={
+    simulation.recommendation ===
+    "AANBEVOLEN"
+      ? "stat-card tone-green"
+      : simulation.recommendation ===
+          "OPTIONEEL"
+        ? "stat-card tone-gold"
+        : "stat-card tone-red"
+  }
+>
+  <span className="stat-label">
+    Advies
+  </span>
+
+  <strong>
+    {simulation.recommendation}
+  </strong>
+
+  <small>
+    {typeof simulation.improvementPer1000Eur === "number"
+  ? `${simulation.improvementPer1000Eur.toFixed(
+      2,
+    )} scorepunt per €1.000`
+  : "—"}
+  </small>
+</div>
+
         <div
           className="content-grid two-columns"
           style={{
@@ -377,5 +413,6 @@ return (
       </>
     )}
   </div>
+  
 );
 }

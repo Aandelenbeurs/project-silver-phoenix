@@ -1,5 +1,10 @@
 import {
+  exitEngineTestCases,
+} from "../../data/exit-engine";
+
+import {
   buildPhoenixScenarioRanking,
+  calculateScenarioUpside,
 } from "../../data/scenario-upside";
 
 import {
@@ -33,6 +38,27 @@ import {
   getTopRotationSellPlan,
   simulateRotation,
 } from "../../data/rotation-engine";
+
+import {
+  reviewPortfolioExits,
+  type ExitReviewSupplement,
+} from "../../data/exit-engine";
+
+import {
+  calculateCompanyMarketHeat,
+} from "../../data/market-heat";
+
+import {
+  getCompanyById,
+} from "../../data/companies";
+
+import {
+  calculateUnrealizedReturnPercent,
+} from "../../data/cost-basis";
+
+import {
+  readReviewStore,
+} from "../../data/review-store";
 
 import RotationSimulator from "../../components/RotationSimulator";
 
@@ -110,6 +136,34 @@ function PositionRow({
 export default async function OptimizerPage() {
   const portfolio =
   await getLivePortfolio();
+
+  const reviewStore =
+  await readReviewStore();
+
+  function getLatestStoredReview(
+  companyId: string,
+) {
+  const reviews =
+    [...reviewStore.reviews].sort(
+      (a, b) =>
+        b.reviewDate.localeCompare(
+          a.reviewDate,
+        ),
+    );
+
+  for (const review of reviews) {
+    const companyReview =
+      review.companies[
+        companyId
+      ];
+
+    if (companyReview) {
+      return companyReview;
+    }
+  }
+
+  return null;
+}
 
   const liveMetalPrices =
   portfolio.referenceSilverPriceUsd !== null &&
@@ -258,6 +312,136 @@ const investmentScores =
     ),
   );
 
+const exitSupplements =
+  new Map<
+    string,
+    ExitReviewSupplement
+  >(
+    portfolioV2.positions.map(
+      (position) => {
+        const marketHeat =
+          liveMetalPrices
+            ? calculateCompanyMarketHeat({
+                companyId:
+                  position.companyId,
+
+                livePrices:
+                  liveMetalPrices,
+              })
+            : null;
+
+            const scenarioUpside =
+  liveMetalPrices
+    ? calculateScenarioUpside({
+        companyId:
+          position.companyId,
+
+        livePrices:
+          liveMetalPrices,
+      })
+    : null;
+
+const company =
+  getCompanyById(
+    position.companyId,
+  );
+
+const silverExposure =
+  company?.silverExposure ?? 0;
+
+const goldExposure =
+  company?.goldExposure ?? 0;
+
+const totalExposure =
+  silverExposure +
+  goldExposure;
+
+const remainingUpsidePercent =
+  scenarioUpside !== null &&
+  totalExposure > 0
+    ? (
+        (
+          silverExposure *
+            scenarioUpside.silverRemainingUpside +
+          goldExposure *
+            scenarioUpside.goldRemainingUpside
+        ) /
+        totalExposure
+      ) * 100
+    : null;
+
+    const portfolioPosition =
+  portfolio.positions.find(
+    (item) =>
+      item.company?.id ===
+      position.companyId,
+  );
+
+const unrealizedReturnPercent =
+  portfolioPosition?.localPrice !== null &&
+  portfolioPosition?.localPrice !== undefined
+    ? calculateUnrealizedReturnPercent({
+        companyId:
+          position.companyId,
+
+        currentPrice:
+          portfolioPosition.localPrice,
+
+        currentCurrency:
+          portfolioPosition.currency,
+
+        exchangeRates:
+          portfolio.exchangeRates,
+      })
+    : null;
+
+    const latestStoredReview =
+  getLatestStoredReview(
+    position.companyId,
+  );
+
+const thesisHealth =
+  latestStoredReview?.thesisHealth ??
+  "UNKNOWN";
+
+const previousInvestmentScore =
+  latestStoredReview?.investmentScore ??
+  null;
+
+        return [
+          position.companyId,
+          {
+            investmentScore:
+              investmentScores.get(
+                position.companyId,
+              ) ?? null,
+
+            previousInvestmentScore,
+
+            thesisHealth,
+
+            marketHeatScore:
+              marketHeat?.marketHeatScore ??
+              null,
+
+           remainingUpsidePercent,
+
+            unrealizedReturnPercent,
+          },
+        ];
+      },
+    ),
+  );
+
+const portfolioExitReviews =
+  reviewPortfolioExits({
+    positions:
+      portfolioV2.positions,
+
+    supplements:
+      exitSupplements,
+  });
+
   const candidateCompanyIds =
   phoenixCompaniesV2.map(
     (company) =>
@@ -278,8 +462,6 @@ const rotationSellTest =
 
     investmentScores,
 
-    candidateCompanyIds,
-
     liveMetalPrices:
       liveMetalPrices ?? undefined,
 
@@ -297,55 +479,6 @@ const rotationSellTest =
   return (
   <>
 
-  <section className="panel">
-  <div className="panel-heading">
-    <div>
-      <p className="eyebrow">
-        ROTATION ENGINE TEST
-      </p>
-
-      <h3>Top 10 verkoopkandidaten</h3>
-    </div>
-  </div>
-
-  <div className="company-list">
-    {rotationSellTest.map(
-      (item, index) => (
-        <div
-          className="company-row"
-          key={item.companyId}
-        >
-          <div>
-            <strong>
-              {index + 1}. {item.name}
-            </strong>
-
-            <small>
-              Allocatie{" "}
-              {item.currentAllocation.toFixed(2)}%
-              {" · "}
-              Investment{" "}
-              {item.investmentScore.toFixed(1)}
-              {" · "}
-              {item.sellReason}
-            </small>
-          </div>
-
-          <strong>
-  Verkoop{" "}
-  €{item.proposedSellAmountEur.toLocaleString(
-    "nl-NL",
-    {
-      maximumFractionDigits: 0,
-    },
-  )}
-</strong>
-
-        </div>
-      ),
-    )}
-  </div>
-</section>
 <section className="panel">
   <div className="panel-heading">
     <div>
@@ -451,6 +584,125 @@ const rotationSellTest =
         />
       </div>
     </section>
+
+    <section className="panel">
+  <div className="panel-heading">
+    <div>
+      <p className="eyebrow">
+        EXIT ENGINE TEST
+      </p>
+
+      <h3>
+        Exit Pressure testscenario&apos;s
+      </h3>
+    </div>
+  </div>
+
+  <div className="company-list">
+    {Object.entries(
+      exitEngineTestCases,
+    ).map(
+      ([name, result]) => (
+        <div
+          className="company-row"
+          key={name}
+        >
+          <div>
+            <strong>
+              {name}
+            </strong>
+
+            <small>
+              {result.status}
+              {" · "}
+              {result.reasons.length > 0
+                ? result.reasons.join(" · ")
+                : "Geen exitredenen"}
+            </small>
+          </div>
+
+          <strong>
+            {result.exitPressureScore !== null
+              ? result.exitPressureScore.toFixed(
+                  1,
+                )
+              : "—"}
+          </strong>
+        </div>
+      ),
+    )}
+  </div>
+</section>
+
+<section className="panel">
+  <div className="panel-heading">
+    <div>
+      <p className="eyebrow">
+        LIVE EXIT REVIEW
+      </p>
+
+      <h3>
+        Echte portefeuille
+      </h3>
+
+      <p>
+        Voorlopige Exit Pressure op basis van de
+        data die nu beschikbaar is.
+      </p>
+    </div>
+  </div>
+
+  <div className="company-list">
+    {portfolioExitReviews
+      .filter(
+        (item) =>
+          item.result.exitPressureScore !== null,
+      )
+      .sort(
+        (a, b) =>
+          (b.result.exitPressureScore ?? 0) -
+          (a.result.exitPressureScore ?? 0),
+      )
+      .slice(0, 15)
+      .map((item) => (
+        <div
+          className="company-row"
+          key={item.position.companyId}
+        >
+          <div>
+            <strong>
+              {item.position.companyId}
+            </strong>
+
+            <small>
+  {item.result.status}
+  {" · "}
+  Investment{" "}
+  {item.input.investmentScore !== null
+    ? item.input.investmentScore.toFixed(1)
+    : "—"}
+  {" · "}
+  Thesis{" "}
+  {item.input.thesisHealth}
+  {" · "}
+  Coverage{" "}
+  {item.result.dataCoveragePercent.toFixed(0)}%
+  {" · "}
+  {item.result.scoreIsReliable
+    ? "BETROUWBAAR"
+    : "ONVOLDOENDE DATA"}
+</small>
+          </div>
+
+          <strong>
+            {item.result.exitPressureScore !== null
+              ? item.result.exitPressureScore.toFixed(1)
+              : "—"}
+          </strong>
+        </div>
+      ))}
+  </div>
+</section>
 
     <NewMoneyOptimizerV2
   positions={optimizerV2Positions}

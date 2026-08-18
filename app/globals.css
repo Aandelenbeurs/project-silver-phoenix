@@ -1601,3 +1601,236 @@ a {
     width: 100%;
   }
 }
+
+.review-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 0;
+}
+
+.review-row-main {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 2fr)
+    100px
+    70px
+    120px
+    100px
+    130px
+    90px;
+  gap: 18px;
+  align-items: center;
+  position: relative;
+}
+
+.review-company strong {
+  font-size: 15px;
+}
+
+.review-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.review-cell span {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.5;
+}
+
+.review-cell strong {
+  font-size: 13px;
+}
+
+.review-toggle {
+  white-space: nowrap;
+}
+
+.review-editor {
+  grid-column: 1 / -1;
+
+  width: 100%;
+  margin-top: 4px;
+  padding: 18px;
+
+  background: #0d2030;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.review-thesis-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.review-editor textarea {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.review-save-row {
+  margin-top: 10px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.review-toggle,
+.review-thesis-buttons button,
+.review-save-row button {
+  border: 1px solid rgba(240, 200, 90, 0.35);
+  background: rgba(240, 200, 90, 0.08);
+  color: #f4f7fa;
+
+  border-radius: 7px;
+  padding: 8px 12px;
+
+  font: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.review-toggle:hover,
+.review-thesis-buttons button:hover,
+.review-save-row button:hover {
+  border-color: rgba(240, 200, 90, 0.7);
+  background: rgba(240, 200, 90, 0.14);
+}
+
+.review-thesis-buttons button.active {
+  border-color: #f0c85a;
+  background: rgba(240, 200, 90, 0.18);
+}
+
+.review-thesis-buttons button:disabled,
+.review-save-row button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.review-editor textarea {
+  width: 100%;
+  margin-top: 12px;
+
+  min-height: 80px;
+
+  padding: 12px 14px;
+
+  background: rgba(255, 255, 255, 0.035);
+  color: #f4f7fa;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+
+  resize: vertical;
+  font: inherit;
+}
+
+.review-editor textarea:focus {
+  outline: none;
+  border-color: rgba(240, 200, 90, 0.6);
+}
+
+.review-editor textarea::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.review-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  font-size: 11px !important;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.review-badge-unknown {
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.review-badge-intact {
+  color: #74e0ab;
+  border-color: rgba(116, 224, 171, 0.35);
+  background: rgba(116, 224, 171, 0.08);
+}
+
+.review-badge-weakening {
+  color: #f0c85a;
+  border-color: rgba(240, 200, 90, 0.4);
+  background: rgba(240, 200, 90, 0.08);
+}
+
+.review-badge-broken {
+  color: #ff8585;
+  border-color: rgba(255, 133, 133, 0.4);
+  background: rgba(255, 133, 133, 0.08);
+}
+
+.review-badge-ready {
+  color: #74e0ab;
+  border-color: rgba(116, 224, 171, 0.35);
+  background: rgba(116, 224, 171, 0.08);
+}
+
+.review-badge-needed {
+  color: #f0c85a;
+  border-color: rgba(240, 200, 90, 0.4);
+  background: rgba(240, 200, 90, 0.08);
+}
+
+/* Review thesis status buttons */
+
+.review-thesis-buttons button:nth-child(1) {
+  color: #74e0ab;
+  border-color: rgba(116, 224, 171, 0.35);
+}
+
+.review-thesis-buttons button:nth-child(1):hover,
+.review-thesis-buttons button:nth-child(1).active {
+  background: rgba(116, 224, 171, 0.12);
+  border-color: rgba(116, 224, 171, 0.7);
+}
+
+.review-thesis-buttons button:nth-child(2) {
+  color: #f0c85a;
+  border-color: rgba(240, 200, 90, 0.4);
+}
+
+.review-thesis-buttons button:nth-child(2):hover,
+.review-thesis-buttons button:nth-child(2).active {
+  background: rgba(240, 200, 90, 0.12);
+  border-color: rgba(240, 200, 90, 0.75);
+}
+
+.review-thesis-buttons button:nth-child(3) {
+  color: #ff8585;
+  border-color: rgba(255, 133, 133, 0.4);
+}
+
+.review-thesis-buttons button:nth-child(3):hover,
+.review-thesis-buttons button:nth-child(3).active {
+  background: rgba(255, 133, 133, 0.12);
+  border-color: rgba(255, 133, 133, 0.75);
+}
+
+.review-summary .review-badge {
+  padding: 7px 12px;
+
+  font-size: 13px !important;
+  font-weight: 600;
+
+  min-height: 30px;
+}
