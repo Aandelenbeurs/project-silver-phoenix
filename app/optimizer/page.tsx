@@ -1,10 +1,5 @@
 import {
-  exitEngineTestCases,
-} from "../../data/exit-engine";
-
-import {
   buildPhoenixScenarioRanking,
-  calculateScenarioUpside,
 } from "../../data/scenario-upside";
 
 import {
@@ -40,21 +35,13 @@ import {
 } from "../../data/rotation-engine";
 
 import {
-  reviewPortfolioExits,
-  type ExitReviewSupplement,
-} from "../../data/exit-engine";
+  getYahooHistoricalSeries,
+} from "../../services/yahoo";
 
 import {
-  calculateCompanyMarketHeat,
+  calculateHistoricalHeat,
+  combineMetalMarketHeat,
 } from "../../data/market-heat";
-
-import {
-  getCompanyById,
-} from "../../data/companies";
-
-import {
-  calculateUnrealizedReturnPercent,
-} from "../../data/cost-basis";
 
 import {
   readReviewStore,
@@ -137,6 +124,16 @@ export default async function OptimizerPage() {
   const portfolio =
   await getLivePortfolio();
 
+  const silverHistory =
+  await getYahooHistoricalSeries({
+    symbol: "SI=F",
+  });
+
+const goldHistory =
+  await getYahooHistoricalSeries({
+    symbol: "GC=F",
+  });
+
   const reviewStore =
   await readReviewStore();
 
@@ -175,6 +172,48 @@ export default async function OptimizerPage() {
         goldPriceUsd:
           portfolio.referenceGoldPriceUsd,
       }
+    : null;
+
+    const silverTechnicalHeat =
+  calculateHistoricalHeat(
+    silverHistory.points,
+  );
+
+const goldTechnicalHeat =
+  calculateHistoricalHeat(
+    goldHistory.points,
+  );
+
+const silverMarketHeat =
+  liveMetalPrices !== null &&
+  silverTechnicalHeat?.technicalHeatScore !== null &&
+  silverTechnicalHeat !== null
+    ? combineMetalMarketHeat({
+        priceHeatScore:
+          (
+            liveMetalPrices.silverPriceUsd /
+            300
+          ) * 100,
+
+        technicalHeatScore:
+          silverTechnicalHeat.technicalHeatScore,
+      })
+    : null;
+
+const goldMarketHeat =
+  liveMetalPrices !== null &&
+  goldTechnicalHeat?.technicalHeatScore !== null &&
+  goldTechnicalHeat !== null
+    ? combineMetalMarketHeat({
+        priceHeatScore:
+          (
+            liveMetalPrices.goldPriceUsd /
+            7000
+          ) * 100,
+
+        technicalHeatScore:
+          goldTechnicalHeat.technicalHeatScore,
+      })
     : null;
 
   const portfolioV2 =
@@ -311,136 +350,6 @@ const investmentScores =
       ],
     ),
   );
-
-const exitSupplements =
-  new Map<
-    string,
-    ExitReviewSupplement
-  >(
-    portfolioV2.positions.map(
-      (position) => {
-        const marketHeat =
-          liveMetalPrices
-            ? calculateCompanyMarketHeat({
-                companyId:
-                  position.companyId,
-
-                livePrices:
-                  liveMetalPrices,
-              })
-            : null;
-
-            const scenarioUpside =
-  liveMetalPrices
-    ? calculateScenarioUpside({
-        companyId:
-          position.companyId,
-
-        livePrices:
-          liveMetalPrices,
-      })
-    : null;
-
-const company =
-  getCompanyById(
-    position.companyId,
-  );
-
-const silverExposure =
-  company?.silverExposure ?? 0;
-
-const goldExposure =
-  company?.goldExposure ?? 0;
-
-const totalExposure =
-  silverExposure +
-  goldExposure;
-
-const remainingUpsidePercent =
-  scenarioUpside !== null &&
-  totalExposure > 0
-    ? (
-        (
-          silverExposure *
-            scenarioUpside.silverRemainingUpside +
-          goldExposure *
-            scenarioUpside.goldRemainingUpside
-        ) /
-        totalExposure
-      ) * 100
-    : null;
-
-    const portfolioPosition =
-  portfolio.positions.find(
-    (item) =>
-      item.company?.id ===
-      position.companyId,
-  );
-
-const unrealizedReturnPercent =
-  portfolioPosition?.localPrice !== null &&
-  portfolioPosition?.localPrice !== undefined
-    ? calculateUnrealizedReturnPercent({
-        companyId:
-          position.companyId,
-
-        currentPrice:
-          portfolioPosition.localPrice,
-
-        currentCurrency:
-          portfolioPosition.currency,
-
-        exchangeRates:
-          portfolio.exchangeRates,
-      })
-    : null;
-
-    const latestStoredReview =
-  getLatestStoredReview(
-    position.companyId,
-  );
-
-const thesisHealth =
-  latestStoredReview?.thesisHealth ??
-  "UNKNOWN";
-
-const previousInvestmentScore =
-  latestStoredReview?.investmentScore ??
-  null;
-
-        return [
-          position.companyId,
-          {
-            investmentScore:
-              investmentScores.get(
-                position.companyId,
-              ) ?? null,
-
-            previousInvestmentScore,
-
-            thesisHealth,
-
-            marketHeatScore:
-              marketHeat?.marketHeatScore ??
-              null,
-
-           remainingUpsidePercent,
-
-            unrealizedReturnPercent,
-          },
-        ];
-      },
-    ),
-  );
-
-const portfolioExitReviews =
-  reviewPortfolioExits({
-    positions:
-      portfolioV2.positions,
-
-    supplements:
-      exitSupplements,
-  });
 
   const candidateCompanyIds =
   phoenixCompaniesV2.map(
@@ -584,125 +493,6 @@ const rotationSellTest =
         />
       </div>
     </section>
-
-    <section className="panel">
-  <div className="panel-heading">
-    <div>
-      <p className="eyebrow">
-        EXIT ENGINE TEST
-      </p>
-
-      <h3>
-        Exit Pressure testscenario&apos;s
-      </h3>
-    </div>
-  </div>
-
-  <div className="company-list">
-    {Object.entries(
-      exitEngineTestCases,
-    ).map(
-      ([name, result]) => (
-        <div
-          className="company-row"
-          key={name}
-        >
-          <div>
-            <strong>
-              {name}
-            </strong>
-
-            <small>
-              {result.status}
-              {" · "}
-              {result.reasons.length > 0
-                ? result.reasons.join(" · ")
-                : "Geen exitredenen"}
-            </small>
-          </div>
-
-          <strong>
-            {result.exitPressureScore !== null
-              ? result.exitPressureScore.toFixed(
-                  1,
-                )
-              : "—"}
-          </strong>
-        </div>
-      ),
-    )}
-  </div>
-</section>
-
-<section className="panel">
-  <div className="panel-heading">
-    <div>
-      <p className="eyebrow">
-        LIVE EXIT REVIEW
-      </p>
-
-      <h3>
-        Echte portefeuille
-      </h3>
-
-      <p>
-        Voorlopige Exit Pressure op basis van de
-        data die nu beschikbaar is.
-      </p>
-    </div>
-  </div>
-
-  <div className="company-list">
-    {portfolioExitReviews
-      .filter(
-        (item) =>
-          item.result.exitPressureScore !== null,
-      )
-      .sort(
-        (a, b) =>
-          (b.result.exitPressureScore ?? 0) -
-          (a.result.exitPressureScore ?? 0),
-      )
-      .slice(0, 15)
-      .map((item) => (
-        <div
-          className="company-row"
-          key={item.position.companyId}
-        >
-          <div>
-            <strong>
-              {item.position.companyId}
-            </strong>
-
-            <small>
-  {item.result.status}
-  {" · "}
-  Investment{" "}
-  {item.input.investmentScore !== null
-    ? item.input.investmentScore.toFixed(1)
-    : "—"}
-  {" · "}
-  Thesis{" "}
-  {item.input.thesisHealth}
-  {" · "}
-  Coverage{" "}
-  {item.result.dataCoveragePercent.toFixed(0)}%
-  {" · "}
-  {item.result.scoreIsReliable
-    ? "BETROUWBAAR"
-    : "ONVOLDOENDE DATA"}
-</small>
-          </div>
-
-          <strong>
-            {item.result.exitPressureScore !== null
-              ? item.result.exitPressureScore.toFixed(1)
-              : "—"}
-          </strong>
-        </div>
-      ))}
-  </div>
-</section>
 
     <NewMoneyOptimizerV2
   positions={optimizerV2Positions}

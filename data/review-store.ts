@@ -120,6 +120,333 @@ export async function getLatestStoredCompanyReview(
   return null;
 }
 
+export async function getCompanyReviewHistory(
+  companyId: string,
+): Promise<StoredCompanyReview[]> {
+  const store =
+    await readReviewStore();
+
+  return store.reviews
+    .map(
+      (monthlyReview) =>
+        monthlyReview.companies[
+          companyId
+        ] ?? null,
+    )
+    .filter(
+      (
+        review,
+      ): review is StoredCompanyReview =>
+        review !== null,
+    )
+    .sort(
+      (a, b) =>
+        a.reviewDate.localeCompare(
+          b.reviewDate,
+        ),
+    );
+}
+
+export type InvestmentDeteriorationTrend = {
+  latestScore: number | null;
+  previousScore: number | null;
+
+  latestChange: number | null;
+  totalChange: number | null;
+
+  consecutiveDeclines: number;
+
+  reviewCount: number;
+};
+
+export async function calculateInvestmentDeteriorationTrend(
+  companyId: string,
+): Promise<InvestmentDeteriorationTrend> {
+  const history =
+    await getCompanyReviewHistory(
+      companyId,
+    );
+
+  const scoredHistory =
+    history.filter(
+      (
+        review,
+      ): review is StoredCompanyReview & {
+        investmentScore: number;
+      } =>
+        review.investmentScore !== null,
+    );
+
+  const reviewCount =
+    scoredHistory.length;
+
+  if (reviewCount === 0) {
+    return {
+      latestScore: null,
+      previousScore: null,
+
+      latestChange: null,
+      totalChange: null,
+
+      consecutiveDeclines: 0,
+
+      reviewCount: 0,
+    };
+  }
+
+  const latest =
+    scoredHistory[
+      scoredHistory.length - 1
+    ];
+
+  const previous =
+    scoredHistory.length >= 2
+      ? scoredHistory[
+          scoredHistory.length - 2
+        ]
+      : null;
+
+  const first =
+    scoredHistory[0];
+
+  const latestChange =
+    previous !== null
+      ? latest.investmentScore -
+        previous.investmentScore
+      : null;
+
+  const totalChange =
+    scoredHistory.length >= 2
+      ? latest.investmentScore -
+        first.investmentScore
+      : null;
+
+  let consecutiveDeclines = 0;
+
+  for (
+    let index =
+      scoredHistory.length - 1;
+    index > 0;
+    index -= 1
+  ) {
+    const current =
+      scoredHistory[index];
+
+    const prior =
+      scoredHistory[
+        index - 1
+      ];
+
+    if (
+      current.investmentScore <
+      prior.investmentScore
+    ) {
+      consecutiveDeclines += 1;
+    } else {
+      break;
+    }
+  }
+
+  return {
+    latestScore:
+      latest.investmentScore,
+
+    previousScore:
+      previous?.investmentScore ??
+      null,
+
+    latestChange,
+    totalChange,
+
+    consecutiveDeclines,
+
+    reviewCount,
+  };
+}
+
+export type InvestmentDeteriorationAssessment = {
+  pressureScore: number | null;
+
+  latestDecline: number | null;
+  totalDecline: number | null;
+
+  consecutiveDeclines: number;
+
+  reason: string | null;
+};
+
+export async function calculateInvestmentDeteriorationAssessment({
+  companyId,
+  currentInvestmentScore,
+}: {
+  companyId: string;
+  currentInvestmentScore: number | null;
+}): Promise<InvestmentDeteriorationAssessment> {
+  const history =
+    await getCompanyReviewHistory(
+      companyId,
+    );
+
+  const scoredHistory =
+    history.filter(
+      (
+        review,
+      ): review is StoredCompanyReview & {
+        investmentScore: number;
+      } =>
+        review.investmentScore !== null,
+    );
+
+  /**
+   * Zonder huidige score of eerdere
+   * historische score kunnen we geen
+   * deterioration bepalen.
+   *
+   * Belangrijk: null betekent
+   * ONVOLDOENDE DATA, niet pressure 0.
+   */
+  if (
+    currentInvestmentScore === null ||
+    scoredHistory.length === 0
+  ) {
+    return {
+      pressureScore: null,
+
+      latestDecline: null,
+      totalDecline: null,
+
+      consecutiveDeclines: 0,
+
+      reason: null,
+    };
+  }
+
+  const latestStored =
+    scoredHistory[
+      scoredHistory.length - 1
+    ];
+
+  const firstStored =
+    scoredHistory[0];
+
+  const latestChange =
+    currentInvestmentScore -
+    latestStored.investmentScore;
+
+  const totalChange =
+    currentInvestmentScore -
+    firstStored.investmentScore;
+
+  const latestDecline =
+    Math.max(
+      0,
+      -latestChange,
+    );
+
+  const totalDecline =
+    Math.max(
+      0,
+      -totalChange,
+    );
+
+  /**
+   * Tel historische dalingen vanaf
+   * achteren, inclusief de overgang
+   * van de laatste review naar NU.
+   */
+  let consecutiveDeclines = 0;
+
+  if (
+    currentInvestmentScore <
+    latestStored.investmentScore
+  ) {
+    consecutiveDeclines = 1;
+
+    for (
+      let index =
+        scoredHistory.length - 1;
+      index > 0;
+      index -= 1
+    ) {
+      const current =
+        scoredHistory[index];
+
+      const previous =
+        scoredHistory[
+          index - 1
+        ];
+
+      if (
+        current.investmentScore <
+        previous.investmentScore
+      ) {
+        consecutiveDeclines += 1;
+      } else {
+        break;
+      }
+    }
+  }
+
+  const latestPressure =
+    latestDecline * 6;
+
+  const trendPressure =
+    totalDecline * 3;
+
+  const consecutivePressure =
+    consecutiveDeclines >= 3
+      ? 20
+      : consecutiveDeclines === 2
+        ? 10
+        : 0;
+
+  const pressureScore =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        latestPressure +
+          trendPressure +
+          consecutivePressure,
+      ),
+    );
+
+  let reason: string | null =
+    null;
+
+  if (
+    consecutiveDeclines >= 3
+  ) {
+    reason =
+      `Investment Score daalt al ${consecutiveDeclines} reviews op rij.`;
+  } else if (
+    totalDecline >= 8
+  ) {
+    reason =
+      `Investment Score is sinds de eerste opgeslagen review ${totalDecline.toFixed(
+        1,
+      )} punten gedaald.`;
+  } else if (
+    latestDecline >= 5
+  ) {
+    reason =
+      `Investment Score daalde sinds de vorige review ${latestDecline.toFixed(
+        1,
+      )} punten.`;
+  }
+
+  return {
+    pressureScore,
+
+    latestDecline,
+    totalDecline,
+
+    consecutiveDeclines,
+
+    reason,
+  };
+}
+
 /**
  * Sla één bedrijfsreview op.
  *

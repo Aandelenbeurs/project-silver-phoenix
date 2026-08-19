@@ -101,6 +101,28 @@ export type NewMoneyOptimizerResult = {
   explanation: string[];
 };
 
+export type HistoricalPricePoint = {
+  date: string;
+  close: number;
+};
+
+export type HistoricalHeatResult = {
+  currentPrice: number;
+
+  return20DayPercent: number | null;
+  return50DayPercent: number | null;
+
+  movingAverage50: number | null;
+  movingAverage200: number | null;
+
+  extension50Percent: number | null;
+  extension200Percent: number | null;
+
+  momentumHeatScore: number | null;
+  extensionHeatScore: number | null;
+
+  technicalHeatScore: number | null;
+};
 
 type WorkingPosition = {
   companyId: string;

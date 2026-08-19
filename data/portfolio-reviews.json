@@ -11,6 +11,18 @@
           "thesisNote": "Maandelijkse review test"
         }
       }
+    },
+    {
+      "reviewDate": "2026-08-19",
+      "companies": {
+        "golden-goliath": {
+          "companyId": "golden-goliath",
+          "reviewDate": "2026-08-19",
+          "investmentScore": 72.39934678321015,
+          "thesisHealth": "INTACT",
+          "thesisNote": "Maandelijkse review 2"
+        }
+      }
     }
   ]
 }

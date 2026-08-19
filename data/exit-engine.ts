@@ -37,7 +37,7 @@ export type ExitReviewInput = {
 
   investmentScore: number | null;
   previousInvestmentScore: number | null;
-
+  investmentDeteriorationScore?: number | null;
   opportunityScore: number | null;
 
   thesisHealth: ThesisHealth;
@@ -45,25 +45,37 @@ export type ExitReviewInput = {
   marketHeatScore: number | null;
 
   remainingUpsidePercent: number | null;
+  estimatedCompanyUpsidePercent?: number | null;
+  scenarioUpsideScore?: number | null;
 
   currentAllocationPercent: number | null;
   idealMax: number | null;
   hardMax: number | null;
 
   unrealizedReturnPercent: number | null;
+
+  latestInvestmentDecline?: number | null;
+totalInvestmentDecline?: number | null;
+consecutiveInvestmentDeclines?: number | null;
 };
 
 export type ExitReviewSupplement = {
   investmentScore: number | null;
   previousInvestmentScore: number | null;
-
+  investmentDeteriorationScore?: number | null;
   thesisHealth: ThesisHealth;
 
   marketHeatScore: number | null;
 
   remainingUpsidePercent: number | null;
+  estimatedCompanyUpsidePercent?: number | null;
+  scenarioUpsideScore?: number | null;
 
   unrealizedReturnPercent: number | null;
+
+  latestInvestmentDecline?: number | null;
+totalInvestmentDecline?: number | null;
+consecutiveInvestmentDeclines?: number | null;
 };
 
 export type ExitReviewResult = {
@@ -99,6 +111,18 @@ export function buildExitReviewInput({
     previousInvestmentScore:
       supplement.previousInvestmentScore,
 
+      investmentDeteriorationScore:
+        supplement.investmentDeteriorationScore,
+
+        latestInvestmentDecline:
+  supplement.latestInvestmentDecline,
+
+totalInvestmentDecline:
+  supplement.totalInvestmentDecline,
+
+consecutiveInvestmentDeclines:
+  supplement.consecutiveInvestmentDeclines,
+
     opportunityScore:
       position.opportunity,
 
@@ -110,6 +134,12 @@ export function buildExitReviewInput({
 
     remainingUpsidePercent:
       supplement.remainingUpsidePercent,
+
+      estimatedCompanyUpsidePercent:
+       supplement.estimatedCompanyUpsidePercent,
+
+      scenarioUpsideScore:
+       supplement.scenarioUpsideScore,
 
     currentAllocationPercent:
       position.allocationPercent,
@@ -234,67 +264,47 @@ export function calculateExitPressure(
   );
 }
 
-  /**
-   * 2. INVESTMENT DETERIORATION
-   *
-   * We kijken bewust naar verandering,
-   * niet alleen naar de huidige score.
-   */
-  if (
-    input.investmentScore !== null &&
-    input.previousInvestmentScore !== null
-  ) {
-    const deterioration =
-      input.previousInvestmentScore -
-      input.investmentScore;
+/**
+ * 2. INVESTMENT DETERIORATION
+ *
+ * Deze score wordt buiten de Exit Engine
+ * berekend op basis van reviewhistorie.
+ */
+if (
+  input.investmentDeteriorationScore != null
+) {
+  components.investmentDeterioration =
+    clampExitPressure(
+      input.investmentDeteriorationScore,
+    );
+}
 
-    components.investmentDeterioration =
-      clampExitPressure(
-        Math.max(
-          0,
-          deterioration * 8,
-        ),
-      );
+/**
+ * 3. SCENARIO UPSIDE RISK
+ *
+ * scenarioUpsideScore is een bedrijfsspecifieke
+ * 0–100 score waarin commodity-upside, exposure
+ * en company leverage al verwerkt zijn.
+ *
+ * Hoge scenario-upside = lage exit pressure.
+ */
+if (
+  input.scenarioUpsideScore != null
+) {
+  const upsideScore =
+    input.scenarioUpsideScore;
 
-    if (deterioration >= 5) {
-      reasons.push(
-        `Investment Score is ${deterioration.toFixed(
-          1,
-        )} punten gedaald sinds de vorige review.`,
-      );
-    }
+  components.remainingUpsideRisk =
+    clampExitPressure(
+      100 - upsideScore,
+    );
+
+  if (upsideScore < 35) {
+    reasons.push(
+      "De resterende bedrijfsspecifieke scenario-upside is beperkt.",
+    );
   }
-
-  /**
-   * 3. REMAINING UPSIDE
-   *
-   * Veel resterende upside = weinig exitdruk.
-   * Nauwelijks resterende upside = hoge exitdruk.
-   */
-  if (
-    input.remainingUpsidePercent !== null
-  ) {
-    const upside =
-      input.remainingUpsidePercent;
-
-    if (upside >= 50) {
-      components.remainingUpsideRisk = 0;
-    } else if (upside >= 25) {
-      components.remainingUpsideRisk = 25;
-    } else if (upside >= 10) {
-      components.remainingUpsideRisk = 55;
-    } else if (upside >= 0) {
-      components.remainingUpsideRisk = 80;
-    } else {
-      components.remainingUpsideRisk = 100;
-    }
-
-    if (upside < 10) {
-      reasons.push(
-        "Er resteert nog maar beperkte scenario-upside.",
-      );
-    }
-  }
+}
 
   /**
    * 4. MARKET HEAT
@@ -485,6 +495,19 @@ if (
 }
 
 /**
+ * Zonder expliciete thesisreview geven
+ * we nooit een definitief exitadvies.
+ *
+ * Automatische marktdata mag een ontbrekende
+ * fundamentele beoordeling niet vervangen.
+ */
+if (
+  input.thesisHealth === "UNKNOWN"
+) {
+  status = "REVIEW";
+}
+
+/**
  * Bij voldoende coverage gelden deze
  * extra veiligheidsregels.
  */
@@ -525,88 +548,485 @@ if (scoreIsReliable) {
   };
 }
 
-export const exitEngineTestCases = {
-  healthyPosition: calculateExitPressure({
-    companyId: "TEST_HEALTHY",
+export type ExitActionSuggestion = {
+  action: ExitStatus;
 
-    investmentScore: 90,
-    previousInvestmentScore: 91,
+  driver: ExitActionDriver;
 
-    opportunityScore: 88,
+  targetSellPercent: number;
+
+  minSellPercent: number;
+  maxSellPercent: number;
+
+  explanation: string;
+};
+
+export type ExitActionDriver =
+  | "THESIS"
+  | "DETERIORATION"
+  | "UPSIDE"
+  | "MARKET_HEAT"
+  | "VALUATION"
+  | "PROFIT_PROTECTION"
+  | "COMBINED"
+  | "NONE";
+
+  export function getDominantExitDriver({
+  input,
+  result,
+}: {
+  input: ExitReviewInput;
+  result: ExitReviewResult;
+}): ExitActionDriver {
+  const components =
+    result.components;
+
+  /**
+   * Een gebroken of verzwakkende thesis
+   * heeft altijd fundamentele prioriteit.
+   */
+  if (
+    input.thesisHealth === "BROKEN" ||
+    input.thesisHealth === "WEAKENING"
+  ) {
+    return "THESIS";
+  }
+
+  const availableDrivers = [
+    {
+      driver:
+        "DETERIORATION" as const,
+      score:
+        components.investmentDeterioration,
+    },
+    {
+      driver: "UPSIDE" as const,
+      score:
+        components.remainingUpsideRisk,
+    },
+    {
+      driver:
+        "MARKET_HEAT" as const,
+      score:
+        components.marketHeat,
+    },
+    {
+      driver:
+        "VALUATION" as const,
+      score:
+        components.valuationOverextension,
+    },
+    {
+      driver:
+        "PROFIT_PROTECTION" as const,
+      score:
+        components.positionProfitRisk,
+    },
+  ].filter(
+    (
+      item,
+    ): item is {
+      driver:
+        | "DETERIORATION"
+        | "UPSIDE"
+        | "MARKET_HEAT"
+        | "VALUATION"
+        | "PROFIT_PROTECTION";
+      score: number;
+    } => item.score !== null,
+  );
+
+  if (availableDrivers.length === 0) {
+    return "NONE";
+  }
+
+  const strongDrivers =
+    availableDrivers.filter(
+      (item) => item.score >= 50,
+    );
+
+  /**
+   * Meerdere duidelijke exitsignalen
+   * tegelijk vormen een gecombineerd
+   * exitargument.
+   */
+  if (strongDrivers.length >= 2) {
+    return "COMBINED";
+  }
+
+  const dominant =
+    [...availableDrivers].sort(
+      (a, b) =>
+        b.score - a.score,
+    )[0];
+
+  if (!dominant) {
+    return "NONE";
+  }
+
+  return dominant.driver;
+}
+
+export function getExitActionSuggestion({
+  input,
+  result,
+}: {
+  input: ExitReviewInput;
+  result: ExitReviewResult;
+}): ExitActionSuggestion {
+  const driver =
+  getDominantExitDriver({
+    input,
+    result,
+  });
+  /**
+   * Geen betrouwbare beoordeling =
+   * nog geen verkoopactie voorstellen.
+   */
+  if (result.status === "REVIEW") {
+    return {
+      action: "REVIEW",
+
+      driver,
+
+      targetSellPercent: 0,
+
+      minSellPercent: 0,
+      maxSellPercent: 0,
+
+      explanation:
+        "Eerst de ontbrekende reviewdata aanvullen voordat een verkoopactie wordt voorgesteld.",
+    };
+  }
+
+  
+
+  /**
+   * Thesis break is de sterkste override.
+   *
+   * Een gebroken investment thesis betekent
+   * dat de oorspronkelijke reden om de positie
+   * te bezitten niet meer geldig is.
+   */
+  if (
+    input.thesisHealth === "BROKEN"
+  ) {
+    return {
+      action: "EXIT",
+
+      driver,
+
+      targetSellPercent: 100,
+
+      minSellPercent: 100,
+      maxSellPercent: 100,
+
+      explanation:
+        "De investment thesis is gebroken. Phoenix adviseert volledige exit.",
+    };
+  }
+
+  if (result.status === "HOLD") {
+    return {
+      action: "HOLD",
+
+      driver,
+
+      targetSellPercent: 0,
+
+      minSellPercent: 0,
+      maxSellPercent: 0,
+
+      explanation:
+        "De huidige exit pressure geeft geen aanleiding om de positie af te bouwen.",
+    };
+  }
+
+  if (result.status === "WATCH") {
+    return {
+      action: "WATCH",
+
+      driver,
+
+      targetSellPercent: 0,
+
+      minSellPercent: 0,
+      maxSellPercent: 0,
+
+      explanation:
+        "De exit pressure loopt op, maar is nog onvoldoende voor een directe verkoopactie.",
+    };
+  }
+
+  if (result.status === "TRIM") {
+  const pressure =
+    result.exitPressureScore ?? 50;
+
+  /**
+   * Binnen TRIM loopt het verkoopadvies
+   * geleidelijk van 10% naar 20%.
+   *
+   * 50 pressure = 10%
+   * 57 pressure = 15%
+   * 64 pressure = 20%
+   */
+  const normalizedPressure =
+    Math.max(
+      50,
+      Math.min(
+        64,
+        pressure,
+      ),
+    );
+
+  const targetSellPercent =
+    Math.round(
+      10 +
+        (
+          normalizedPressure -
+          50
+        ) *
+          (10 / 14),
+    );
+
+  return {
+    action: "TRIM",
+
+    driver,
+
+    targetSellPercent,
+
+    minSellPercent: 10,
+    maxSellPercent: 20,
+
+    explanation:
+      "Een beperkte winstname of risicoreductie is gerechtvaardigd, maar het grootste deel van de positie blijft behouden.",
+  };
+}
+
+  if (
+    result.status === "SCALE_OUT"
+  ) {
+    const pressure =
+      result.exitPressureScore ?? 65;
+
+    /**
+     * Binnen SCALE_OUT loopt het advies
+     * geleidelijk op.
+     *
+     * 65 pressure ≈ 30%
+     * 79 pressure ≈ 50%
+     */
+    const normalizedPressure =
+  Math.max(
+    65,
+    Math.min(
+      79,
+      pressure,
+    ),
+  );
+
+const targetSellPercent =
+  Math.round(
+    25 +
+      (
+        normalizedPressure -
+        65
+      ) *
+        (25 / 14),
+  );
+
+    return {
+      action: "SCALE_OUT",
+
+      driver,
+
+      targetSellPercent,
+
+      minSellPercent: 25,
+      maxSellPercent: 50,
+
+      explanation:
+        "Meerdere exitsignalen zijn sterk genoeg om de positie gefaseerd aanzienlijk af te bouwen.",
+    };
+  }
+
+  /**
+   * EXIT zonder thesis break.
+   *
+   * Hier bepaalt de hoogte van de totale
+   * Exit Pressure hoe agressief Phoenix
+   * wil afbouwen.
+   */
+const pressure =
+  result.exitPressureScore ?? 80;
+
+/**
+ * EXIT 80–89:
+ *
+ * geleidelijk van 60% naar 85%.
+ */
+if (pressure < 90) {
+  const normalizedPressure =
+    Math.max(
+      80,
+      Math.min(
+        89,
+        pressure,
+      ),
+    );
+
+  const targetSellPercent =
+    Math.round(
+      60 +
+        (
+          normalizedPressure -
+          80
+        ) *
+          (25 / 9),
+    );
+
+  return {
+    action: "EXIT",
+
+    driver,
+
+    targetSellPercent,
+
+    minSellPercent: 60,
+    maxSellPercent: 85,
+
+    explanation:
+      "De gecombineerde exit pressure is zeer hoog. Phoenix adviseert het grootste deel van de positie af te bouwen.",
+  };
+}
+
+/**
+ * EXIT 90–100:
+ *
+ * geleidelijk van 90% naar 100%.
+ */
+const normalizedPressure =
+  Math.max(
+    90,
+    Math.min(
+      100,
+      pressure,
+    ),
+  );
+
+const targetSellPercent =
+  Math.round(
+    90 +
+      (
+        normalizedPressure -
+        90
+      ),
+);
+
+return {
+  action: "EXIT",
+
+  driver,
+
+  targetSellPercent,
+
+  minSellPercent: 90,
+  maxSellPercent: 100,
+
+  explanation:
+    targetSellPercent >= 100
+      ? "De gecombineerde exit pressure is extreem hoog. Phoenix adviseert volledige exit."
+      : "De gecombineerde exit pressure is extreem hoog. Phoenix adviseert vrijwel volledige exit.",
+};
+};
+
+export const exitActionTestCases = [
+  50,
+  57,
+  64,
+  65,
+  72,
+  79,
+  80,
+  85,
+  89,
+  90,
+  95,
+  100,
+].map((pressure) => {
+  const status: ExitStatus =
+    pressure >= 80
+      ? "EXIT"
+      : pressure >= 65
+        ? "SCALE_OUT"
+        : pressure >= 50
+          ? "TRIM"
+          : pressure >= 35
+            ? "WATCH"
+            : "HOLD";
+
+  const input: ExitReviewInput = {
+    companyId:
+      `TEST_ACTION_${pressure}`,
+
+    investmentScore: 80,
+    previousInvestmentScore: 80,
+
+    opportunityScore: 70,
 
     thesisHealth: "INTACT",
 
-    marketHeatScore: 35,
+    marketHeatScore: 50,
 
-    remainingUpsidePercent: 75,
+    remainingUpsidePercent: 100,
+    scenarioUpsideScore: 70,
 
     currentAllocationPercent: 5,
     idealMax: 6,
     hardMax: 8,
 
-    unrealizedReturnPercent: 40,
-  }),
+    unrealizedReturnPercent: 50,
+  };
 
-  hotWinner: calculateExitPressure({
-    companyId: "TEST_HOT_WINNER",
+  const result: ExitReviewResult = {
+    companyId:
+      input.companyId,
 
-    investmentScore: 88,
-    previousInvestmentScore: 90,
+    exitPressureScore:
+      pressure,
 
-    opportunityScore: 55,
+    status,
 
-    thesisHealth: "INTACT",
+    dataCoveragePercent:
+      100,
 
-    marketHeatScore: 90,
+    scoreIsReliable:
+      true,
 
-    remainingUpsidePercent: 15,
+    components: {
+      thesisRisk: 0,
+      investmentDeterioration: 0,
+      remainingUpsideRisk: 30,
+      marketHeat: 50,
+      valuationOverextension: 30,
+      positionProfitRisk: 15,
+    },
 
-    currentAllocationPercent: 8,
-    idealMax: 6,
-    hardMax: 8,
+    reasons: [],
 
-    unrealizedReturnPercent: 180,
-  }),
+    reviewRequired:
+      false,
+  };
 
-  weakeningThesis: calculateExitPressure({
-    companyId: "TEST_WEAKENING",
+  return {
+    pressure,
+    status,
 
-    investmentScore: 68,
-    previousInvestmentScore: 82,
-
-    opportunityScore: 52,
-
-    thesisHealth: "WEAKENING",
-
-    marketHeatScore: 65,
-
-    remainingUpsidePercent: 20,
-
-    currentAllocationPercent: 6,
-    idealMax: 6,
-    hardMax: 8,
-
-    unrealizedReturnPercent: 70,
-  }),
-
-  brokenThesis: calculateExitPressure({
-    companyId: "TEST_BROKEN",
-
-    investmentScore: 60,
-    previousInvestmentScore: 85,
-
-    opportunityScore: 45,
-
-    thesisHealth: "BROKEN",
-
-    marketHeatScore: 30,
-
-    remainingUpsidePercent: 60,
-
-    currentAllocationPercent: 4,
-    idealMax: 6,
-    hardMax: 8,
-
-    unrealizedReturnPercent: -15,
-  }),
-};
+    suggestion:
+      getExitActionSuggestion({
+        input,
+        result,
+      }),
+  };
+});

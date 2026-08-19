@@ -271,18 +271,22 @@ return (
   </strong>
 </div>
 
-      <ReviewForm
-        companyId={
-          position.companyId
-        }
-        currentInvestmentScore={
-          currentInvestmentScore
-        }
-        previousThesisHealth={
-          previousReview?.thesisHealth ??
-          "UNKNOWN"
-        }
-      />
+   <ReviewForm
+  companyId={
+    position.companyId
+  }
+  currentInvestmentScore={
+    currentInvestmentScore
+  }
+  previousThesisHealth={
+    previousReview?.thesisHealth ??
+    "UNKNOWN"
+  }
+  previousThesisNote={
+    previousReview?.thesisNote ??
+    null
+  }
+/>
     </div>
   </div>
 );

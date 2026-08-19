@@ -11,6 +11,7 @@ const nav = [
   { href: '/holdings', label: 'Holdings', icon: '▤' },
   { href: '/ranking', label: 'Master Ranking', icon: '★' },
   { href: '/optimizer', label: 'Optimizer', icon: '⇄' },
+  { href: '/exit', label: 'Exit Strategy', icon: '↗' },
 ];
 
 export default function AppShell({ children }: { children: ReactNode }) {

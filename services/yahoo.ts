@@ -954,3 +954,87 @@ export async function getYahooInstrument(
     instrumentId
   ];
 }
+
+export type YahooHistoricalPoint = {
+  date: string;
+  close: number;
+};
+
+export type YahooHistoricalSeries = {
+  symbol: string;
+  points: YahooHistoricalPoint[];
+};
+
+export async function getYahooHistoricalSeries({
+  symbol,
+  days = 365,
+}: {
+  symbol: string;
+  days?: number;
+}): Promise<YahooHistoricalSeries> {
+  const period1 =
+    new Date(
+      Date.now() -
+        days *
+          24 *
+          60 *
+          60 *
+          1000,
+    );
+
+  const chart =
+    (await yahooFinance.chart(
+      symbol,
+      {
+        period1,
+        interval: "1d",
+      },
+      {
+        validateResult: false,
+      },
+    )) as {
+      quotes: Array<{
+        date?: Date | string | number;
+        close?: number;
+      }>;
+    };
+
+  const points =
+    chart.quotes
+      .map((quote) => {
+        const close =
+          safeNumber(
+            quote.close,
+          );
+
+        const date =
+          quote.date !== undefined
+            ? normalizeDate(
+                quote.date,
+              )
+            : null;
+
+        if (
+          close === null ||
+          date === null
+        ) {
+          return null;
+        }
+
+        return {
+          date,
+          close,
+        };
+      })
+      .filter(
+        (
+          point,
+        ): point is YahooHistoricalPoint =>
+          point !== null,
+      );
+
+  return {
+    symbol,
+    points,
+  };
+}

@@ -5,6 +5,10 @@ import {
 } from "react";
 
 import {
+  useRouter,
+} from "next/navigation";
+
+import {
   saveReviewAction,
 } from "./actions";
 
@@ -16,11 +20,15 @@ export default function ReviewForm({
   companyId,
   currentInvestmentScore,
   previousThesisHealth,
+  previousThesisNote,
 }: {
   companyId: string;
   currentInvestmentScore: number | null;
   previousThesisHealth: ThesisHealth;
+  previousThesisNote: string | null;
 }) {
+
+  const router = useRouter();
  
     const [thesisHealth, setThesisHealth] =
   useState<ThesisHealth>(
@@ -31,7 +39,9 @@ export default function ReviewForm({
   useState(false);
 
   const [thesisNote, setThesisNote] =
-    useState("");
+  useState(
+    previousThesisNote ?? "",
+  );
 
   const [saving, setSaving] =
     useState(false);
@@ -64,6 +74,7 @@ export default function ReviewForm({
       });
 
       setSaved(true);
+      router.refresh();
     } finally {
       setSaving(false);
     }
