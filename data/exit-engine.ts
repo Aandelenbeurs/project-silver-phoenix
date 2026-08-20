@@ -280,26 +280,46 @@ if (
 }
 
 /**
- * 3. SCENARIO UPSIDE RISK
+ * 3. COMPANY UPSIDE RISK
  *
- * scenarioUpsideScore is een bedrijfsspecifieke
- * 0–100 score waarin commodity-upside, exposure
- * en company leverage al verwerkt zijn.
+ * We gebruiken hier de geschatte
+ * bedrijfsspecifieke resterende upside.
  *
- * Hoge scenario-upside = lage exit pressure.
+ * Veel upside = weinig exitdruk.
+ * Weinig upside = hoge exitdruk.
  */
 if (
-  input.scenarioUpsideScore != null
+  input.estimatedCompanyUpsidePercent != null
 ) {
-  const upsideScore =
-    input.scenarioUpsideScore;
-
-  components.remainingUpsideRisk =
-    clampExitPressure(
-      100 - upsideScore,
+  const upside =
+    Math.max(
+      0,
+      input.estimatedCompanyUpsidePercent,
     );
 
-  if (upsideScore < 35) {
+  /**
+   * Continue curve:
+   *
+   *   0% upside   -> risk 100
+   *  25% upside   -> risk ~78
+   *  50% upside   -> risk ~61
+   * 100% upside   -> risk ~37
+   * 200% upside   -> risk ~14
+   * 400% upside   -> risk ~2
+   *
+   * Geen harde buckets, zodat kleine
+   * verschillen tussen bedrijven behouden
+   * blijven.
+   */
+  components.remainingUpsideRisk =
+    clampExitPressure(
+      100 *
+        Math.exp(
+          -upside / 100,
+        ),
+    );
+
+  if (upside < 50) {
     reasons.push(
       "De resterende bedrijfsspecifieke scenario-upside is beperkt.",
     );
@@ -548,6 +568,11 @@ if (scoreIsReliable) {
   };
 }
 
+export type ExitCapitalAction =
+  | "KEEP_POSITION"
+  | "SEEK_REPLACEMENT"
+  | "ALLOW_CASH";
+
 export type ExitActionSuggestion = {
   action: ExitStatus;
 
@@ -558,8 +583,89 @@ export type ExitActionSuggestion = {
   minSellPercent: number;
   maxSellPercent: number;
 
+  /**
+   * Wat moet er gebeuren met het kapitaal
+   * dat door de exitactie vrijkomt?
+   */
+  capitalAction: ExitCapitalAction;
+
+  /**
+   * Mag Phoenix de verkoopactie uitvoeren
+   * wanneer er geen betere vervanger bestaat?
+   */
+  canExitWithoutReplacement: boolean;
+
   explanation: string;
 };
+
+export type BuyEligibilityResult = {
+  eligible: boolean;
+
+  reason:
+    | "ELIGIBLE"
+    | "REVIEW_REQUIRED"
+    | "EXIT_PRESSURE"
+    | "INSUFFICIENT_UPSIDE";
+};
+
+export function evaluateBuyEligibility({
+  exitReview,
+  remainingUpsidePercent,
+}: {
+  exitReview: ExitReviewResult | null;
+  remainingUpsidePercent: number | null;
+}): BuyEligibilityResult {
+  /**
+   * Zonder betrouwbare exit review
+   * geen nieuw kapitaal toevoegen.
+   */
+  if (
+    !exitReview ||
+    exitReview.status === "REVIEW"
+  ) {
+    return {
+      eligible: false,
+      reason: "REVIEW_REQUIRED",
+    };
+  }
+
+  /**
+   * Geen nieuw geld toevoegen aan een
+   * positie die Phoenix al wil afbouwen.
+   */
+  if (
+    exitReview.status === "TRIM" ||
+    exitReview.status === "SCALE_OUT" ||
+    exitReview.status === "EXIT"
+  ) {
+    return {
+      eligible: false,
+      reason: "EXIT_PRESSURE",
+    };
+  }
+
+  /**
+   * Ook bij HOLD/WATCH moet er voldoende
+   * resterende upside zijn om nieuw geld
+   * te rechtvaardigen.
+   *
+   * Voorlopige grens: minimaal 30%.
+   */
+  if (
+    remainingUpsidePercent === null ||
+    remainingUpsidePercent < 30
+  ) {
+    return {
+      eligible: false,
+      reason: "INSUFFICIENT_UPSIDE",
+    };
+  }
+
+  return {
+    eligible: true,
+    reason: "ELIGIBLE",
+  };
+}
 
 export type ExitActionDriver =
   | "THESIS"
@@ -642,7 +748,7 @@ export type ExitActionDriver =
 
   const strongDrivers =
     availableDrivers.filter(
-      (item) => item.score >= 50,
+      (item) => item.score >= 65,
     );
 
   /**
@@ -667,6 +773,37 @@ export type ExitActionDriver =
   return dominant.driver;
 }
 
+function applyDriverAdjustment({
+  basePercent,
+  driver,
+}: {
+  basePercent: number;
+  driver: ExitActionDriver;
+}): number {
+  const multiplier =
+    driver === "THESIS"
+      ? 1.25
+      : driver === "DETERIORATION"
+        ? 1.15
+        : driver === "COMBINED"
+          ? 1.2
+          : driver === "MARKET_HEAT"
+            ? 0.9
+            : driver === "PROFIT_PROTECTION"
+              ? 0.9
+              : 1;
+
+  return Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        basePercent * multiplier,
+      ),
+    ),
+  );
+}
+
 export function getExitActionSuggestion({
   input,
   result,
@@ -683,6 +820,35 @@ export function getExitActionSuggestion({
    * Geen betrouwbare beoordeling =
    * nog geen verkoopactie voorstellen.
    */
+
+  function getDriverExplanation(): string {
+  switch (driver) {
+    case "THESIS":
+      return "De investment thesis is de belangrijkste reden voor de verhoogde exitdruk.";
+
+    case "DETERIORATION":
+      return "De Investment Score verslechtert en vormt het belangrijkste exitsignaal.";
+
+    case "UPSIDE":
+      return "De resterende bedrijfsspecifieke scenario-upside is het belangrijkste exitsignaal.";
+
+    case "MARKET_HEAT":
+      return "De huidige marktfase en oververhitting vormen het belangrijkste exitsignaal.";
+
+    case "VALUATION":
+      return "De waardering ten opzichte van de resterende opportunity vormt het belangrijkste exitsignaal.";
+
+    case "PROFIT_PROTECTION":
+      return "De omvang van de opgebouwde winst verhoogt de noodzaak om risico te beschermen.";
+
+    case "COMBINED":
+      return "Meerdere sterke exitsignalen lopen tegelijk op.";
+
+    default:
+      return "Er is momenteel geen dominant exitsignaal.";
+  }
+}
+
   if (result.status === "REVIEW") {
     return {
       action: "REVIEW",
@@ -693,6 +859,12 @@ export function getExitActionSuggestion({
 
       minSellPercent: 0,
       maxSellPercent: 0,
+
+      capitalAction:
+    "KEEP_POSITION",
+
+  canExitWithoutReplacement:
+    false,
 
       explanation:
         "Eerst de ontbrekende reviewdata aanvullen voordat een verkoopactie wordt voorgesteld.",
@@ -721,6 +893,12 @@ export function getExitActionSuggestion({
       minSellPercent: 100,
       maxSellPercent: 100,
 
+      capitalAction:
+  "ALLOW_CASH",
+
+canExitWithoutReplacement:
+  true,
+
       explanation:
         "De investment thesis is gebroken. Phoenix adviseert volledige exit.",
     };
@@ -736,6 +914,12 @@ export function getExitActionSuggestion({
 
       minSellPercent: 0,
       maxSellPercent: 0,
+
+      capitalAction:
+  "KEEP_POSITION",
+
+canExitWithoutReplacement:
+  false,
 
       explanation:
         "De huidige exit pressure geeft geen aanleiding om de positie af te bouwen.",
@@ -753,8 +937,15 @@ export function getExitActionSuggestion({
       minSellPercent: 0,
       maxSellPercent: 0,
 
+      capitalAction:
+  "KEEP_POSITION",
+
+canExitWithoutReplacement:
+  false,
+
       explanation:
-        "De exit pressure loopt op, maar is nog onvoldoende voor een directe verkoopactie.",
+          getDriverExplanation() +  
+          "De exit pressure loopt op, maar is nog onvoldoende voor een directe verkoopactie.",
     };
   }
 
@@ -779,15 +970,23 @@ export function getExitActionSuggestion({
       ),
     );
 
-  const targetSellPercent =
-    Math.round(
-      10 +
-        (
-          normalizedPressure -
-          50
-        ) *
-          (10 / 14),
-    );
+ const baseSellPercent =
+  Math.round(
+    10 +
+      (
+        normalizedPressure -
+        50
+      ) *
+        (10 / 14),
+  );
+
+const targetSellPercent =
+  applyDriverAdjustment({
+    basePercent:
+      baseSellPercent,
+
+    driver,
+  });
 
   return {
     action: "TRIM",
@@ -799,8 +998,15 @@ export function getExitActionSuggestion({
     minSellPercent: 10,
     maxSellPercent: 20,
 
+    capitalAction:
+  "SEEK_REPLACEMENT",
+
+canExitWithoutReplacement:
+  false,
+
     explanation:
-      "Een beperkte winstname of risicoreductie is gerechtvaardigd, maar het grootste deel van de positie blijft behouden.",
+  getDriverExplanation() + 
+  " Een beperkte winstname of risicoreductie is gerechtvaardigd, maar het grootste deel van de positie blijft behouden.",
   };
 }
 
@@ -826,7 +1032,7 @@ export function getExitActionSuggestion({
     ),
   );
 
-const targetSellPercent =
+const baseSellPercent =
   Math.round(
     25 +
       (
@@ -835,6 +1041,14 @@ const targetSellPercent =
       ) *
         (25 / 14),
   );
+
+const targetSellPercent =
+  applyDriverAdjustment({
+    basePercent:
+      baseSellPercent,
+
+    driver,
+  });
 
     return {
       action: "SCALE_OUT",
@@ -846,8 +1060,15 @@ const targetSellPercent =
       minSellPercent: 25,
       maxSellPercent: 50,
 
+      capitalAction:
+  "SEEK_REPLACEMENT",
+
+canExitWithoutReplacement:
+  true,
+
       explanation:
-        "Meerdere exitsignalen zijn sterk genoeg om de positie gefaseerd aanzienlijk af te bouwen.",
+          getDriverExplanation() + 
+          "Meerdere exitsignalen zijn sterk genoeg om de positie gefaseerd aanzienlijk af te bouwen.",
     };
   }
 
@@ -876,15 +1097,23 @@ if (pressure < 90) {
       ),
     );
 
-  const targetSellPercent =
-    Math.round(
-      60 +
-        (
-          normalizedPressure -
-          80
-        ) *
-          (25 / 9),
-    );
+const baseSellPercent =
+  Math.round(
+    60 +
+      (
+        normalizedPressure -
+        80
+      ) *
+        (25 / 9),
+  );
+
+const targetSellPercent =
+  applyDriverAdjustment({
+    basePercent:
+      baseSellPercent,
+
+    driver,
+  });
 
   return {
     action: "EXIT",
@@ -896,8 +1125,15 @@ if (pressure < 90) {
     minSellPercent: 60,
     maxSellPercent: 85,
 
+    capitalAction:
+  "ALLOW_CASH",
+
+canExitWithoutReplacement:
+  true,
+
     explanation:
-      "De gecombineerde exit pressure is zeer hoog. Phoenix adviseert het grootste deel van de positie af te bouwen.",
+       getDriverExplanation() +  
+       "De gecombineerde exit pressure is zeer hoog. Phoenix adviseert het grootste deel van de positie af te bouwen.",
   };
 }
 
@@ -934,99 +1170,15 @@ return {
   minSellPercent: 90,
   maxSellPercent: 100,
 
+  capitalAction:
+  "ALLOW_CASH",
+
+canExitWithoutReplacement:
+  true,
+
   explanation:
     targetSellPercent >= 100
       ? "De gecombineerde exit pressure is extreem hoog. Phoenix adviseert volledige exit."
       : "De gecombineerde exit pressure is extreem hoog. Phoenix adviseert vrijwel volledige exit.",
 };
 };
-
-export const exitActionTestCases = [
-  50,
-  57,
-  64,
-  65,
-  72,
-  79,
-  80,
-  85,
-  89,
-  90,
-  95,
-  100,
-].map((pressure) => {
-  const status: ExitStatus =
-    pressure >= 80
-      ? "EXIT"
-      : pressure >= 65
-        ? "SCALE_OUT"
-        : pressure >= 50
-          ? "TRIM"
-          : pressure >= 35
-            ? "WATCH"
-            : "HOLD";
-
-  const input: ExitReviewInput = {
-    companyId:
-      `TEST_ACTION_${pressure}`,
-
-    investmentScore: 80,
-    previousInvestmentScore: 80,
-
-    opportunityScore: 70,
-
-    thesisHealth: "INTACT",
-
-    marketHeatScore: 50,
-
-    remainingUpsidePercent: 100,
-    scenarioUpsideScore: 70,
-
-    currentAllocationPercent: 5,
-    idealMax: 6,
-    hardMax: 8,
-
-    unrealizedReturnPercent: 50,
-  };
-
-  const result: ExitReviewResult = {
-    companyId:
-      input.companyId,
-
-    exitPressureScore:
-      pressure,
-
-    status,
-
-    dataCoveragePercent:
-      100,
-
-    scoreIsReliable:
-      true,
-
-    components: {
-      thesisRisk: 0,
-      investmentDeterioration: 0,
-      remainingUpsideRisk: 30,
-      marketHeat: 50,
-      valuationOverextension: 30,
-      positionProfitRisk: 15,
-    },
-
-    reasons: [],
-
-    reviewRequired:
-      false,
-  };
-
-  return {
-    pressure,
-    status,
-
-    suggestion:
-      getExitActionSuggestion({
-        input,
-        result,
-      }),
-  };
-});

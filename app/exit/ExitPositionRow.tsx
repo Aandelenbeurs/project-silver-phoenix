@@ -77,6 +77,7 @@ opportunityScore:
       | null;
 };
       action: string;
+      driver: string;
 
 targetSellPercent: number;
 
@@ -103,6 +104,7 @@ consecutiveInvestmentDeclines,
   marketHeatScore,
   opportunityScore,
   action,
+  driver,
 targetSellPercent,
 minSellPercent,
 maxSellPercent,
@@ -359,42 +361,106 @@ actionExplanation,
   }}
 >
   <small
+  style={{
+    display: "block",
+    opacity: 0.55,
+    marginBottom: "8px",
+  }}
+>
+  PHOENIX ACTION
+</small>
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "12px",
+    flexWrap: "wrap",
+  }}
+>
+  <strong
     style={{
-      display: "block",
-      opacity: 0.55,
-      marginBottom: "4px",
+      fontSize: "16px",
     }}
   >
-    PHOENIX ACTION
-  </small>
-
-  <strong>
     {action}
-    {targetSellPercent > 0
-      ? ` · target ${targetSellPercent}%`
-      : ""}
   </strong>
 
-  {targetSellPercent > 0 && (
-    <small
-      style={{
-        display: "block",
-        marginTop: "4px",
-      }}
-    >
-      Richtlijn: {minSellPercent}%–{maxSellPercent}%
-    </small>
-  )}
-
-  <small
+  <span
     style={{
-      display: "block",
-      marginTop: "6px",
-      opacity: 0.75,
+      display: "inline-block",
+      padding: "3px 8px",
+      border:
+        "1px solid rgba(255,255,255,0.14)",
+      borderRadius: "999px",
+      fontSize: "11px",
+      fontWeight: 700,
+      letterSpacing: "0.04em",
     }}
   >
-    {actionExplanation}
-  </small>
+    DRIVER · {driver}
+  </span>
+</div>
+
+{targetSellPercent > 0 && (
+  <div
+    style={{
+      marginTop: "14px",
+      display: "grid",
+      gridTemplateColumns:
+        "repeat(2, minmax(140px, 1fr))",
+      gap: "10px",
+    }}
+  >
+    <div>
+      <small
+        style={{
+          display: "block",
+          opacity: 0.55,
+          marginBottom: "4px",
+        }}
+      >
+        RECOMMENDED REDUCTION
+      </small>
+
+      <strong
+        style={{
+          fontSize: "22px",
+        }}
+      >
+        {targetSellPercent}%
+      </strong>
+    </div>
+
+    <div>
+      <small
+        style={{
+          display: "block",
+          opacity: 0.55,
+          marginBottom: "4px",
+        }}
+      >
+        ACTION RANGE
+      </small>
+
+      <strong>
+        {minSellPercent}%–{maxSellPercent}%
+      </strong>
+    </div>
+  </div>
+)}
+
+<small
+  style={{
+    display: "block",
+    marginTop: "12px",
+    opacity: 0.75,
+    lineHeight: 1.5,
+  }}
+>
+  {actionExplanation}
+</small>
 </div>
 
           {reasons.length > 0 && (

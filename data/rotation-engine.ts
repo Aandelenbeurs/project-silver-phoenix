@@ -18,6 +18,14 @@ import {
   type LiveMetalPrices,
 } from "./scenario-upside";
 
+import {
+  type ExitReviewResult,
+} from "./exit-engine";
+
+import {
+  type ExitRotationInstruction,
+} from "./exit-rotation-bridge";
+
 export type RotationRecommendation =
   | "AANBEVOLEN"
   | "OPTIONEEL"
@@ -165,13 +173,18 @@ export function buildRotationSellCandidates({
     });
 }
 
+export type RotationSellReason =
+  | "ABOVE_HARD_MAX"
+  | "ABOVE_IDEAL_MAX"
+  | "WEAK_CAPITAL_USE"
+  | "EXIT_STRATEGY";
+
 export type RankedRotationSellCandidate =
   RotationSellCandidate & {
     sellPriority: number;
+
     sellReason:
-      | "ABOVE_HARD_MAX"
-      | "ABOVE_IDEAL_MAX"
-      | "WEAK_CAPITAL_USE";
+      RotationSellReason;
   };
 
   export type RotationSellPlan =
@@ -207,7 +220,8 @@ export function rankRotationSellCandidates(
   candidates: RotationSellCandidate[],
 ): RankedRotationSellCandidate[] {
   return candidates
-    .map((candidate) => {
+    .map<RankedRotationSellCandidate | null>(
+  (candidate) => {
       if (
         candidate.excessAboveHardMaxEur >=
     MIN_ROTATION_EXCESS_EUR
@@ -374,6 +388,8 @@ export function simulateRotation({
   liveMetalPrices,
   maxSellPositions = 4,
   selectedSellCompanyIds,
+  exitReviews,
+  exitRotationInstructions,
 }: {
   positions: PortfolioV2PositionInput[];
 
@@ -387,6 +403,14 @@ export function simulateRotation({
 
   selectedSellCompanyIds?:
     string[];
+    exitReviews?: Map<
+    string,
+    ExitReviewResult
+  >;
+
+  exitRotationInstructions?:
+  ExitRotationInstruction[];
+  
 }): RotationSimulationResult {
 
     const portfolioBeforeRotation =
@@ -416,15 +440,109 @@ const scoreBeforeRotation =
     maxSellPositions,
   );
 
+  const exitSellPlan:
+  RotationSellPlan[] =
+  (
+    exitRotationInstructions ??
+    []
+  )
+    .map<RotationSellPlan | null>(
+  (instruction) => {
+      const candidate =
+        sellCandidates.find(
+          (item) =>
+            item.companyId ===
+            instruction.companyId,
+        );
+
+      if (!candidate) {
+        return null;
+      }
+
+      return {
+        ...candidate,
+
+        sellPriority:
+          40_000 +
+          instruction.sellAmountEur,
+
+        sellReason:
+          "EXIT_STRATEGY",
+
+        proposedSellAmountEur:
+          Math.min(
+            instruction.sellAmountEur,
+            candidate.marketValueEur,
+          ),
+      };
+    })
+    .filter(
+      (
+        item,
+      ): item is RotationSellPlan =>
+        item !== null,
+    );
+
+    const combinedSellPlan =
+  new Map<
+    string,
+    RotationSellPlan
+  >();
+
+for (
+  const item of
+  availableSellPlan
+) {
+  combinedSellPlan.set(
+    item.companyId,
+    item,
+  );
+}
+
+for (
+  const item of
+  exitSellPlan
+) {
+  const existing =
+    combinedSellPlan.get(
+      item.companyId,
+    );
+
+  if (
+    !existing ||
+    item.proposedSellAmountEur >
+      existing.proposedSellAmountEur
+  ) {
+    combinedSellPlan.set(
+      item.companyId,
+      item,
+    );
+  }
+}
+
+const mergedSellPlan =
+  Array.from(
+    combinedSellPlan.values(),
+  )
+    .sort(
+      (a, b) =>
+        b.sellPriority -
+        a.sellPriority,
+    )
+    .slice(
+      0,
+      maxSellPositions,
+    );
+
 const sellPlan =
   selectedSellCompanyIds
-    ? availableSellPlan.filter(
+    ? mergedSellPlan.filter(
         (item) =>
           selectedSellCompanyIds.includes(
             item.companyId,
           ),
       )
-    : availableSellPlan;
+    : mergedSellPlan;
 
   const freedCapitalEur =
     sellPlan.reduce(
@@ -457,6 +575,7 @@ const buyResult =
       freedCapitalEur,
 
     liveMetalPrices,
+    exitReviews,
 
     ...practicalSettings,
   });

@@ -20,6 +20,45 @@ export default async function ExitPage() {
   const reviews =
     exitReview.portfolioExitReviews;
 
+    const exitRotationInstructions =
+  exitReview.exitRotationInstructions;
+
+const exitDrivenCapitalEur =
+  exitRotationInstructions.reduce(
+    (total, item) =>
+      total +
+      item.sellAmountEur,
+    0,
+  );
+
+const replacementRequiredCapitalEur =
+  exitRotationInstructions
+    .filter(
+      (item) =>
+        item.capitalAction ===
+        "SEEK_REPLACEMENT" &&
+        !item.canExitWithoutReplacement,
+    )
+    .reduce(
+      (total, item) =>
+        total +
+        item.sellAmountEur,
+      0,
+    );
+
+const flexibleExitCapitalEur =
+  exitRotationInstructions
+    .filter(
+      (item) =>
+        item.canExitWithoutReplacement,
+    )
+    .reduce(
+      (total, item) =>
+        total +
+        item.sellAmountEur,
+      0,
+    );
+
     const silverMarketHeat =
   exitReview.silverMarketHeat;
 
@@ -216,6 +255,73 @@ const goldMarketHeat =
   </div>
 </div>
 
+<div
+  style={{
+    marginTop: "28px",
+  }}
+>
+  <p className="eyebrow">
+    EXIT → ROTATION BRIDGE
+  </p>
+
+  <div className="stats-grid">
+    <div className="stat-card">
+      <span className="stat-label">
+        Exit Instructions
+      </span>
+
+      <strong>
+        {exitRotationInstructions.length}
+      </strong>
+    </div>
+
+    <div className="stat-card">
+      <span className="stat-label">
+        Exit-Driven Capital
+      </span>
+
+      <strong>
+        €{exitDrivenCapitalEur.toLocaleString(
+          "nl-NL",
+          {
+            maximumFractionDigits: 0,
+          },
+        )}
+      </strong>
+    </div>
+
+    <div className="stat-card">
+      <span className="stat-label">
+        Replacement Required
+      </span>
+
+      <strong>
+        €{replacementRequiredCapitalEur.toLocaleString(
+          "nl-NL",
+          {
+            maximumFractionDigits: 0,
+          },
+        )}
+      </strong>
+    </div>
+
+    <div className="stat-card">
+      <span className="stat-label">
+        Cash Allowed
+      </span>
+
+      <strong>
+        €{flexibleExitCapitalEur.toLocaleString(
+          "nl-NL",
+          {
+            maximumFractionDigits: 0,
+          },
+        )}
+      </strong>
+    </div>
+  </div>
+</div>
+
       </section>
 
       <section className="panel">
@@ -306,6 +412,8 @@ opportunityScore={
 action={
   item.actionSuggestion.action
 }
+
+driver={item.actionSuggestion.driver}
 
 targetSellPercent={
   item.actionSuggestion.targetSellPercent

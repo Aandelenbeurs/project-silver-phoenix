@@ -19,6 +19,10 @@ import {
   phoenixCompaniesV2,
 } from "../data/phoenix-v2";
 
+import type {
+  ExitReviewResult,
+} from "../data/exit-engine";
+
 
 type Props = {
   positions: PortfolioV2PositionInput[];
@@ -27,6 +31,13 @@ type Props = {
     silverPriceUsd: number;
     goldPriceUsd: number;
   } | null;
+
+  exitReviews: Array<
+    readonly [
+      string,
+      ExitReviewResult,
+    ]
+  >;
 };
 
 
@@ -72,6 +83,7 @@ function formatScore(
 export default function NewMoneyOptimizerV2({
   positions,
   liveMetalPrices,
+  exitReviews,
 }: Props) {
 
   const [
@@ -121,6 +133,14 @@ const practicalSettings =
     parsedAmount,
   );
 
+const exitReviewMap =
+  new Map<
+    string,
+    ExitReviewResult
+  >(
+    exitReviews,
+  );
+
    const optimizerResult =
   optimizeNewMoneyV2({
     positions,
@@ -132,6 +152,9 @@ const practicalSettings =
 
     liveMetalPrices:
       liveMetalPrices ?? undefined,
+
+    exitReviews:
+      exitReviewMap,
 
     ...practicalSettings,
   });
@@ -426,6 +449,7 @@ const practicalSettings =
                             ? "Bestaand"
                             : "Watchlist"}
                         </td>
+                      
                       </tr>
                     ),
                   )

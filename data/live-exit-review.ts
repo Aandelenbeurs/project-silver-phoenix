@@ -36,6 +36,10 @@ import {
   type LivePortfolio,
 } from "./portfolio-engine";
 
+import {
+  buildExitRotationInstructions,
+} from "./exit-rotation-bridge";
+
 export async function buildLiveExitReview({
   portfolio,
 }: {
@@ -345,10 +349,30 @@ consecutiveInvestmentDeclines:
     }),
   );
 
+const exitActions =
+  new Map(
+    portfolioExitReviewsWithActions.map(
+      (item) => [
+        item.position.companyId,
+        item.actionSuggestion,
+      ],
+    ),
+  );
+
+const exitRotationInstructions =
+  buildExitRotationInstructions({
+    positions:
+      portfolioV2.positions,
+
+    actions:
+      exitActions,
+  });
+
   return {
     portfolioExitReviews:
   portfolioExitReviewsWithActions,
 
+  exitRotationInstructions,
     silverMarketHeat,
     goldMarketHeat,
 

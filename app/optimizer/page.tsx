@@ -47,6 +47,10 @@ import {
   readReviewStore,
 } from "../../data/review-store";
 
+import {
+  buildLiveExitReview,
+} from "../../data/live-exit-review";
+
 import RotationSimulator from "../../components/RotationSimulator";
 
 function sortByRank(
@@ -364,7 +368,22 @@ const rotationSellTest =
     limit: 10,
   });
 
-  const rotationSimulation =
+const liveExitReview =
+  await buildLiveExitReview({
+    portfolio,
+  });
+
+const exitReviews =
+  new Map(
+    liveExitReview.portfolioExitReviews.map(
+      (item) => [
+        item.position.companyId,
+        item.result,
+      ],
+    ),
+  );
+
+const rotationSimulation =
   simulateRotation({
     positions:
       optimizerV2Positions,
@@ -375,6 +394,12 @@ const rotationSellTest =
       liveMetalPrices ?? undefined,
 
     maxSellPositions: 4,
+
+    exitReviews,
+
+    exitRotationInstructions:
+      liveExitReview
+        .exitRotationInstructions,
   });
 
   const core = sortByRank(corePositions);
@@ -497,6 +522,11 @@ const rotationSellTest =
     <NewMoneyOptimizerV2
   positions={optimizerV2Positions}
   liveMetalPrices={liveMetalPrices}
+  exitReviews={
+  Array.from(
+    exitReviews.entries(),
+  )
+}
 />
 
       <section className="stats-grid">

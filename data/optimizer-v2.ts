@@ -14,6 +14,14 @@ import {
   type LiveMetalPrices,
 } from "./scenario-upside";
 
+import {
+  type ExitReviewResult,
+} from "./exit-engine";
+
+import {
+  evaluateBuyEligibility,
+} from "./buy-eligibility";
+
 export type NewMoneyOptimizerInput = {
   /**
    * Huidige aandelenportefeuille.
@@ -59,6 +67,11 @@ export type NewMoneyOptimizerInput = {
    * "koop €83 van aandeel X".
    */
   minimumOrderEur?: number;
+
+  exitReviews?: Map<
+  string,
+  ExitReviewResult
+>;
 };
 
 
@@ -99,29 +112,6 @@ export type NewMoneyOptimizerResult = {
   isMeaningfulImprovement: boolean;
 
   explanation: string[];
-};
-
-export type HistoricalPricePoint = {
-  date: string;
-  close: number;
-};
-
-export type HistoricalHeatResult = {
-  currentPrice: number;
-
-  return20DayPercent: number | null;
-  return50DayPercent: number | null;
-
-  movingAverage50: number | null;
-  movingAverage200: number | null;
-
-  extension50Percent: number | null;
-  extension200Percent: number | null;
-
-  momentumHeatScore: number | null;
-  extensionHeatScore: number | null;
-
-  technicalHeatScore: number | null;
 };
 
 type WorkingPosition = {
@@ -528,6 +518,68 @@ let bestInvestmentScore =
       const companyId of
       candidateCompanyIds
     ) {
+
+      const exitReview =
+  input.exitReviews?.get(
+    companyId,
+  ) ?? null;
+
+const scenarioData =
+  scenarioRanking.find(
+    (item) =>
+      item.companyId ===
+      companyId,
+  );
+
+const companyUpsidePercent =
+  scenarioData?.rawScenarioPower != null
+    ? scenarioData.rawScenarioPower *
+      100
+    : null;
+
+if (input.exitReviews) {
+  const buyEligibility =
+    evaluateBuyEligibility({
+      companyId,
+
+      investmentScore:
+        scenarioData?.investmentScore ??
+        null,
+
+      exitStatus:
+        exitReview?.status ??
+        null,
+
+      exitPressureScore:
+        exitReview?.exitPressureScore ??
+        null,
+
+      thesisHealth:
+        exitReview
+          ? (
+              exitReview.components.thesisRisk === null
+                ? "UNKNOWN"
+                : exitReview.components.thesisRisk >= 100
+                  ? "BROKEN"
+                  : exitReview.components.thesisRisk >= 55
+                    ? "WEAKENING"
+                    : "INTACT"
+            )
+          : "UNKNOWN",
+
+      estimatedCompanyUpsidePercent:
+        companyUpsidePercent,
+
+      marketHeatScore:
+        exitReview?.components.marketHeat ??
+        null,
+    });
+
+  if (!buyEligibility.eligible) {
+    continue;
+  }
+}
+
       const alreadySelected =
         allocations.has(
           companyId,
@@ -585,13 +637,6 @@ let bestInvestmentScore =
       ) {
         continue;
       }
-
-      const scenarioData =
-  scenarioRanking.find(
-    (item) =>
-      item.companyId ===
-      companyId,
-  );
 
  const investmentScore =
   scenarioData?.investmentScore ??
@@ -668,7 +713,7 @@ if (
     simulatedScore;
 
   bestInvestmentScore =
-    investmentScore;
+  investmentScore;
 
   bestCompanyId =
     companyId;
@@ -683,9 +728,6 @@ if (
      * geld alleen omdat het beschikbaar
      * is.
      */
-
-    if (!bestCompanyId) {
-}
 
     if (!bestCompanyId) {
       break;
@@ -754,6 +796,70 @@ if (
       const companyId of
       candidateCompanyIds
     ) {
+      if (!allocations.has(companyId)) {
+  continue;
+}
+const exitReview =
+  input.exitReviews?.get(
+    companyId,
+  ) ?? null;
+
+const scenarioData =
+  scenarioRanking.find(
+    (item) =>
+      item.companyId ===
+      companyId,
+  );
+
+const companyUpsidePercent =
+  scenarioData?.rawScenarioPower != null
+    ? scenarioData.rawScenarioPower *
+      100
+    : null;
+
+if (input.exitReviews) {
+ const buyEligibility =
+  evaluateBuyEligibility({
+    companyId,
+
+    investmentScore:
+      scenarioData?.investmentScore ??
+      null,
+
+    exitStatus:
+      exitReview?.status ??
+      null,
+
+    exitPressureScore:
+      exitReview?.exitPressureScore ??
+      null,
+
+    thesisHealth:
+      exitReview
+        ? (
+            exitReview.components.thesisRisk === null
+              ? "UNKNOWN"
+              : exitReview.components.thesisRisk >= 100
+                ? "BROKEN"
+                : exitReview.components.thesisRisk >= 55
+                  ? "WEAKENING"
+                  : "INTACT"
+          )
+        : null,
+
+    estimatedCompanyUpsidePercent:
+      companyUpsidePercent,
+
+    marketHeatScore:
+      exitReview?.components.marketHeat ??
+      null,
+  });
+
+ if (!buyEligibility.eligible) {
+  continue;
+}
+}
+
       /**
        * Fase 2 mag geen nieuwe namen
        * introduceren.
@@ -780,13 +886,6 @@ if (
       ) {
         continue;
       }
-
-      const scenarioData =
-        scenarioRanking.find(
-          (item) =>
-            item.companyId ===
-            companyId,
-        );
 
       const investmentScore =
         scenarioData
@@ -921,7 +1020,7 @@ if (
             ? 1000
             : 0
         ) +
-        investmentScore +
+       investmentScore +
         distanceToIdealMin *
           10 +
         distanceToIdealMax;
@@ -1040,24 +1139,24 @@ while (
     let rebuiltPositions =
       testPositions;
 
-    for (
-      const [
+      for (
+  const [
+    existingCompanyId,
+    existingAmountEur,
+  ] of meaningfulAllocations
+) {
+  rebuiltPositions =
+    addMoneyToCompany({
+      positions:
+        rebuiltPositions,
+
+      companyId:
         existingCompanyId,
+
+      amountEur:
         existingAmountEur,
-      ] of meaningfulAllocations
-    ) {
-      rebuiltPositions =
-        addMoneyToCompany({
-          positions:
-            rebuiltPositions,
-
-          companyId:
-            existingCompanyId,
-
-          amountEur:
-            existingAmountEur,
-        });
-    }
+    });
+}
 
     if (
       !canAddMoney({
@@ -1142,24 +1241,24 @@ while (
 
   let moneyInvestedEur = 0;
 
-  for (
-    const [
+for (
+  const [
+    companyId,
+    amountEur,
+  ] of meaningfulAllocations
+) {
+  workingPositions =
+    addMoneyToCompany({
+      positions:
+        workingPositions,
+
       companyId,
       amountEur,
-    ] of meaningfulAllocations
-  ) {
-    workingPositions =
-      addMoneyToCompany({
-        positions:
-          workingPositions,
+    });
 
-        companyId,
-        amountEur,
-      });
-
-    moneyInvestedEur +=
-      amountEur;
-  }
+  moneyInvestedEur +=
+    amountEur;
+}
 
   const portfolioAfter =
     calculatePortfolioV2(
@@ -1270,6 +1369,7 @@ while (
 
             wasExistingHolding:
               before !== undefined,
+
           };
         },
       )
