@@ -72,6 +72,7 @@ export type NewMoneyOptimizerInput = {
   string,
   ExitReviewResult
 >;
+allowStrategicNewPositionFallback?: boolean;
 };
 
 
@@ -282,6 +283,129 @@ function canAddMoney({
   );
 }
 
+function canAddRotationMoney({
+  positions,
+  companyId,
+  amountEur,
+  totalCapitalEur,
+  effectiveHardMax,
+}: {
+  positions: WorkingPosition[];
+  companyId: string;
+  amountEur: number;
+  totalCapitalEur: number;
+  effectiveHardMax?: number;
+}): boolean {
+
+  const phoenix =
+    getPhoenixCompanyV2(
+      companyId,
+    );
+
+  const hardMax =
+  effectiveHardMax ??
+  phoenix?.portfolio.hardMax;
+
+  if (
+    hardMax === null ||
+    hardMax === undefined ||
+    hardMax <= 0 ||
+    totalCapitalEur <= 0
+  ) {
+    return false;
+  }
+
+  const existingAmountEur =
+    positions.find(
+      (position) =>
+        position.companyId ===
+        companyId,
+    )?.marketValueEur ?? 0;
+
+  const resultingAmountEur =
+    existingAmountEur +
+    amountEur;
+
+  const resultingAllocationPercent =
+    (
+      resultingAmountEur /
+      totalCapitalEur
+    ) * 100;
+
+  return (
+    resultingAllocationPercent <=
+    hardMax
+  );
+}
+
+function getRotationAllocationBands({
+  originalIdealMin,
+  originalIdealMax,
+  originalHardMax,
+  selectedPositionCount,
+  averageOriginalIdealMax,
+  averageOriginalHardMax,
+}: {
+  originalIdealMin: number | null;
+  originalIdealMax: number | null;
+  originalHardMax: number | null;
+  selectedPositionCount: number;
+  averageOriginalIdealMax: number;
+  averageOriginalHardMax: number;
+}) {
+  const safePositionCount =
+    Math.max(
+      1,
+      selectedPositionCount,
+    );
+
+  const neutralWeight =
+    100 / safePositionCount;
+
+  const idealMaxScale =
+    averageOriginalIdealMax > 0
+      ? neutralWeight /
+        averageOriginalIdealMax
+      : 1;
+
+  const hardMaxTargetAverage =
+    neutralWeight * 1.25;
+
+  const hardMaxScale =
+    averageOriginalHardMax > 0
+      ? hardMaxTargetAverage /
+        averageOriginalHardMax
+      : 1;
+
+  const effectiveIdealMin =
+    originalIdealMin === null
+      ? neutralWeight * 0.75
+      : originalIdealMin;
+
+  const effectiveIdealMax =
+    originalIdealMax === null
+      ? neutralWeight
+      : Math.max(
+          originalIdealMax,
+          originalIdealMax *
+            idealMaxScale,
+        );
+
+  const effectiveHardMax =
+    originalHardMax === null
+      ? hardMaxTargetAverage
+      : Math.max(
+          originalHardMax,
+          originalHardMax *
+            hardMaxScale,
+        );
+
+  return {
+    effectiveIdealMin,
+    effectiveIdealMax,
+    effectiveHardMax,
+  };
+}
 
 /**
  * Een kandidaat moet echte V2-data
@@ -364,6 +488,534 @@ export function getOptimizerCandidateCompanyIds(): string[] {
   );
 }
 
+function optimizeStarterPortfolioV2({
+  input,
+  newMoneyEur,
+  scenarioRanking,
+  minimumEligibleInvestmentScore,
+  minimumOrderEur,
+  maxPositions,
+}: {
+  input: NewMoneyOptimizerInput;
+  newMoneyEur: number;
+  scenarioRanking: ReturnType<
+    typeof buildPhoenixScenarioRanking
+  >;
+  minimumEligibleInvestmentScore: number;
+  minimumOrderEur: number;
+  maxPositions: number;
+}): NewMoneyOptimizerResult {
+
+  const candidateCompanyIds =
+    Array.from(
+      new Set(
+        input.candidateCompanyIds,
+      ),
+    ).filter(
+      isEligibleCandidate,
+    );
+
+  const rankedCandidates =
+    candidateCompanyIds
+      .map((companyId) => {
+        const phoenix =
+          getPhoenixCompanyV2(
+            companyId,
+          );
+
+        if (!phoenix) {
+          return null;
+        }
+
+        const scenarioData =
+          scenarioRanking.find(
+            (item) =>
+              item.companyId ===
+              companyId,
+          );
+
+        const investmentScore =
+          scenarioData?.investmentScore ??
+          phoenix.scores.opportunity ??
+          0;
+
+        if (
+          investmentScore <
+          minimumEligibleInvestmentScore
+        ) {
+          return null;
+        }
+
+        const exitReview =
+          input.exitReviews?.get(
+            companyId,
+          ) ?? null;
+
+        const companyUpsidePercent =
+          scenarioData?.rawScenarioPower != null
+            ? scenarioData.rawScenarioPower *
+              100
+            : null;
+
+        if (input.exitReviews) {
+          const buyEligibility =
+            evaluateBuyEligibility({
+              companyId,
+
+              investmentScore,
+
+              exitStatus:
+                exitReview?.status ??
+                null,
+
+              exitPressureScore:
+                exitReview?.exitPressureScore ??
+                null,
+
+              thesisHealth:
+                exitReview
+                  ? (
+                      exitReview.components
+                        .thesisRisk === null
+                        ? "UNKNOWN"
+                        : exitReview.components
+                              .thesisRisk >= 100
+                          ? "BROKEN"
+                          : exitReview.components
+                                .thesisRisk >= 55
+                            ? "WEAKENING"
+                            : "INTACT"
+                    )
+                  : "UNKNOWN",
+
+              estimatedCompanyUpsidePercent:
+                companyUpsidePercent,
+
+              marketHeatScore:
+                exitReview?.components
+                  .marketHeat ??
+                null,
+            });
+
+          if (!buyEligibility.eligible) {
+            return null;
+          }
+        }
+
+        return {
+          companyId,
+          phoenix,
+          investmentScore,
+        };
+      })
+      .filter(
+        (
+          item,
+        ): item is NonNullable<
+          typeof item
+        > => item !== null,
+      )
+     .sort(
+  (a, b) =>
+    b.investmentScore -
+    a.investmentScore,
+);
+
+/**
+ * STARTER PORTFOLIO SELECTION
+ *
+ * maxPositions is hier het gewenste minimumaantal
+ * starter-posities.
+ *
+ * Als die selectie samen onvoldoende hardMax-
+ * capaciteit heeft om het startkapitaal verantwoord
+ * te beleggen, voegen we extra sterke kandidaten toe.
+ *
+ * Nooit meer dan 15 posities.
+ */
+const minimumStarterPositions =
+ newMoneyEur <= 3_000
+    ? 4
+  : Math.min(
+    Math.max(
+      maxPositions,
+      1,
+    ),
+    15,
+  );
+
+const maximumStarterPositions =
+  newMoneyEur <= 3_000
+    ? 6
+    : newMoneyEur <= 7_500
+      ? 8
+      : 15;
+
+const selectedCandidates:
+  typeof rankedCandidates = [];
+
+const starterPositionCapPercent =
+  newMoneyEur <= 3_000
+    ? 20
+    : newMoneyEur <= 7_500
+      ? 15
+      : null;
+
+let totalHardMaxCapacity =
+  0;
+
+for (
+  const candidate of
+  rankedCandidates
+) {
+  if (
+    selectedCandidates.length >=
+    maximumStarterPositions
+  ) {
+    break;
+  }
+
+  selectedCandidates.push(
+    candidate,
+  );
+
+ const candidateHardMax =
+  candidate.phoenix.portfolio
+    .hardMax ?? 0;
+
+const candidateEffectiveMax =
+  starterPositionCapPercent !== null
+    ? Math.max(
+        candidateHardMax,
+        starterPositionCapPercent,
+      )
+    : candidateHardMax;
+
+totalHardMaxCapacity +=
+  candidateEffectiveMax;
+
+  const minimumReached =
+    selectedCandidates.length >=
+    minimumStarterPositions;
+
+  const enoughCapacity =
+    totalHardMaxCapacity >= 100;
+
+  if (
+    minimumReached &&
+    enoughCapacity
+  ) {
+    break;
+  }
+}
+
+const allocations =
+  new Map<string, number>();
+
+let remainingMoney =
+  newMoneyEur;
+
+/**
+ * FASE 1
+ *
+ * Bouw eerst de beste kandidaten
+ * richting idealMax.
+ */
+for (
+  const candidate of
+  selectedCandidates
+) {
+
+  if (
+    remainingMoney <
+    minimumOrderEur
+  ) {
+    break;
+  }
+
+  const idealMax =
+    candidate.phoenix.portfolio
+      .idealMax;
+
+  if (
+    idealMax === null ||
+    idealMax <= 0
+  ) {
+    continue;
+  }
+
+  const targetAmountEur =
+    newMoneyEur *
+    (idealMax / 100);
+
+  const amountEur =
+    Math.min(
+      targetAmountEur,
+      remainingMoney,
+    );
+
+  if (
+    amountEur <
+    minimumOrderEur
+  ) {
+    continue;
+  }
+
+  allocations.set(
+    candidate.companyId,
+    amountEur,
+  );
+
+  remainingMoney -=
+    amountEur;
+}
+
+/**
+ * FASE 2
+ *
+ * Alleen als er daarna nog geld over is,
+ * mogen reeds geselecteerde posities verder
+ * richting hardMax worden gevuld.
+ */
+if (
+  remainingMoney > 0
+) {
+  for (
+    const candidate of
+    selectedCandidates
+  ) {
+    if (
+      remainingMoney <= 0
+    ) {
+      break;
+    }
+
+    const currentAmountEur =
+      allocations.get(
+        candidate.companyId,
+      );
+
+    if (
+      currentAmountEur ===
+      undefined
+    ) {
+      continue;
+    }
+
+    const hardMax =
+      candidate.phoenix.portfolio
+        .hardMax;
+
+    if (
+      hardMax === null ||
+      hardMax <= 0
+    ) {
+      continue;
+    }
+
+    const effectiveMaxPercent =
+  starterPositionCapPercent !== null
+    ? Math.max(
+        hardMax,
+        starterPositionCapPercent,
+      )
+    : hardMax;
+
+const hardMaxAmountEur =
+  newMoneyEur *
+  (effectiveMaxPercent / 100);
+
+    const availableRoomEur =
+      Math.max(
+        0,
+        hardMaxAmountEur -
+          currentAmountEur,
+      );
+
+    const extraAmountEur =
+      Math.min(
+        availableRoomEur,
+        remainingMoney,
+      );
+
+    allocations.set(
+      candidate.companyId,
+      currentAmountEur +
+        extraAmountEur,
+    );
+
+    remainingMoney -=
+      extraAmountEur;
+  }
+}
+
+  const workingPositions:
+    PortfolioV2PositionInput[] =
+    Array.from(
+      allocations.entries(),
+    ).map(
+      ([
+        companyId,
+        amountEur,
+      ]) => ({
+        companyId,
+        marketValueEur:
+          amountEur,
+      }),
+    );
+
+  const portfolioAfter =
+    calculatePortfolioV2(
+      workingPositions,
+    );
+
+  const scoreAfter =
+    getPortfolioScore(
+      portfolioAfter,
+    );
+
+  const resultAllocations:
+    NewMoneyAllocation[] =
+    Array.from(
+      allocations.entries(),
+    )
+      .map(
+        ([
+          companyId,
+          amountEur,
+        ]) => {
+          const phoenix =
+            getPhoenixCompanyV2(
+              companyId,
+            );
+
+          const after =
+            getPositionFromPortfolio(
+              portfolioAfter,
+              companyId,
+            );
+
+          if (
+            !phoenix ||
+            !after ||
+            phoenix.scores.opportunity ===
+              null
+          ) {
+            return null;
+          }
+
+          const scenarioData =
+            scenarioRanking.find(
+              (item) =>
+                item.companyId ===
+                companyId,
+            );
+
+          return {
+            companyId,
+
+            amountEur,
+
+            allocationBeforePercent:
+              0,
+
+            allocationAfterPercent:
+  newMoneyEur > 0
+    ? (
+        amountEur /
+        newMoneyEur
+      ) * 100
+    : 0,
+
+            opportunity:
+              phoenix.scores
+                .opportunity,
+
+            investmentScore:
+              scenarioData
+                ?.investmentScore ??
+              phoenix.scores
+                .opportunity,
+
+            idealMin:
+              phoenix.portfolio
+                .idealMin,
+
+            idealMax:
+              phoenix.portfolio
+                .idealMax,
+
+            hardMax:
+              phoenix.portfolio
+                .hardMax,
+
+            wasExistingHolding:
+              false,
+          };
+        },
+      )
+      .filter(
+        (
+          item,
+        ): item is NewMoneyAllocation =>
+          item !== null,
+      )
+      .sort(
+        (a, b) =>
+          b.amountEur -
+          a.amountEur,
+      );
+
+  const moneyInvestedEur =
+    resultAllocations.reduce(
+      (total, item) =>
+        total + item.amountEur,
+      0,
+    );
+
+  const moneyUnallocatedEur =
+    Math.max(
+      0,
+      newMoneyEur -
+        moneyInvestedEur,
+    );
+
+  return {
+    newMoneyEur,
+
+    scoreBefore: null,
+    scoreAfter,
+
+    scoreImprovement: null,
+
+    allocations:
+      resultAllocations,
+
+    portfolioBefore:
+      calculatePortfolioV2([]),
+
+    portfolioAfter,
+
+    moneyInvestedEur,
+    moneyUnallocatedEur,
+
+    isMeaningfulImprovement:
+      resultAllocations.length > 0,
+
+    explanation: [
+      resultAllocations.length > 0
+        ? `${resultAllocations.length} positie(s) geselecteerd voor een nieuw startportfolio.`
+        : "Phoenix vond geen geschikte aandelen voor een nieuw startportfolio.",
+
+      moneyUnallocatedEur > 0
+        ? `€${moneyUnallocatedEur.toFixed(
+            0,
+          )} blijft voorlopig ongealloceerd.`
+        : "Het beschikbare startkapitaal is volledig toegewezen.",
+    ],
+  };
+}
+
 export function optimizeNewMoneyV2(
   input: NewMoneyOptimizerInput,
 ): NewMoneyOptimizerResult {
@@ -417,6 +1069,44 @@ const minimumEligibleInvestmentScore =
     ? bestAvailableInvestmentScore -
       INVESTMENT_SCORE_RANGE
     : -Infinity;
+
+  const starterMaxPositions =
+  newMoneyEur < 5_000
+    ? 6
+    : newMoneyEur <= 10_000
+      ? 8
+      : newMoneyEur <= 25_000
+        ? 10
+        : newMoneyEur <= 50_000
+          ? 12
+          : 15;
+
+    const isEmptyPortfolio =
+  input.positions.length === 0;
+
+const starterMinimumOrderEur =
+  Math.max(
+    50,
+    Math.min(
+      minimumOrderEur,
+      newMoneyEur * 0.02,
+    ),
+  );
+
+if (
+  isEmptyPortfolio &&
+  newMoneyEur > 0
+) {
+  return optimizeStarterPortfolioV2({
+    input,
+    newMoneyEur,
+    scenarioRanking,
+    minimumEligibleInvestmentScore,
+    minimumOrderEur:
+  starterMinimumOrderEur,
+     maxPositions: starterMaxPositions,
+  });
+}
 
   if (
     newMoneyEur <= 0 ||
@@ -514,6 +1204,16 @@ let bestScore =
 let bestInvestmentScore =
   -Infinity;
 
+  let fallbackCompanyId:
+  | string
+  | null = null;
+
+let fallbackInvestmentScore =
+  -Infinity;
+
+let fallbackSimulatedScore =
+  -Infinity;
+
     for (
       const companyId of
       candidateCompanyIds
@@ -597,19 +1297,40 @@ if (input.exitReviews) {
         continue;
       }
 
-      if (
-        !canAddMoney({
-          positions:
-            workingPositions,
+    const canAllocateMoney =
+  input.allowStrategicNewPositionFallback ===
+    true
+    ? canAddRotationMoney({
+        positions:
+          workingPositions,
 
-          companyId,
+        companyId,
 
-          amountEur:
-            amountToAllocate,
-        })
-      ) {
-        continue;
-      }
+        amountEur:
+          amountToAllocate,
+
+        totalCapitalEur:
+          workingPositions.reduce(
+            (total, position) =>
+              total +
+              position.marketValueEur,
+            0,
+          ) +
+          remainingMoney,
+      })
+    : canAddMoney({
+        positions:
+          workingPositions,
+
+        companyId,
+
+        amountEur:
+          amountToAllocate,
+      });
+
+if (!canAllocateMoney) {
+  continue;
+}
 
       const simulatedPositions =
         addMoneyToCompany({
@@ -662,6 +1383,41 @@ if (
     maxPositions
 ) {
   continue;
+}
+
+const isExistingHolding =
+  workingPositions.some(
+    (position) =>
+      position.companyId ===
+      companyId,
+  );
+
+if (
+  input.allowStrategicNewPositionFallback ===
+    true &&
+  !isExistingHolding &&
+  !alreadySelectedInPhase2
+) {
+  const betterFallback =
+    investmentScore >
+      fallbackInvestmentScore ||
+    (
+      investmentScore ===
+        fallbackInvestmentScore &&
+      simulatedScore >
+        fallbackSimulatedScore
+    );
+
+  if (betterFallback) {
+    fallbackCompanyId =
+      companyId;
+
+    fallbackInvestmentScore =
+      investmentScore;
+
+    fallbackSimulatedScore =
+      simulatedScore;
+  }
 }
 
 /**
@@ -729,9 +1485,17 @@ if (
      * is.
      */
 
-    if (!bestCompanyId) {
-      break;
-    }
+   if (
+  !bestCompanyId &&
+  fallbackCompanyId
+) {
+  bestCompanyId =
+    fallbackCompanyId;
+}
+
+if (!bestCompanyId) {
+  break;
+}
 
     workingPositions =
       addMoneyToCompany({
@@ -775,6 +1539,73 @@ if (
    * mag de aankoop worden uitgevoerd.
    * ----------------------------------
    */
+
+ const rotationSelectedPositionCount =
+  allocations.size;
+
+const selectedRotationCompanyIds =
+  Array.from(
+    allocations.keys(),
+  );
+
+const selectedRotationCompanies =
+  selectedRotationCompanyIds
+    .map((companyId) =>
+      getPhoenixCompanyV2(companyId),
+    )
+    .filter(
+      (
+        company,
+      ): company is NonNullable<
+        typeof company
+      > => company !== null,
+    );
+
+const rotationIdealMaxValues =
+  selectedRotationCompanies
+    .map(
+      (company) =>
+        company.portfolio.idealMax,
+    )
+    .filter(
+      (
+        value,
+      ): value is number =>
+        value !== null,
+    );
+
+const rotationHardMaxValues =
+  selectedRotationCompanies
+    .map(
+      (company) =>
+        company.portfolio.hardMax,
+    )
+    .filter(
+      (
+        value,
+      ): value is number =>
+        value !== null,
+    );
+
+const averageOriginalIdealMax =
+  rotationIdealMaxValues.length > 0
+    ? rotationIdealMaxValues.reduce(
+        (total, value) =>
+          total + value,
+        0,
+      ) /
+      rotationIdealMaxValues.length
+    : 0;
+
+const averageOriginalHardMax =
+  rotationHardMaxValues.length > 0
+    ? rotationHardMaxValues.reduce(
+        (total, value) =>
+          total + value,
+        0,
+      ) /
+      rotationHardMaxValues.length
+    : 0;
 
   while (
     remainingMoney >=
@@ -874,18 +1705,45 @@ if (input.exitReviews) {
         continue;
       }
 
-      const idealMin =
-        phoenix.portfolio.idealMin;
+    const rotationAllocationBands =
+  getRotationAllocationBands({
+    originalIdealMin:
+      phoenix.portfolio.idealMin,
 
-      const idealMax =
-        phoenix.portfolio.idealMax;
+    originalIdealMax:
+      phoenix.portfolio.idealMax,
 
-      if (
-        idealMin === null ||
-        idealMax === null
-      ) {
-        continue;
-      }
+    originalHardMax:
+      phoenix.portfolio.hardMax,
+
+    selectedPositionCount:
+      rotationSelectedPositionCount,
+
+          averageOriginalIdealMax,
+
+    averageOriginalHardMax,
+  });
+
+const idealMin =
+  input.allowStrategicNewPositionFallback ===
+    true
+    ? rotationAllocationBands
+        .effectiveIdealMin
+    : phoenix.portfolio.idealMin;
+
+const idealMax =
+  input.allowStrategicNewPositionFallback ===
+    true
+    ? rotationAllocationBands
+        .effectiveIdealMax
+    : phoenix.portfolio.idealMax;
+
+if (
+  idealMin === null ||
+  idealMax === null
+) {
+  continue;
+}
 
       const investmentScore =
         scenarioData
@@ -911,17 +1769,37 @@ if (input.exitReviews) {
           companyId,
         );
 
-      const currentAllocation =
-        position
-          ?.allocationPercent ??
-        0;
+const currentAllocation =
+  position
+    ?.allocationPercent ??
+  0;
 
-      if (
-        currentAllocation >=
-        idealMax
-      ) {
-        continue;
-      }
+const effectiveCurrentAllocation =
+  input.allowStrategicNewPositionFallback ===
+    true
+    ? (
+        (
+          position?.marketValueEur ??
+          0
+        ) /
+        (
+          workingPositions.reduce(
+            (total, item) =>
+              total +
+              item.marketValueEur,
+            0,
+          ) +
+          remainingMoney
+        )
+      ) * 100
+    : currentAllocation;
+
+if (
+  effectiveCurrentAllocation >=
+  idealMax
+) {
+  continue;
+}
 
       const amountToAllocate =
         Math.min(
@@ -929,19 +1807,44 @@ if (input.exitReviews) {
           remainingMoney,
         );
 
-      if (
-        !canAddMoney({
-          positions:
-            workingPositions,
+      const canAllocateMore =
+  input.allowStrategicNewPositionFallback ===
+    true
+    ? canAddRotationMoney({
+    positions:
+      workingPositions,
 
-          companyId,
+    companyId,
 
-          amountEur:
-            amountToAllocate,
-        })
-      ) {
-        continue;
-      }
+    amountEur:
+      amountToAllocate,
+
+    totalCapitalEur:
+      workingPositions.reduce(
+        (total, position) =>
+          total +
+          position.marketValueEur,
+        0,
+      ) +
+      remainingMoney,
+
+    effectiveHardMax:
+      rotationAllocationBands
+        .effectiveHardMax,
+  })
+    : canAddMoney({
+        positions:
+          workingPositions,
+
+        companyId,
+
+        amountEur:
+          amountToAllocate,
+      });
+
+if (!canAllocateMore) {
+  continue;
+}
 
       /**
        * SIMULATIE:
@@ -983,13 +1886,29 @@ if (input.exitReviews) {
        * 7.0000000001% niet foutief af
        * te wijzen.
        */
-      if (
-        simulatedPosition
-          .allocationPercent >
-        idealMax + 0.0001
-      ) {
-        continue;
-      }
+     const simulatedAllocationPercent =
+  input.allowStrategicNewPositionFallback ===
+    true
+    ? (
+        simulatedPosition.marketValueEur /
+        (
+          workingPositions.reduce(
+            (total, position) =>
+              total +
+              position.marketValueEur,
+            0,
+          ) +
+          remainingMoney
+        )
+      ) * 100
+    : simulatedPosition.allocationPercent;
+
+if (
+  simulatedAllocationPercent >
+  idealMax + 0.0001
+) {
+  continue;
+}
 
       /**
        * Onder idealMin krijgt voorrang.
@@ -997,21 +1916,21 @@ if (input.exitReviews) {
        * tot de ideale band.
        */
       const belowIdealMin =
-        currentAllocation <
-        idealMin;
+  effectiveCurrentAllocation <
+  idealMin;
 
       const distanceToIdealMin =
         Math.max(
           0,
           idealMin -
-            currentAllocation,
+            effectiveCurrentAllocation,
         );
 
       const distanceToIdealMax =
         Math.max(
           0,
           idealMax -
-            currentAllocation,
+           effectiveCurrentAllocation,
         );
 
       const priority =
@@ -1036,6 +1955,8 @@ if (input.exitReviews) {
           companyId;
       }
     }
+
+    
 
     /**
      * Alle geselecteerde sterke posities

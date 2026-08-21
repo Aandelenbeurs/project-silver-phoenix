@@ -57,6 +57,16 @@ export async function getWorkspaceHoldings(
     return effectiveHoldings;
   }
 
+/**
+ * Een zelfstandig portfolio begint leeg.
+ *
+ * Anders dan simulaties en scenario's wordt
+ * de Live Portfolio hier niet als basis gebruikt.
+ */
+if (currentWorkspace.type === "portfolio") {
+  return [];
+}
+
   /**
    * Een nieuwe simulatie of nieuw scenario begint als
    * volledige kopie van de Live-portefeuille.

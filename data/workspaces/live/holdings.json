@@ -220,7 +220,7 @@
     "companyId": "blackrock-silver",
     "name": "Blackrock Silver Corp",
     "ticker": "AHZ0",
-    "quantity": 9725,
+    "quantity": 10975,
     "type": "equity",
     "unit": "shares"
   },
@@ -229,7 +229,7 @@
     "companyId": "china-silver",
     "name": "China Silver Group Ltd",
     "ticker": "2CS",
-    "quantity": 30000,
+    "quantity": 0,
     "type": "equity",
     "unit": "shares"
   },

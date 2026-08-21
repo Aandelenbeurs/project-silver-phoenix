@@ -6,10 +6,12 @@ import {
 import {
   deleteWorkspaceData,
   duplicateWorkspaceData,
+  initializeWorkspaceData,
 } from "./workspace-data-storage";
 
 export type WorkspaceType =
   | "live"
+  | "portfolio"
   | "simulation"
   | "scenario";
 
@@ -135,6 +137,11 @@ export async function createWorkspace({
     createdAt: now,
     updatedAt: now,
   };
+
+  await initializeWorkspaceData({
+  workspace,
+  holdings: [],
+});
 
   await writeWorkspaceFile({
     activeWorkspaceId: workspace.id,

@@ -394,6 +394,7 @@ export function isWorkspaceType(
 ): value is WorkspaceType {
   return (
     value === "live" ||
+    value === "portfolio" ||
     value === "simulation" ||
     value === "scenario"
   );

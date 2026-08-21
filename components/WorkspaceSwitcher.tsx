@@ -7,6 +7,7 @@ import {
 
 type WorkspaceType =
   | "live"
+  | "portfolio"
   | "simulation"
   | "scenario";
 
@@ -60,12 +61,12 @@ export default function WorkspaceSwitcher() {
     setDuplicateWorkspaceName,
   ] = useState("");
 
-  const [
-    newWorkspaceType,
-    setNewWorkspaceType,
-  ] = useState<
-    "simulation" | "scenario"
-  >("simulation");
+const [
+  newWorkspaceType,
+  setNewWorkspaceType,
+] = useState<
+  "portfolio" | "simulation" | "scenario"
+>("portfolio");
 
   const [error, setError] =
     useState<string | null>(null);
@@ -251,7 +252,7 @@ export default function WorkspaceSwitcher() {
       );
 
       setNewWorkspaceName("");
-      setNewWorkspaceType("simulation");
+      setNewWorkspaceType("portfolio");
       setIsCreateOpen(false);
 
       window.location.reload();
@@ -405,7 +406,7 @@ async function handleDeleteWorkspace(): Promise<void> {
 
     setIsCreateOpen(false);
     setNewWorkspaceName("");
-    setNewWorkspaceType("simulation");
+    setNewWorkspaceType("portfolio");
     setError(null);
   }
 
@@ -473,6 +474,9 @@ async function handleDeleteWorkspace(): Promise<void> {
         <small>
           {activeWorkspace?.type === "live"
             ? "Actieve portefeuille"
+            : activeWorkspace?.type === 
+                "portfolio"
+                ? "Portfolio"
             : activeWorkspace?.type ===
                 "scenario"
               ? "Scenario"
@@ -609,12 +613,17 @@ async function handleDeleteWorkspace(): Promise<void> {
               onChange={(event) =>
                 setNewWorkspaceType(
                   event.target.value as
+                    | "portfolio"
                     | "simulation"
                     | "scenario",
                 )
               }
               disabled={isSaving}
             >
+              <option value="portfolio">
+                Portfolio
+              </option>
+
               <option value="simulation">
                 Simulatie
               </option>

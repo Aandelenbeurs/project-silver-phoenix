@@ -33,8 +33,15 @@ import type {
 type HoldingsTableProps = {
   positions: ValuedPortfolioPosition[];
   portfolioV2: PortfolioV2Result;
+
   investmentScores:
     Record<string, number | null>;
+
+  availableCompanies: {
+    id: string;
+    name: string;
+    ticker: string;
+  }[];
 };
 
 function formatLocalPrice(
@@ -81,6 +88,7 @@ export default function HoldingsTable({
   positions,
   portfolioV2,
   investmentScores,
+   availableCompanies,
 }: HoldingsTableProps) {
   const [search, setSearch] = useState("");
 
@@ -120,6 +128,147 @@ const [
   oldQuantity: number;
   newQuantity: number;
 } | null>(null);
+
+const [
+  isAddHoldingOpen,
+  setIsAddHoldingOpen,
+] = useState(false);
+
+const [
+  newHoldingCompanyId,
+  setNewHoldingCompanyId,
+] = useState("");
+
+const [
+  newHoldingQuantity,
+  setNewHoldingQuantity,
+] = useState("");
+
+const [
+  isAddingHolding,
+  setIsAddingHolding,
+] = useState(false);
+
+const [
+  addHoldingError,
+  setAddHoldingError,
+] = useState<string | null>(
+  null,
+);
+
+const [
+  deletingHoldingId,
+  setDeletingHoldingId,
+] = useState<string | null>(null);
+
+const [
+  deleteHoldingError,
+  setDeleteHoldingError,
+] = useState<string | null>(null);
+
+const [
+  pendingDeleteHolding,
+  setPendingDeleteHolding,
+] = useState<{
+  holdingId: string;
+  name: string;
+} | null>(null);
+
+const addableCompanies =
+  useMemo(
+    () => {
+      const existingCompanyIds =
+        new Set(
+          positions
+            .map(
+              (position) =>
+                position.holding.companyId,
+            )
+            .filter(
+              (
+                companyId,
+              ): companyId is string =>
+                typeof companyId ===
+                "string",
+            ),
+        );
+
+      return availableCompanies
+        .filter(
+          (company) =>
+            !existingCompanyIds.has(
+              company.id,
+            ),
+        )
+        .sort(
+          (a, b) =>
+            a.name.localeCompare(
+              b.name,
+              "nl",
+            ),
+        );
+    },
+    [
+      positions,
+      availableCompanies,
+    ],
+  );
+
+   async function deleteHolding(
+  holdingId: string,
+): Promise<void> {
+  if (deletingHoldingId !== null) {
+    return;
+  }
+
+  setDeletingHoldingId(holdingId);
+  setDeleteHoldingError(null);
+
+  try {
+    const response =
+      await fetch(
+        "/api/workspaces/holdings",
+        {
+          method: "DELETE",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            holdingId,
+          }),
+        },
+      );
+
+    const data =
+      (await response.json()) as {
+        success?: boolean;
+        error?: string;
+      };
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+      throw new Error(
+        data.error ??
+          "Het aandeel kon niet worden verwijderd.",
+      );
+    }
+
+    window.location.reload();
+  } catch (deleteError) {
+    setDeleteHoldingError(
+      deleteError instanceof Error
+        ? deleteError.message
+        : "Onbekende fout bij het verwijderen.",
+    );
+  } finally {
+    setDeletingHoldingId(null);
+  }
+}
 
 function getPhoenixAdvice(
   position: ValuedPortfolioPosition,
@@ -370,6 +519,9 @@ async function confirmQuantityChange(): Promise<void> {
     pendingQuantityChange === null ||
     isSavingQuantity
   ) {
+
+
+
     return;
   }
 
@@ -419,6 +571,95 @@ async function confirmQuantityChange(): Promise<void> {
     );
   } finally {
     setIsSavingQuantity(false);
+  }
+}
+
+async function addHolding(): Promise<void> {
+  if (isAddingHolding) {
+    return;
+  }
+
+  const normalizedQuantity =
+    newHoldingQuantity
+      .trim()
+      .replace(",", ".");
+
+  const quantity =
+    Number(normalizedQuantity);
+
+  if (!newHoldingCompanyId) {
+    setAddHoldingError(
+      "Selecteer eerst een aandeel.",
+    );
+
+    return;
+  }
+
+  if (
+    normalizedQuantity.length === 0 ||
+    !Number.isFinite(quantity) ||
+    quantity <= 0
+  ) {
+    setAddHoldingError(
+      "Vul een geldig aantal groter dan 0 in.",
+    );
+
+    return;
+  }
+
+  setIsAddingHolding(true);
+  setAddHoldingError(null);
+
+  try {
+    const response =
+      await fetch(
+        "/api/workspaces/holdings",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            companyId:
+              newHoldingCompanyId,
+
+            quantity,
+          }),
+        },
+      );
+
+    const data =
+      (await response.json()) as {
+        success?: boolean;
+        error?: string;
+      };
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+      throw new Error(
+        data.error ??
+          "Het aandeel kon niet worden toegevoegd.",
+      );
+    }
+
+    setNewHoldingCompanyId("");
+    setNewHoldingQuantity("");
+    setIsAddHoldingOpen(false);
+
+    window.location.reload();
+  } catch (saveError) {
+    setAddHoldingError(
+      saveError instanceof Error
+        ? saveError.message
+        : "Onbekende fout bij het toevoegen.",
+    );
+  } finally {
+    setIsAddingHolding(false);
   }
 }
 
@@ -552,7 +793,121 @@ async function confirmQuantityChange(): Promise<void> {
         >
           Reset
         </button>
+        <button
+  type="button"
+  className="primary-button"
+  onClick={() => {
+    setIsAddHoldingOpen(
+      (current) =>
+        !current,
+    );
+
+    setAddHoldingError(null);
+  }}
+  disabled={
+    addableCompanies.length === 0
+  }
+>
+  + Aandeel toevoegen
+</button>
       </div>
+
+      {isAddHoldingOpen && (
+  <div className="workspace-create-form">
+    <label>
+      <span>Aandeel</span>
+
+      <select
+        value={
+          newHoldingCompanyId
+        }
+        onChange={(event) =>
+          setNewHoldingCompanyId(
+            event.target.value,
+          )
+        }
+        disabled={isAddingHolding}
+      >
+        <option value="">
+          Selecteer een aandeel
+        </option>
+
+        {addableCompanies.map(
+          (company) => (
+            <option
+              key={company.id}
+              value={company.id}
+            >
+              {company.name}
+              {" — "}
+              {company.ticker}
+            </option>
+          ),
+        )}
+      </select>
+    </label>
+
+    <label>
+      <span>Aantal aandelen</span>
+
+      <input
+        type="text"
+        inputMode="decimal"
+        value={newHoldingQuantity}
+        onChange={(event) =>
+          setNewHoldingQuantity(
+            event.target.value,
+          )
+        }
+        placeholder="Bijvoorbeeld 1250"
+        disabled={isAddingHolding}
+      />
+    </label>
+
+    {addHoldingError && (
+      <p className="workspace-selector-error">
+        {addHoldingError}
+      </p>
+    )}
+
+    <div className="workspace-create-actions">
+      <button
+        type="button"
+        className="secondary-button"
+        onClick={() => {
+          if (!isAddingHolding) {
+            setIsAddHoldingOpen(false);
+            setNewHoldingCompanyId("");
+            setNewHoldingQuantity("");
+            setAddHoldingError(null);
+          }
+        }}
+        disabled={isAddingHolding}
+      >
+        Annuleren
+      </button>
+
+      <button
+        type="button"
+        className="primary-button"
+        onClick={() =>
+          void addHolding()
+        }
+        disabled={
+          isAddingHolding ||
+          !newHoldingCompanyId ||
+          newHoldingQuantity
+            .trim()
+            .length === 0
+        }
+      >
+        {isAddingHolding
+          ? "Toevoegen..."
+          : "Toevoegen"}
+      </button>
+    </div>
+  </div>
+)}
 
       <div className="holdings-results">
         <strong>
@@ -616,6 +971,7 @@ async function confirmQuantityChange(): Promise<void> {
 <th>Ideal band</th>
 <th>Hard max</th>
 <th>Phoenix advies</th>
+<th>Actie</th>
             </tr>
           </thead>
 
@@ -800,6 +1156,31 @@ const phoenixAdvice =
     {phoenixAdvice}
   </strong>
 </td>
+<td>
+  <button
+    type="button"
+    className="secondary-button"
+    onClick={() => {
+  setPendingDeleteHolding({
+    holdingId:
+      position.holding.id,
+    name:
+      position.name,
+  });
+
+  setDeleteHoldingError(null);
+}}
+    disabled={
+      deletingHoldingId !== null
+    }
+    title={`Verwijder ${position.name}`}
+  >
+    {deletingHoldingId ===
+    position.holding.id
+      ? "Verwijderen..."
+      : "Verwijderen"}
+  </button>
+</td>
 
                   </tr>
                 );
@@ -894,6 +1275,74 @@ const phoenixAdvice =
           </div>
         </div>
       )}
+      {pendingDeleteHolding && (
+  <div
+    className="quantity-confirm-backdrop"
+    role="presentation"
+  >
+    <div
+      className="quantity-confirm-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-holding-confirm-title"
+    >
+      <p className="eyebrow">
+        POSITIE VERWIJDEREN
+      </p>
+
+      <h3 id="delete-holding-confirm-title">
+        {pendingDeleteHolding.name}
+      </h3>
+
+      <p className="quantity-confirm-warning">
+        Weet je zeker dat je deze positie uit de
+        actieve portfolio wilt verwijderen?
+      </p>
+
+      {deleteHoldingError && (
+        <p className="workspace-selector-error">
+          {deleteHoldingError}
+        </p>
+      )}
+
+      <div className="quantity-confirm-actions">
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() => {
+            if (deletingHoldingId === null) {
+              setPendingDeleteHolding(null);
+              setDeleteHoldingError(null);
+            }
+          }}
+          disabled={
+            deletingHoldingId !== null
+          }
+        >
+          Annuleren
+        </button>
+
+        <button
+          type="button"
+          className="primary-button"
+          onClick={() =>
+            void deleteHolding(
+              pendingDeleteHolding.holdingId,
+            )
+          }
+          disabled={
+            deletingHoldingId !== null
+          }
+        >
+          {deletingHoldingId ===
+          pendingDeleteHolding.holdingId
+            ? "Verwijderen..."
+            : "Verwijderen"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </>
   );
 }

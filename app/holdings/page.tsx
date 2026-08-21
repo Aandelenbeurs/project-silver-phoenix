@@ -14,6 +14,10 @@ import {
   formatPercent,
 } from "../../data/prices";
 
+import {
+  companies,
+} from "../../data/companies";
+
 export default async function HoldingsPage() {
   const portfolio = await getLivePortfolio();
 
@@ -110,10 +114,19 @@ const investmentScores =
           </div>
         </div>
 
-        <HoldingsTable
+<HoldingsTable
   positions={positions}
   portfolioV2={portfolioV2}
   investmentScores={investmentScores}
+  availableCompanies={
+    companies.map(
+      (company) => ({
+        id: company.id,
+        name: company.name,
+        ticker: company.ticker,
+      }),
+    )
+  }
 />
       </section>
 

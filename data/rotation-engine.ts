@@ -577,7 +577,12 @@ const buyResult =
     liveMetalPrices,
     exitReviews,
 
+    allowStrategicNewPositionFallback:
+      true,
+
     ...practicalSettings,
+
+    maxPositions: 8,
   });
 
     const scoreAfterRotation =

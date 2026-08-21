@@ -99,7 +99,10 @@ export async function POST(
   try {
     const body = (await request.json()) as {
       name?: string;
-      type?: "simulation" | "scenario";
+     type?:
+  | "portfolio"
+  | "simulation"
+  | "scenario";
     };
 
     if (!body.name || !body.type) {
