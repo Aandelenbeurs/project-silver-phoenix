@@ -1,5 +1,5 @@
 {
-  "activeWorkspaceId": "live",
+  "activeWorkspaceId": "moeder-test",
   "workspaces": [
     {
       "id": "live",
@@ -19,11 +19,11 @@
     },
     {
       "id": "moeder-test",
-      "name": "moeder test",
+      "name": "moeder portfolio",
       "type": "portfolio",
       "isReadOnly": false,
       "createdAt": "2026-08-21T07:09:22.417Z",
-      "updatedAt": "2026-08-21T07:09:22.417Z"
+      "updatedAt": "2026-08-22T09:05:44.120Z"
     }
   ]
 }

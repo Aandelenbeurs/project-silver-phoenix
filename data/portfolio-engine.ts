@@ -13,6 +13,7 @@ import {
 
 import {
   readWorkspaceSettings,
+  saveDailyWorkspaceSnapshot,
 } from "./workspace-data-storage";
 
 import {
@@ -85,6 +86,7 @@ export type PortfolioTotals = {
 };
 
 export type LivePortfolio = {
+  workspaceId: string;
   positions: ValuedPortfolioPosition[];
   totals: PortfolioTotals;
 
@@ -869,6 +871,36 @@ const [
     positions,
   );
 
+  await saveDailyWorkspaceSnapshot({
+  workspaceId:
+    currentWorkspace.id,
+
+  totalMarketValueEur:
+    totals.totalMarketValueEur,
+
+  positions:
+    positions
+      .filter(
+        (position) =>
+          position.company &&
+          position.marketValueEur !== null &&
+          position.currentAllocation !== null,
+      )
+      .map((position) => ({
+        companyId:
+          position.company!.id,
+
+        quantity:
+          position.quantity,
+
+        marketValueEur:
+          position.marketValueEur!,
+
+        allocationPercent:
+          position.currentAllocation!,
+      })),
+});
+
 const portfolioV2 =
   calculatePortfolioV2(
     positions
@@ -897,6 +929,8 @@ const referenceGoldPriceUsd =
   );
 
   return {
+     workspaceId:
+    currentWorkspace.id,
     positions,
     totals,
 
@@ -935,18 +969,24 @@ export async function getMetalScenario({
 }: MetalScenarioInput & {
   forceRefresh?: boolean;
 } = {}): Promise<MetalScenarioResult> {
-  const [snapshot, liveHoldings] =
-    await Promise.all([
-      getYahooMarketSnapshot({
-        forceRefresh,
-      }),
-      getWorkspaceHoldings("live"),
-    ]);
 
-  const portfolioPositions =
-    buildPortfolioPositions(
-      liveHoldings,
-    );
+  const currentWorkspace =
+  await getCurrentWorkspace();
+
+const [snapshot, workspaceHoldings] =
+  await Promise.all([
+    getYahooMarketSnapshot({
+      forceRefresh,
+    }),
+    getWorkspaceHoldings(
+      currentWorkspace.id,
+    ),
+  ]);
+
+ const portfolioPositions =
+  buildPortfolioPositions(
+    workspaceHoldings,
+  );
 
   const livePositions =
     buildValuedPortfolio({

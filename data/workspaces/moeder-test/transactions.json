@@ -1,0 +1,63 @@
+[
+  {
+    "id": "transaction-1787398624279",
+    "holdingId": "holding-discovery-mining",
+    "type": "buy",
+    "quantity": 400,
+    "price": 1,
+    "currency": "CAD",
+    "date": "2026-08-22T11:37:04.279Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1787398710304",
+    "holdingId": "holding-discovery-mining",
+    "type": "sell",
+    "quantity": 500,
+    "price": null,
+    "currency": null,
+    "date": "2026-08-22T11:38:30.304Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1787410576402",
+    "holdingId": "holding-discovery-mining",
+    "type": "sell",
+    "quantity": 100,
+    "price": 16,
+    "currency": "EUR",
+    "date": "2026-08-22T14:56:16.402Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1787410593781",
+    "holdingId": "holding-discovery-mining",
+    "type": "buy",
+    "quantity": 200,
+    "price": 1,
+    "currency": "EUR",
+    "date": "2026-08-22T14:56:33.781Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1787410660106",
+    "holdingId": "holding-discovery-mining",
+    "type": "sell",
+    "quantity": 100,
+    "price": 18,
+    "currency": "CAD",
+    "date": "2026-08-22T14:57:40.106Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1787414037924",
+    "holdingId": "holding-discovery-mining",
+    "type": "sell",
+    "quantity": 10,
+    "price": 18,
+    "currency": "CAD",
+    "transactionValueEur": 112.00995644057251,
+    "date": "2026-08-22T15:53:57.924Z",
+    "costs": null
+  }
+]

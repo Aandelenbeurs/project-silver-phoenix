@@ -3,6 +3,7 @@ import {
 } from "./companies";
 
 import {
+  calculateDynamicAverageCostEur,
   calculateUnrealizedReturnPercent,
 } from "./cost-basis";
 
@@ -39,6 +40,14 @@ import {
 import {
   buildExitRotationInstructions,
 } from "./exit-rotation-bridge";
+
+import {
+  readWorkspaceTransactions,
+} from "./workspace-data-storage";
+
+import {
+  convertPriceToEur,
+} from "./prices";
 
 export async function buildLiveExitReview({
   portfolio,
@@ -79,20 +88,25 @@ export async function buildLiveExitReview({
     );
 
   const [
-    silverHistory,
-    goldHistory,
-    reviewStore,
-  ] = await Promise.all([
-    getYahooHistoricalSeries({
-      symbol: "SI=F",
-    }),
+  silverHistory,
+  goldHistory,
+  reviewStore,
+  workspaceTransactions,
+] = await Promise.all([
+  getYahooHistoricalSeries({
+    symbol: "SI=F",
+  }),
 
-    getYahooHistoricalSeries({
-      symbol: "GC=F",
-    }),
+  getYahooHistoricalSeries({
+    symbol: "GC=F",
+  }),
 
-    readReviewStore(),
-  ]);
+  readReviewStore(),
+
+  readWorkspaceTransactions(
+    portfolio.workspaceId,
+  ),
+]);
 
   const silverTechnicalHeat =
     calculateHistoricalHeat(
@@ -231,23 +245,55 @@ export async function buildLiveExitReview({
                 position.companyId,
             );
 
-          const unrealizedReturnPercent =
-            portfolioPosition?.localPrice !== null &&
-            portfolioPosition?.localPrice !== undefined
-              ? calculateUnrealizedReturnPercent({
-                  companyId:
-                    position.companyId,
+          const dynamicAverageCostEur =
+  portfolioPosition
+    ? calculateDynamicAverageCostEur({
+        companyId:
+          position.companyId,
 
-                  currentPrice:
-                    portfolioPosition.localPrice,
+        currentQuantity:
+          portfolioPosition.quantity,
 
-                  currentCurrency:
-                    portfolioPosition.currency,
+        transactions:
+          workspaceTransactions,
 
-                  exchangeRates:
-                    portfolio.exchangeRates,
-                })
-              : null;
+        exchangeRates:
+          portfolio.exchangeRates,
+      })
+    : null;
+
+const unrealizedReturnPercent =
+  portfolioPosition?.localPrice !== null &&
+  portfolioPosition?.localPrice !== undefined
+    ? (
+        dynamicAverageCostEur !== null &&
+        dynamicAverageCostEur > 0
+          ? (
+              (
+                convertPriceToEur(
+                  portfolioPosition.localPrice,
+                  portfolioPosition.currency,
+                  portfolio.exchangeRates,
+                ) -
+                dynamicAverageCostEur
+              ) /
+              dynamicAverageCostEur
+            ) * 100
+          : calculateUnrealizedReturnPercent({
+              companyId:
+                position.companyId,
+
+              currentPrice:
+                portfolioPosition.localPrice,
+
+              currentCurrency:
+                portfolioPosition.currency,
+
+              exchangeRates:
+                portfolio.exchangeRates,
+            })
+      )
+    : null;
 
           const latestStoredReview =
             getLatestStoredReview(

@@ -41,7 +41,7 @@ export const costBasisByCompanyId:
 
   "silver47": {
     companyId: "silver47",
-    averageCost: 0.493360,
+    averageCost: 0.455186,
     currency: "EUR",
     source: "PORTFOLIO_PDF",
     isApproximate: true,
@@ -105,7 +105,7 @@ export const costBasisByCompanyId:
 
   "blackrock-silver": {
     companyId: "blackrock-silver",
-    averageCost: 0.43,
+    averageCost: 0.675204,
     currency: "EUR",
     source: "PORTFOLIO_PDF",
     isApproximate: true,
@@ -375,6 +375,141 @@ export const costBasisByCompanyId:
     isApproximate: true,
   },
 };
+
+export function calculateDynamicAverageCostEur({
+  companyId,
+  currentQuantity,
+  transactions,
+  exchangeRates,
+}: {
+  companyId: string;
+  currentQuantity: number;
+
+  transactions: {
+    holdingId: string;
+    type: "buy" | "sell";
+    quantity: number;
+    price: number | null;
+    currency: string | null;
+  }[];
+
+  exchangeRates: ExchangeRates;
+}): number | null {
+  const staticCostBasis =
+    costBasisByCompanyId[
+      companyId
+    ];
+
+  if (!staticCostBasis) {
+    return null;
+  }
+
+  const holdingId =
+    `holding-${companyId}`;
+
+  const relevantTransactions =
+    transactions.filter(
+      (transaction) =>
+        transaction.holdingId ===
+        holdingId,
+    );
+
+  const netTransactionQuantity =
+    relevantTransactions.reduce(
+      (total, transaction) =>
+        transaction.type === "buy"
+          ? total +
+            transaction.quantity
+          : total -
+            transaction.quantity,
+      0,
+    );
+
+  const originalQuantity =
+    currentQuantity -
+    netTransactionQuantity;
+
+  if (originalQuantity < 0) {
+    return null;
+  }
+
+  const originalAverageCostEur =
+    convertPriceToEur(
+      staticCostBasis.averageCost,
+      staticCostBasis.currency,
+      exchangeRates,
+    );
+
+  let workingQuantity =
+    originalQuantity;
+
+  let totalCostEur =
+    originalQuantity *
+    originalAverageCostEur;
+
+  for (
+    const transaction of
+    relevantTransactions
+  ) {
+    if (
+      transaction.type === "buy"
+    ) {
+      if (
+        transaction.price === null ||
+        transaction.currency === null
+      ) {
+        continue;
+      }
+
+      const purchasePriceEur =
+        convertPriceToEur(
+          transaction.price,
+          transaction.currency as
+            | "EUR"
+            | "CAD"
+            | "USD"
+            | "AUD"
+            | "HKD"
+            | "GBP",
+          exchangeRates,
+        );
+
+      totalCostEur +=
+        transaction.quantity *
+        purchasePriceEur;
+
+      workingQuantity +=
+        transaction.quantity;
+
+      continue;
+    }
+
+    if (
+      transaction.type === "sell" &&
+      workingQuantity > 0
+    ) {
+      const averageCostEur =
+        totalCostEur /
+        workingQuantity;
+
+      totalCostEur -=
+        transaction.quantity *
+        averageCostEur;
+
+      workingQuantity -=
+        transaction.quantity;
+    }
+  }
+
+  if (workingQuantity <= 0) {
+    return null;
+  }
+
+  return (
+    totalCostEur /
+    workingQuantity
+  );
+}
 
 export function calculateUnrealizedReturnPercent({
   companyId,

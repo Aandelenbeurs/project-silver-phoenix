@@ -9,12 +9,22 @@ import {
 
 import {
   readWorkspaceHoldings,
+  readWorkspaceTransactions,
   writeWorkspaceHoldings,
+  writeWorkspaceTransactions,
 } from "../../../../data/workspace-data-storage";
 
 import {
   companies,
 } from "../../../../data/companies";
+
+import {
+  getYahooMarketSnapshot,
+} from "../../../../services/yahoo";
+
+import {
+  convertPriceToEur,
+} from "../../../../data/prices";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -249,6 +259,25 @@ export async function PATCH(
     const quantity =
       Reflect.get(body, "quantity");
 
+      const purchasePriceRaw =
+  Reflect.get(body, "purchasePrice");
+  const purchaseCurrency =
+  Reflect.get(
+    body,
+    "purchaseCurrency",
+  );
+
+const purchasePrice =
+  purchasePriceRaw === null ||
+  purchasePriceRaw === undefined ||
+  purchasePriceRaw === ""
+    ? null
+    : Number(
+        String(purchasePriceRaw)
+          .trim()
+          .replace(",", "."),
+      );
+
     if (
       typeof holdingId !== "string" ||
       holdingId.trim().length === 0
@@ -282,13 +311,69 @@ export async function PATCH(
       );
     }
 
+if (
+  purchasePrice !== null &&
+  (
+    !Number.isFinite(purchasePrice) ||
+    purchasePrice <= 0
+  )
+) {
+  return NextResponse.json(
+    {
+      success: false,
+      error:
+        "De aankoopprijs moet een geldig getal groter dan 0 zijn.",
+    },
+    {
+      status: 400,
+    },
+  );
+}
+
+if (
+  purchaseCurrency !== null &&
+  purchaseCurrency !== undefined &&
+  ![
+    "EUR",
+    "CAD",
+    "USD",
+    "AUD",
+    "GBP",
+    "HKD",
+  ].includes(
+    String(purchaseCurrency),
+  )
+) {
+  return NextResponse.json(
+    {
+      success: false,
+      error:
+        "Ongeldige valuta voor de aankoopprijs.",
+    },
+    {
+      status: 400,
+    },
+  );
+}
+
     const workspace =
       await getCurrentWorkspace();
 
-    const holdings =
-      await readWorkspaceHoldings(
-        workspace.id,
-      );
+   const [
+  holdings,
+  transactions,
+  marketSnapshot,
+] = await Promise.all([
+  readWorkspaceHoldings(
+    workspace.id,
+  ),
+
+  readWorkspaceTransactions(
+    workspace.id,
+  ),
+
+  getYahooMarketSnapshot(),
+]);
 
     const index =
       holdings.findIndex(
@@ -309,6 +394,37 @@ export async function PATCH(
       );
     }
 
+    const existingHolding =
+  holdings[index];
+
+const quantityDifference =
+  quantity -
+  existingHolding.quantity;
+
+const isBuy =
+  quantityDifference > 0;
+
+const isSell =
+  quantityDifference < 0;
+
+if (
+  (isBuy || isSell) &&
+  purchasePrice === null
+) {
+  return NextResponse.json(
+    {
+      success: false,
+      error:
+        isBuy
+          ? "Bij een aankoop is de aankoopprijs per aandeel verplicht."
+          : "Bij een verkoop is de verkoopprijs per aandeel verplicht.",
+    },
+    {
+      status: 400,
+    },
+  );
+}
+
     const updatedHolding = {
       ...holdings[index],
       quantity,
@@ -326,6 +442,71 @@ export async function PATCH(
       workspace.id,
       updatedHoldings,
     );
+
+    if (isBuy || isSell) {
+  const transaction = {
+    id:
+      `transaction-${Date.now()}`,
+
+    holdingId,
+
+    type:
+      isBuy
+        ? "buy" as const
+        : "sell" as const,
+
+    quantity:
+      Math.abs(
+        quantityDifference,
+      ),
+
+    price:
+  purchasePrice,
+
+currency:
+  purchasePrice !== null
+    ? String(
+        purchaseCurrency ??
+        "EUR",
+      )
+    : null,
+
+transactionValueEur:
+  purchasePrice !== null
+    ? Math.abs(
+        quantityDifference,
+      ) *
+      convertPriceToEur(
+        purchasePrice,
+        String(
+          purchaseCurrency ??
+          "EUR",
+        ) as
+          | "EUR"
+          | "CAD"
+          | "USD"
+          | "AUD"
+          | "GBP"
+          | "HKD",
+        marketSnapshot.exchangeRates,
+      )
+    : null,
+
+    date:
+      new Date().toISOString(),
+
+    costs:
+      null,
+  };
+
+  await writeWorkspaceTransactions(
+    workspace.id,
+    [
+      ...transactions,
+      transaction,
+    ],
+  );
+}
 
     return NextResponse.json({
       success: true,

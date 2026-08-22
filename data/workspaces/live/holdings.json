@@ -225,15 +225,6 @@
     "unit": "shares"
   },
   {
-    "id": "holding-china-silver",
-    "companyId": "china-silver",
-    "name": "China Silver Group Ltd",
-    "ticker": "2CS",
-    "quantity": 0,
-    "type": "equity",
-    "unit": "shares"
-  },
-  {
     "id": "holding-defiance",
     "companyId": "defiance-silver",
     "name": "Defiance Silver Corp",
@@ -320,15 +311,6 @@
     "name": "Silver Storm Mining Ltd",
     "ticker": "SVRS",
     "quantity": 1500,
-    "type": "equity",
-    "unit": "shares"
-  },
-  {
-    "id": "holding-nord",
-    "companyId": "nord-precious-metals",
-    "name": "Nord Precious Metals Mining",
-    "ticker": "NTH",
-    "quantity": 0,
     "type": "equity",
     "unit": "shares"
   },

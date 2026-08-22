@@ -39,11 +39,27 @@ export type WorkspaceTransaction = {
   note?: string;
 };
 
+export type WorkspacePortfolioSnapshot = {
+  id: string;
+  workspaceId: string;
+  capturedAt: string;
+
+  totalMarketValueEur: number;
+
+  positions: {
+    companyId: string;
+    quantity: number;
+    marketValueEur: number;
+    allocationPercent: number;
+  }[];
+};
+
 export type WorkspaceData = {
   workspace: Workspace;
   holdings: Holding[];
   settings: WorkspaceSettings;
   transactions: WorkspaceTransaction[];
+  snapshots: WorkspacePortfolioSnapshot[];
 };
 
 const workspacesDirectory = path.join(
@@ -204,6 +220,103 @@ export async function writeWorkspaceSettings(
   });
 }
 
+export async function readWorkspaceSnapshots(
+  workspaceId: string,
+): Promise<WorkspacePortfolioSnapshot[]> {
+  const snapshots =
+    await readJsonFile<unknown>({
+      workspaceId,
+      fileName: "snapshots.json",
+      fallback: [],
+    });
+
+  return Array.isArray(snapshots)
+    ? (snapshots as WorkspacePortfolioSnapshot[])
+    : [];
+}
+
+export async function writeWorkspaceSnapshots(
+  workspaceId: string,
+  snapshots: WorkspacePortfolioSnapshot[],
+): Promise<void> {
+  await writeJsonFile({
+    workspaceId,
+    fileName: "snapshots.json",
+    data: snapshots,
+  });
+}
+
+export async function saveDailyWorkspaceSnapshot({
+  workspaceId,
+  totalMarketValueEur,
+  positions,
+}: {
+  workspaceId: string;
+
+  totalMarketValueEur: number;
+
+  positions: {
+    companyId: string;
+    quantity: number;
+    marketValueEur: number;
+    allocationPercent: number;
+  }[];
+}): Promise<WorkspacePortfolioSnapshot | null> {
+  if (
+    !Number.isFinite(totalMarketValueEur) ||
+    totalMarketValueEur <= 0
+  ) {
+    return null;
+  }
+
+  const snapshots =
+    await readWorkspaceSnapshots(
+      workspaceId,
+    );
+
+  const now =
+    new Date();
+
+  const today =
+    now.toISOString().slice(0, 10);
+
+  const alreadyCapturedToday =
+    snapshots.some(
+      (snapshot) =>
+        snapshot.capturedAt
+          .slice(0, 10) === today,
+    );
+
+  if (alreadyCapturedToday) {
+    return null;
+  }
+
+  const snapshot:
+    WorkspacePortfolioSnapshot = {
+      id:
+        `snapshot-${workspaceId}-${today}`,
+
+      workspaceId,
+
+      capturedAt:
+        now.toISOString(),
+
+      totalMarketValueEur,
+
+      positions,
+    };
+
+  await writeWorkspaceSnapshots(
+    workspaceId,
+    [
+      ...snapshots,
+      snapshot,
+    ],
+  );
+
+  return snapshot;
+}
+
 export async function readWorkspaceTransactions(
   workspaceId: string,
 ): Promise<WorkspaceTransaction[]> {
@@ -242,28 +355,33 @@ export async function readWorkspaceData(
     return null;
   }
 
-  const [
-    workspaceHoldings,
-    settings,
-    transactions,
-  ] = await Promise.all([
-    readWorkspaceHoldings(
-      workspaceId,
-    ),
-    readWorkspaceSettings(
-      workspaceId,
-    ),
-    readWorkspaceTransactions(
-      workspaceId,
-    ),
-  ]);
+const [
+  workspaceHoldings,
+  settings,
+  transactions,
+  snapshots,
+] = await Promise.all([
+  readWorkspaceHoldings(
+    workspaceId,
+  ),
+  readWorkspaceSettings(
+    workspaceId,
+  ),
+  readWorkspaceTransactions(
+    workspaceId,
+  ),
+  readWorkspaceSnapshots(
+    workspaceId,
+  ),
+]);
 
   return {
-    workspace,
-    holdings: workspaceHoldings,
-    settings,
-    transactions,
-  };
+  workspace,
+  holdings: workspaceHoldings,
+  settings,
+  transactions,
+  snapshots,
+};
 }
 
 export async function initializeWorkspaceData({

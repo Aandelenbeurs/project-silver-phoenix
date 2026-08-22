@@ -8,6 +8,7 @@ import {
    deleteWorkspace,
     getCurrentWorkspace,
   getWorkspaces,
+    renameWorkspace,
   setCurrentWorkspace,
 } from "../../../data/workspace";
 
@@ -54,6 +55,7 @@ export async function PATCH(
   try {
     const body = (await request.json()) as {
       workspaceId?: string;
+      name?: string;
     };
 
     if (!body.workspaceId) {
@@ -67,6 +69,21 @@ export async function PATCH(
           status: 400,
         },
       );
+    }
+
+    if (body.name !== undefined) {
+      const workspace =
+        await renameWorkspace({
+          workspaceId:
+            body.workspaceId,
+          name:
+            body.name,
+        });
+
+      return NextResponse.json({
+        success: true,
+        workspace,
+      });
     }
 
     await setCurrentWorkspace(
@@ -93,6 +110,7 @@ export async function PATCH(
     );
   }
 }
+
 export async function POST(
   request: NextRequest,
 ) {

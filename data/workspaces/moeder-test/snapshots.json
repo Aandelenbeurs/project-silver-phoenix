@@ -1,0 +1,16 @@
+[
+  {
+    "id": "snapshot-moeder-test-2026-08-22",
+    "workspaceId": "moeder-test",
+    "capturedAt": "2026-08-22T13:41:36.644Z",
+    "totalMarketValueEur": 7386.434349719975,
+    "positions": [
+      {
+        "companyId": "discovery-mining",
+        "quantity": 1000,
+        "marketValueEur": 7386.434349719975,
+        "allocationPercent": 100
+      }
+    ]
+  }
+]

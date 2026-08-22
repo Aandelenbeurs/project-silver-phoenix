@@ -127,6 +127,8 @@ const [
   name: string;
   oldQuantity: number;
   newQuantity: number;
+  transactionPrice: string;
+transactionCurrency: string;
 } | null>(null);
 
 const [
@@ -505,11 +507,24 @@ function prepareQuantityChange(
   }
 
   setPendingQuantityChange({
-    holdingId: position.holding.id,
-    name: position.name,
-    oldQuantity: position.quantity,
-    newQuantity: quantity,
-  });
+  holdingId:
+    position.holding.id,
+
+  name:
+    position.name,
+
+  oldQuantity:
+    position.quantity,
+
+  newQuantity:
+    quantity,
+
+  transactionPrice:
+    "",
+
+  transactionCurrency:
+    "EUR",
+});;
 
   setQuantityError(null);
 }
@@ -537,12 +552,24 @@ async function confirmQuantityChange(): Promise<void> {
           "Content-Type":
             "application/json",
         },
-        body: JSON.stringify({
-          holdingId:
-            pendingQuantityChange.holdingId,
-          quantity:
-            pendingQuantityChange.newQuantity,
-        }),
+      body: JSON.stringify({
+  holdingId:
+    pendingQuantityChange.holdingId,
+
+  quantity:
+    pendingQuantityChange.newQuantity,
+
+  purchasePrice:
+    pendingQuantityChange.transactionPrice
+      .trim()
+      .length > 0
+      ? pendingQuantityChange.transactionPrice
+      : null,
+
+  purchaseCurrency:
+    pendingQuantityChange.transactionCurrency ||
+    "EUR",
+}),
       },
     );
 
@@ -1233,6 +1260,103 @@ const phoenixAdvice =
               </strong>
             </div>
 
+            {pendingQuantityChange.newQuantity !==
+  pendingQuantityChange.oldQuantity && (
+    <>
+  <label className="metal-scenario-field">
+    <span>
+  {pendingQuantityChange.newQuantity >
+  pendingQuantityChange.oldQuantity
+    ? "Aankoopprijs per aandeel"
+    : "Verkoopprijs per aandeel"}
+</span>
+
+    <div className="metal-scenario-input-wrap">
+      <span className="metal-scenario-currency">
+        €
+      </span>
+
+      <input
+        className="metal-scenario-input"
+        type="text"
+        inputMode="decimal"
+        value={
+          pendingQuantityChange.transactionPrice ??
+          ""
+        }
+        onChange={(event) =>
+          setPendingQuantityChange(
+            (current) =>
+              current
+                ? {
+                    ...current,
+                    transactionPrice:
+                      event.target.value,
+                  }
+                : current,
+          )
+        }
+        placeholder="Bijvoorbeeld 0,75"
+        disabled={isSavingQuantity}
+      />
+    </div>
+  </label>
+
+<label className="metal-scenario-field">
+  <span>
+  {pendingQuantityChange.newQuantity >
+  pendingQuantityChange.oldQuantity
+    ? "Valuta aankoopprijs"
+    : "Valuta verkoopprijs"}
+</span>
+
+  <select
+    className="metal-scenario-input"
+    value={
+      pendingQuantityChange.transactionCurrency ??
+      "EUR"
+    }
+    onChange={(event) =>
+      setPendingQuantityChange(
+        (current) =>
+          current
+            ? {
+                ...current,
+                transactionCurrency:
+  event.target.value,
+              }
+            : current,
+      )
+    }
+    disabled={isSavingQuantity}
+  >
+    <option value="EUR">
+      EUR (€)
+    </option>
+
+    <option value="CAD">
+      CAD (C$)
+    </option>
+
+    <option value="USD">
+      USD ($)
+    </option>
+
+    <option value="AUD">
+      AUD (A$)
+    </option>
+
+    <option value="GBP">
+      GBP (£)
+    </option>
+
+    <option value="HKD">
+      HKD (HK$)
+    </option>
+  </select>
+</label>
+ </>
+)}
             <p className="quantity-confirm-warning">
               Controleer het nieuwe aantal zorgvuldig.
               Na bevestigen wordt de actieve workspace

@@ -239,6 +239,71 @@ export async function duplicateWorkspace({
 
   return workspace;
 }
+
+export async function renameWorkspace({
+  workspaceId,
+  name,
+}: {
+  workspaceId: string;
+  name: string;
+}): Promise<Workspace> {
+  const trimmedName =
+    name.trim();
+
+  if (trimmedName.length < 2) {
+    throw new Error(
+      "De naam van de workspace moet minimaal 2 tekens bevatten.",
+    );
+  }
+
+  const data =
+    await readWorkspaceFile();
+
+  const workspace =
+    data.workspaces.find(
+      (item) =>
+        item.id === workspaceId,
+    );
+
+  if (!workspace) {
+    throw new Error(
+      `Workspace '${workspaceId}' bestaat niet.`,
+    );
+  }
+
+  if (
+    workspace.id === "live" ||
+    workspace.type === "live"
+  ) {
+    throw new Error(
+      "De Live Portfolio workspace kan niet worden hernoemd.",
+    );
+  }
+
+  const updatedWorkspace: Workspace = {
+    ...workspace,
+    name: trimmedName,
+    updatedAt:
+      new Date().toISOString(),
+  };
+
+  const updatedWorkspaces =
+    data.workspaces.map(
+      (item) =>
+        item.id === workspaceId
+          ? updatedWorkspace
+          : item,
+    );
+
+  await writeWorkspaceFile({
+    ...data,
+    workspaces:
+      updatedWorkspaces,
+  });
+
+  return updatedWorkspace;
+}
+
 export async function deleteWorkspace(
   workspaceId: string,
 ): Promise<void> {

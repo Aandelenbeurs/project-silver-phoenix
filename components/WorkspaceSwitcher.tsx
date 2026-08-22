@@ -50,6 +50,16 @@ export default function WorkspaceSwitcher() {
   const [isDuplicateOpen, setIsDuplicateOpen] =
     useState(false);
 
+    const [
+  isRenameOpen,
+  setIsRenameOpen,
+] = useState(false);
+
+  const [
+  renameWorkspaceName,
+  setRenameWorkspaceName,
+] = useState("");
+
     const [isDeleteOpen, setIsDeleteOpen] =
   useState(false);
 
@@ -343,6 +353,91 @@ const [
     }
   }
 
+  async function handleRenameWorkspace(
+  event: React.FormEvent<HTMLFormElement>,
+): Promise<void> {
+  event.preventDefault();
+
+  if (
+    !activeWorkspace ||
+    activeWorkspace.type === "live" ||
+    isSaving
+  ) {
+    return;
+  }
+
+  const trimmedName =
+    renameWorkspaceName.trim();
+
+  if (trimmedName.length < 2) {
+    setError(
+      "De naam moet minimaal 2 tekens bevatten.",
+    );
+
+    return;
+  }
+
+  if (trimmedName === activeWorkspace.name) {
+    setIsRenameOpen(false);
+    setRenameWorkspaceName("");
+    setError(null);
+
+    return;
+  }
+
+  setIsSaving(true);
+  setError(null);
+
+  try {
+    const response = await fetch(
+      "/api/workspaces",
+      {
+        method: "PATCH",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+          workspaceId:
+            activeWorkspace.id,
+          name:
+            trimmedName,
+        }),
+      },
+    );
+
+    const data =
+      (await response.json()) as
+        WorkspaceApiResponse;
+
+    if (
+      !response.ok ||
+      !data.success ||
+      !data.workspace
+    ) {
+      throw new Error(
+        data.error ??
+          "Workspace kon niet worden hernoemd.",
+      );
+    }
+
+    setIsRenameOpen(false);
+    setRenameWorkspaceName("");
+
+    window.location.reload();
+  } catch (renameError) {
+    setError(
+      renameError instanceof Error
+        ? renameError.message
+        : "Onbekende fout bij het hernoemen van de workspace.",
+    );
+  } finally {
+    setIsSaving(false);
+  }
+}
+
 async function handleDeleteWorkspace(): Promise<void> {
   if (
     !activeWorkspace ||
@@ -558,6 +653,37 @@ async function handleDeleteWorkspace(): Promise<void> {
   activeWorkspace.type !== "live" && (
     <button
       type="button"
+      className="workspace-create-button"
+      onClick={() => {
+        setIsCreateOpen(false);
+        setIsDuplicateOpen(false);
+        setIsDeleteOpen(false);
+
+        setIsRenameOpen(
+          (current) => !current,
+        );
+
+        if (!isRenameOpen) {
+          setRenameWorkspaceName(
+            activeWorkspace.name,
+          );
+        }
+
+        setError(null);
+      }}
+      disabled={
+        isLoading || isSaving
+      }
+      aria-expanded={isRenameOpen}
+    >
+      Hernoemen
+    </button>
+  )}
+
+        {activeWorkspace &&
+  activeWorkspace.type !== "live" && (
+    <button
+      type="button"
       className="workspace-delete-button"
       onClick={() => {
         setIsCreateOpen(false);
@@ -735,6 +861,67 @@ async function handleDeleteWorkspace(): Promise<void> {
           </div>
         </form>
       )}
+
+      {isRenameOpen &&
+  activeWorkspace &&
+  activeWorkspace.type !== "live" && (
+    <form
+      className="workspace-create-form"
+      onSubmit={(event) =>
+        void handleRenameWorkspace(
+          event,
+        )
+      }
+    >
+      <label>
+        <span>Nieuwe naam</span>
+
+        <input
+          type="text"
+          value={renameWorkspaceName}
+          onChange={(event) =>
+            setRenameWorkspaceName(
+              event.target.value,
+            )
+          }
+          autoFocus
+          disabled={isSaving}
+        />
+      </label>
+
+      <div className="workspace-create-actions">
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() => {
+            if (!isSaving) {
+              setIsRenameOpen(false);
+              setRenameWorkspaceName("");
+              setError(null);
+            }
+          }}
+          disabled={isSaving}
+        >
+          Annuleren
+        </button>
+
+        <button
+          type="submit"
+          className="primary-button workspace-submit-button"
+          disabled={
+            isSaving ||
+            renameWorkspaceName
+              .trim()
+              .length < 2
+          }
+        >
+          {isSaving
+            ? "Opslaan..."
+            : "Opslaan"}
+        </button>
+      </div>
+    </form>
+  )}
 
 {isDeleteOpen &&
   activeWorkspace &&
