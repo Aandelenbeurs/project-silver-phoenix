@@ -34,6 +34,7 @@ export type WorkspaceTransaction = {
   quantity: number;
   price: number | null;
   currency: string | null;
+  transactionValueEur: number | null;
   date: string;
   costs: number | null;
   note?: string;
