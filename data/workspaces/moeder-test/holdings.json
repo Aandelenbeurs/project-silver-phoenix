@@ -1,11 +1,1 @@
-[
-  {
-    "id": "holding-discovery-mining",
-    "companyId": "discovery-mining",
-    "name": "Discovery Mining Ltd",
-    "ticker": "1CU",
-    "quantity": 990,
-    "type": "equity",
-    "unit": "shares"
-  }
-]
+[]

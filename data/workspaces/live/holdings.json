@@ -9,15 +9,6 @@
     "unit": "shares"
   },
   {
-    "id": "holding-advanced-gold",
-    "companyId": "advanced-gold",
-    "name": "Advanced Gold Exploration Inc",
-    "ticker": "AUEX",
-    "quantity": 2200,
-    "type": "equity",
-    "unit": "shares"
-  },
-  {
     "id": "holding-solstice-gold",
     "companyId": "solstice-gold",
     "name": "Solstice Gold Corp",

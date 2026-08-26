@@ -5,9 +5,21 @@ import {
   useState,
 } from "react";
 
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ReferenceDot,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
 type ReportPeriod =
   | "week"
-  | "month";
+  | "month"
+  | "all";
 
 type PortfolioPeriodSummary = {
   snapshotCount: number;
@@ -43,6 +55,11 @@ type HistoryResponse = {
   period: ReportPeriod;
 
   summary: PortfolioPeriodSummary;
+
+  timeline: {
+  date: string;
+  totalMarketValueEur: number;
+}[];
 
   netTransactionFlowEur: number;
 adjustedDifferenceEur: number | null;
@@ -119,6 +136,11 @@ export default function PortfolioReportPage() {
     null,
   );
 
+  const [
+  includePositionDetailsInPdf,
+  setIncludePositionDetailsInPdf,
+] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -176,7 +198,7 @@ export default function PortfolioReportPage() {
     };
   }, [period]);
 
-const biggestGainer =
+const biggestGainers =
   data?.summary.positions
     .filter(
       (position) =>
@@ -186,9 +208,10 @@ const biggestGainer =
       (a, b) =>
         b.marketValueDifferenceEur -
         a.marketValueDifferenceEur,
-    )[0] ?? null;
+    )
+    .slice(0, 3) ?? [];
 
-const biggestDecliner =
+const biggestDecliners =
   data?.summary.positions
     .filter(
       (position) =>
@@ -198,7 +221,98 @@ const biggestDecliner =
       (a, b) =>
         a.marketValueDifferenceEur -
         b.marketValueDifferenceEur,
-    )[0] ?? null;
+    )
+    .slice(0, 3) ?? [];
+
+   const chartTimeline =
+  data?.timeline.map(
+    (point) => {
+      const pointDate =
+        new Date(
+          point.date,
+        ).toLocaleDateString(
+          "nl-NL",
+        );
+
+      const pointTransactions =
+        data.transactions.filter(
+          (transaction) =>
+            new Date(
+              transaction.date,
+            ).toLocaleDateString(
+              "nl-NL",
+            ) === pointDate,
+        );
+
+      return {
+        date:
+          new Date(
+            point.date,
+          ).toLocaleDateString(
+            "nl-NL",
+            {
+              day: "2-digit",
+              month: "2-digit",
+            },
+          ),
+
+        value:
+          point.totalMarketValueEur,
+
+        transactionCount:
+          pointTransactions.length,
+
+          transactions:
+  pointTransactions.map(
+    (transaction) => ({
+      companyName:
+        transaction.companyName,
+      type:
+        transaction.type,
+      quantity:
+        transaction.quantity,
+    }),
+  ),
+
+        hasBuy:
+          pointTransactions.some(
+            (transaction) =>
+              transaction.type ===
+              "buy",
+          ),
+
+        hasSell:
+          pointTransactions.some(
+            (transaction) =>
+              transaction.type ===
+              "sell",
+          ),
+      };
+    },
+  ) ?? [];
+
+  const reportPeriodLabel =
+  period === "week"
+    ? "Weekrapport"
+    : period === "month"
+      ? "Maandrapport"
+      : "Rapport vanaf begin";
+
+const reportDateRange =
+  data &&
+  data.timeline.length > 0
+    ? `${new Date(
+        data.timeline[0].date,
+      ).toLocaleDateString(
+        "nl-NL",
+      )} t/m ${new Date(
+        data.timeline[
+          data.timeline.length - 1
+        ].date,
+      ).toLocaleDateString(
+        "nl-NL",
+      )}`
+    : null;
   
   return (
     <main className="page-shell">
@@ -215,9 +329,22 @@ const biggestDecliner =
             </h1>
 
             <p>
-              Bekijk de ontwikkeling van
-              de actieve portefeuille.
-            </p>
+  Bekijk de ontwikkeling van
+  de actieve portefeuille.
+</p>
+
+{data && (
+  <p className="report-period-label">
+    {reportPeriodLabel}
+
+    {reportDateRange && (
+      <>
+        {" · "}
+        {reportDateRange}
+      </>
+    )}
+  </p>
+)}
           </div>
 
           <div className="metal-scenario-actions">
@@ -248,6 +375,20 @@ const biggestDecliner =
             >
               Maand
             </button>
+
+            <button
+  type="button"
+  className={
+    period === "all"
+      ? "primary-button"
+      : "secondary-button"
+  }
+  onClick={() =>
+    setPeriod("all")
+  }
+>
+  Vanaf begin
+</button>
 
             <button
   type="button"
@@ -283,6 +424,23 @@ const biggestDecliner =
               periode te berekenen.
             </p>
           )}
+
+          <label className="report-pdf-toggle">
+  <input
+    type="checkbox"
+    checked={
+      includePositionDetailsInPdf
+    }
+    onChange={(event) =>
+      setIncludePositionDetailsInPdf(
+        event.target.checked,
+      )
+    }
+  />
+
+  Details meenemen in PDF
+</label>
+
 {!loading && data && (
   <div className="stats-grid">
     <div className="stat-card">
@@ -373,17 +531,306 @@ const biggestDecliner =
 
 {!loading &&
   data &&
-  data.summary.positions.length > 0 && (
+  chartTimeline.length > 0 && (
     <div
       style={{
         marginTop: "24px",
       }}
     >
       <p className="eyebrow">
-        POSITIE-ONTWIKKELING
+        PORTEFEUILLE-ONTWIKKELING
       </p>
 
-      <div className="compact-table-wrap">
+      <div
+  className="report-chart"
+  style={{
+    width: "100%",
+    height: "320px",
+  }}
+>
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+        >
+          <LineChart
+            data={chartTimeline}
+            margin={{
+              top: 10,
+              right: 20,
+              bottom: 0,
+              left: 10,
+            }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              opacity={0.2}
+            />
+
+            <XAxis
+              dataKey="date"
+            />
+
+            <YAxis
+            domain={["dataMin - 100", "dataMax + 100"]}
+              tickFormatter={(value) =>
+                `€${Number(
+                  value,
+                ).toLocaleString(
+                  "nl-NL",
+                  {
+                    maximumFractionDigits:
+                      0,
+                  },
+                )}`
+              }
+            />
+
+           <Tooltip
+  content={({ active, payload, label }) => {
+    if (
+      !active ||
+      !payload ||
+      payload.length === 0
+    ) {
+      return null;
+    }
+
+    const point =
+      chartTimeline.find(
+        (item) =>
+          item.date === label,
+      );
+
+    if (!point) {
+      return null;
+    }
+
+    return (
+      <div
+        style={{
+          background:
+            "#ffffff",
+          border:
+            "1px solid #cbd5e1",
+          padding:
+            "10px 12px",
+          borderRadius:
+            "6px",
+          color:
+            "#0f172a",
+          minWidth:
+            "220px",
+        }}
+      >
+        <strong>
+          {point.date}
+        </strong>
+
+        <div
+          style={{
+            marginTop:
+              "6px",
+          }}
+        >
+          Dagwaarde:{" "}
+          <strong>
+            {formatEur(
+              point.value,
+            )}
+          </strong>
+        </div>
+
+        {point.transactions.length > 0 && (
+          <div
+            style={{
+              marginTop:
+                "8px",
+              paddingTop:
+                "8px",
+              borderTop:
+                "1px solid #e2e8f0",
+            }}
+          >
+            {point.transactions.map(
+              (
+                transaction,
+                index,
+              ) => (
+                <div
+                  key={`${point.date}-${index}`}
+                  style={{
+                    marginTop:
+                      index === 0
+                        ? 0
+                        : "6px",
+                  }}
+                >
+                  <strong>
+                    {transaction.type ===
+                    "buy"
+                      ? "Aankoop"
+                      : "Verkoop"}
+                    :
+                  </strong>{" "}
+                  {
+                    transaction.companyName
+                  }
+                  {" · "}
+                  {transaction.quantity.toLocaleString(
+                    "nl-NL",
+                  )}
+                  {" aandelen"}
+                </div>
+              ),
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }}
+/>
+
+            <Line
+              type="linear"
+              dataKey="value"
+              name="Portefeuillewaarde"
+              strokeWidth={3}
+              dot={{
+                r: 5,
+              }}
+              activeDot={{
+                r: 7,
+              }}
+            />
+
+            {chartTimeline
+  .filter(
+    (point) =>
+      point.transactionCount > 0,
+  )
+  .map((point) => {
+    const transactionLabel =
+      point.hasBuy && point.hasSell
+        ? "A/V"
+        : point.hasBuy
+          ? "A"
+          : "V";
+
+    return (
+      <ReferenceDot
+        key={`transaction-${point.date}`}
+        x={point.date}
+        y={point.value}
+        r={8}
+        label={{
+          value:
+            transactionLabel,
+          position: "top",
+        }}
+      />
+    );
+  })}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  )}
+
+ {!loading &&
+  data &&
+  data.summary.snapshotCount >= 2 && (
+    <div
+      style={{
+        marginTop: "24px",
+      }}
+    >
+      <p className="eyebrow">
+        GROOTSTE BEWEGINGEN
+      </p>
+
+      <div className="report-movers-grid">
+        <section className="report-movers-box report-movers-up">
+          <span className="stat-label">
+            Top 3 waardestijgingen
+          </span>
+
+          <ol className="report-movers-list">
+            {biggestGainers.map(
+              (position) => (
+                <li key={position.companyId}>
+                  <strong>
+                    {position.companyName}
+                  </strong>
+
+                  <strong>
+                    +
+                    {formatEur(
+                      position.marketValueDifferenceEur,
+                    )}
+                  </strong>
+                </li>
+              ),
+            )}
+          </ol>
+        </section>
+
+        <section className="report-movers-box report-movers-down">
+          <span className="stat-label">
+            Top 3 waardedalingen
+          </span>
+
+          <ol className="report-movers-list">
+            {biggestDecliners.map(
+              (position) => (
+                <li key={position.companyId}>
+                  <strong>
+                    {position.companyName}
+                  </strong>
+
+                  <strong>
+                    {formatEur(
+                      position.marketValueDifferenceEur,
+                    )}
+                  </strong>
+                </li>
+              ),
+            )}
+          </ol>
+        </section>
+      </div>
+    </div>
+  )}
+
+{!loading &&
+  data &&
+  data.summary.positions.length > 0 && (
+    <details
+      className={
+  includePositionDetailsInPdf
+    ? "report-position-details report-position-details-print"
+    : "report-position-details"
+}
+      
+      style={{
+        marginTop: "24px",
+      }}
+    >
+      <summary
+        className="eyebrow"
+        style={{
+          cursor: "pointer",
+          userSelect: "none",
+        }}
+      >
+        POSITIE-ONTWIKKELING
+      </summary>
+
+      <div
+        className="compact-table-wrap"
+        style={{
+          marginTop: "12px",
+        }}
+      >
         <table className="data-table wide-table">
           <thead>
             <tr>
@@ -445,17 +892,22 @@ const biggestDecliner =
           </tbody>
         </table>
       </div>
-    </div>
+    </details>
   )}
 
 {!loading &&
   data &&
   data.transactions.length > 0 && (
     <div
-      style={{
-        marginTop: "24px",
-      }}
-    >
+  className={
+    includePositionDetailsInPdf
+      ? "report-transactions report-transactions-new-page"
+      : "report-transactions"
+  }
+  style={{
+    marginTop: "24px",
+  }}
+>
       <p className="eyebrow">
         TRANSACTIES IN DEZE PERIODE
       </p>

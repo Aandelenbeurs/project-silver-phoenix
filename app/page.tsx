@@ -15,6 +15,8 @@ import {
   formatPercent,
 } from "../data/prices";
 
+import DashboardPortfolioChart from "../components/DashboardPortfolioChart";
+
 function formatUpdatedAt(value: string): string {
   return new Intl.DateTimeFormat("nl-NL", {
     dateStyle: "short",
@@ -282,6 +284,8 @@ const phoenixPortfolioScore =
     </Link>
   </div>
 </section>
+
+<DashboardPortfolioChart />
 
 {isScenario &&
   scenarioContributions.length > 0 && (

@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "id": "transaction-1787726499338",
+    "holdingId": "holding-advanced-gold",
+    "type": "sell",
+    "quantity": 2200,
+    "price": 0.1,
+    "currency": "CAD",
+    "transactionValueEur": 136.0796684604441,
+    "date": "2026-08-26T06:41:39.338Z",
+    "costs": null
+  }
+]

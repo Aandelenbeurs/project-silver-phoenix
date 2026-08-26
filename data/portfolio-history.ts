@@ -237,6 +237,29 @@ export function buildWeeklyPortfolioSummary(
   });
 }
 
+export type PortfolioHistoryPoint = {
+  date: string;
+  totalMarketValueEur: number;
+};
+
+export function buildPortfolioHistoryTimeline(
+  snapshots: WorkspacePortfolioSnapshot[],
+): PortfolioHistoryPoint[] {
+  return snapshots
+    .map((snapshot) => ({
+      date:
+        snapshot.capturedAt,
+      totalMarketValueEur:
+        snapshot.totalMarketValueEur,
+    }))
+    .sort(
+      (a, b) =>
+        a.date.localeCompare(
+          b.date,
+        ),
+    );
+}
+
 export function buildMonthlyPortfolioSummary(
   snapshots: WorkspacePortfolioSnapshot[],
 ): PortfolioPeriodSummary {

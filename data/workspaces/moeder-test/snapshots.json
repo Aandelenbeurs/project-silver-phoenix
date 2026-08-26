@@ -26,5 +26,19 @@
         "allocationPercent": 100
       }
     ]
+  },
+  {
+    "id": "snapshot-moeder-test-2026-08-26",
+    "workspaceId": "moeder-test",
+    "capturedAt": "2026-08-26T06:33:12.286Z",
+    "totalMarketValueEur": 7753.897550111357,
+    "positions": [
+      {
+        "companyId": "discovery-mining",
+        "quantity": 990,
+        "marketValueEur": 7753.897550111357,
+        "allocationPercent": 100
+      }
+    ]
   }
 ]

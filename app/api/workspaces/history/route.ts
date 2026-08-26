@@ -15,6 +15,8 @@ import {
 import {
   buildMonthlyPortfolioSummary,
   buildWeeklyPortfolioSummary,
+  buildPortfolioHistoryTimeline,
+  buildPortfolioPeriodSummary,
 } from "../../../../data/portfolio-history";
 
 import {
@@ -55,25 +57,29 @@ export async function GET(
   getYahooMarketSnapshot(),
 ]);
 
-    const period =
-      request.nextUrl.searchParams.get(
-        "period",
-      );
+const period =
+  request.nextUrl.searchParams.get(
+    "period",
+  );
 
-      const endDate =
+const endDate =
   new Date();
 
 const startDate =
-  new Date(endDate);
+  period === "all"
+    ? null
+    : new Date(endDate);
 
-startDate.setDate(
-  endDate.getDate() -
-    (
-      period === "month"
-        ? 30
-        : 7
-    ),
-);
+if (startDate !== null) {
+  startDate.setDate(
+    endDate.getDate() -
+      (
+        period === "month"
+          ? 30
+          : 7
+      ),
+  );
+}
 
 const periodTransactions =
   transactions
@@ -82,6 +88,13 @@ const periodTransactions =
         new Date(
           transaction.date,
         ).getTime();
+
+      if (startDate === null) {
+        return (
+          transactionTime <=
+          endDate.getTime()
+        );
+      }
 
       return (
         transactionTime >=
@@ -162,12 +175,51 @@ const netTransactionFlowEur =
   );
 
 const summary =
-  period === "month"
-    ? buildMonthlyPortfolioSummary(
+  period === "all"
+    ? buildPortfolioPeriodSummary({
         snapshots,
-      )
-    : buildWeeklyPortfolioSummary(
-        snapshots,
+        startDate:
+          snapshots.length > 0
+            ? new Date(
+                snapshots[0].capturedAt,
+              )
+            : new Date(),
+        endDate,
+      })
+    : period === "month"
+      ? buildMonthlyPortfolioSummary(
+          snapshots,
+        )
+      : buildWeeklyPortfolioSummary(
+          snapshots,
+        );
+
+     const allTimeline =
+  buildPortfolioHistoryTimeline(
+    snapshots,
+  );
+
+const timeline =
+  period === "all"
+    ? allTimeline
+    : allTimeline.filter(
+        (point) => {
+          const pointTime =
+            new Date(
+              point.date,
+            ).getTime();
+
+          if (startDate === null) {
+            return true;
+          }
+
+          return (
+            pointTime >=
+              startDate.getTime() &&
+            pointTime <=
+              endDate.getTime()
+          );
+        },
       );
 
 const hasSufficientHistory =
@@ -199,11 +251,15 @@ return NextResponse.json({
     workspace.name,
 
   period:
-    period === "month"
+  period === "all"
+    ? "all"
+    : period === "month"
       ? "month"
       : "week",
 
   summary,
+
+  timeline,
 
   netTransactionFlowEur,
 
