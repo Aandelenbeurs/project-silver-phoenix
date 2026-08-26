@@ -163,21 +163,34 @@ let activeRequest: Promise<YahooMarketSnapshot> | null = null;
  * opgevraagd en blijven afhankelijk van een handmatige fallback.
  */
 export function getYahooInstruments(): YahooInstrument[] {
-  const companyInstruments: YahooInstrument[] = companies
-    .filter(
-      (
-        company,
-      ): company is typeof company & {
-        yahooSymbol: string;
-      } =>
+  const companyInstruments: YahooInstrument[] =
+    companies.flatMap((company) => {
+      const instruments: YahooInstrument[] = [];
+
+      if (
         typeof company.yahooSymbol === "string" &&
-        company.yahooSymbol.trim().length > 0,
-    )
-    .map((company) => ({
-      id: company.id,
-      symbol: company.yahooSymbol,
-      type: "company",
-    }));
+        company.yahooSymbol.trim().length > 0
+      ) {
+        instruments.push({
+          id: company.id,
+          symbol: company.yahooSymbol,
+          type: "company",
+        });
+      }
+
+      if (
+        typeof company.europeanYahooSymbol === "string" &&
+        company.europeanYahooSymbol.trim().length > 0
+      ) {
+        instruments.push({
+          id: `${company.id}-europe`,
+          symbol: company.europeanYahooSymbol,
+          type: "company",
+        });
+      }
+
+      return instruments;
+    });
 
   return [
     ...companyInstruments,
@@ -775,6 +788,127 @@ function buildExchangeRates(
   };
 }
 
+function shouldUseEuropeanQuote(): boolean {
+  const now =
+    new Date();
+
+  const amsterdamParts =
+    new Intl.DateTimeFormat(
+      "en-GB",
+      {
+        timeZone:
+          "Europe/Amsterdam",
+        weekday: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      },
+    ).formatToParts(now);
+
+  const torontoParts =
+    new Intl.DateTimeFormat(
+      "en-GB",
+      {
+        timeZone:
+          "America/Toronto",
+        weekday: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      },
+    ).formatToParts(now);
+
+  function getPart(
+    parts: Intl.DateTimeFormatPart[],
+    type:
+      | "weekday"
+      | "hour"
+      | "minute",
+  ): string {
+    return (
+      parts.find(
+        (part) =>
+          part.type === type,
+      )?.value ?? ""
+    );
+  }
+
+  const amsterdamWeekday =
+    getPart(
+      amsterdamParts,
+      "weekday",
+    );
+
+  const torontoWeekday =
+    getPart(
+      torontoParts,
+      "weekday",
+    );
+
+  const weekdays =
+    new Set([
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+    ]);
+
+  if (
+    !weekdays.has(
+      amsterdamWeekday,
+    ) ||
+    !weekdays.has(
+      torontoWeekday,
+    )
+  ) {
+    return false;
+  }
+
+  const amsterdamMinutes =
+    Number(
+      getPart(
+        amsterdamParts,
+        "hour",
+      ),
+    ) *
+      60 +
+    Number(
+      getPart(
+        amsterdamParts,
+        "minute",
+      ),
+    );
+
+  const torontoMinutes =
+    Number(
+      getPart(
+        torontoParts,
+        "hour",
+      ),
+    ) *
+      60 +
+    Number(
+      getPart(
+        torontoParts,
+        "minute",
+      ),
+    );
+
+  const europeanStart =
+    8 * 60;
+
+  const northAmericanOpen =
+    9 * 60 + 30;
+
+  return (
+    amsterdamMinutes >=
+      europeanStart &&
+    torontoMinutes <
+      northAmericanOpen
+  );
+}
+
 async function createYahooSnapshot(): Promise<YahooMarketSnapshot> {
   const instruments =
     getYahooInstruments();
@@ -838,6 +972,35 @@ async function createYahooSnapshot(): Promise<YahooMarketSnapshot> {
         "Geen geldige koers beschikbaar.";
     }
   }
+
+  if (shouldUseEuropeanQuote()) {
+  for (const company of companies) {
+    if (
+      typeof company.europeanYahooSymbol !== "string" ||
+      company.europeanYahooSymbol.trim().length === 0
+    ) {
+      continue;
+    }
+
+    const europeanId =
+      `${company.id}-europe`;
+
+    const europeanResult =
+      instrumentResults[europeanId];
+
+    if (
+      !europeanResult ||
+      europeanResult.quote.price === null
+    ) {
+      continue;
+    }
+
+    instrumentResults[company.id] = {
+      ...europeanResult,
+      id: company.id,
+    };
+  }
+}
 
   batchErrors.forEach(
     (error, index) => {
