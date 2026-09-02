@@ -19,6 +19,10 @@ import {
 } from "../../../../data/companies";
 
 import {
+  holdings as baseHoldings,
+} from "../../../../data/holdings";
+
+import {
   getYahooMarketSnapshot,
 } from "../../../../services/yahoo";
 
@@ -94,6 +98,26 @@ export async function POST(
     const quantity =
       Reflect.get(body, "quantity");
 
+      const purchasePriceRaw =
+  Reflect.get(body, "purchasePrice");
+
+const purchaseCurrency =
+  Reflect.get(
+    body,
+    "purchaseCurrency",
+  );
+
+const purchasePrice =
+  purchasePriceRaw === null ||
+  purchasePriceRaw === undefined ||
+  purchasePriceRaw === ""
+    ? null
+    : Number(
+        String(purchasePriceRaw)
+          .trim()
+          .replace(",", "."),
+      );
+
     if (
       typeof companyId !== "string" ||
       companyId.trim().length === 0
@@ -127,18 +151,65 @@ export async function POST(
       );
     }
 
-    const companyData =
+    if (
+  purchasePrice === null ||
+  !Number.isFinite(purchasePrice) ||
+  purchasePrice <= 0
+) {
+  return NextResponse.json(
+    {
+      success: false,
+      error:
+        "De aankoopprijs moet een geldig getal groter dan 0 zijn.",
+    },
+    {
+      status: 400,
+    },
+  );
+}
+
+if (
+  typeof purchaseCurrency !== "string" ||
+  ![
+    "EUR",
+    "CAD",
+    "USD",
+    "AUD",
+    "GBP",
+    "HKD",
+  ].includes(purchaseCurrency)
+) {
+  return NextResponse.json(
+    {
+      success: false,
+      error:
+        "Ongeldige valuta voor de aankoopprijs.",
+    },
+    {
+      status: 400,
+    },
+  );
+}
+
+   const companyData =
   companies.find(
     (item) =>
       item.id === companyId,
   );
 
-if (!companyData) {
+const instrumentData =
+  baseHoldings.find(
+    (item) =>
+      item.id === companyId &&
+      item.type === "etf",
+  );
+
+if (!companyData && !instrumentData) {
   return NextResponse.json(
     {
       success: false,
       error:
-        `Geen bedrijfsgegevens gevonden voor '${companyId}'.`,
+        `Geen aandeel of ETF/ETC gevonden voor '${companyId}'.`,
     },
     {
       status: 404,
@@ -174,26 +245,46 @@ if (!companyData) {
       );
     }
 
-    const holding = {
-      id:
-        `holding-${companyId}`,
+    const holding =
+  companyData
+    ? {
+        id:
+          `holding-${companyId}`,
 
-      companyId,
+        companyId,
 
-       name:
-    companyData.name,
+        name:
+          companyData.name,
 
-  ticker:
-    companyData.ticker,
+        ticker:
+          companyData.ticker,
 
-      quantity,
+        quantity,
 
-      type:
-        "equity" as const,
+        type:
+          "equity" as const,
 
-      unit:
-        "shares" as const,
-    };
+        unit:
+          "shares" as const,
+      }
+    : {
+        id:
+          instrumentData!.id,
+
+        name:
+          instrumentData!.name,
+
+        ticker:
+          instrumentData!.ticker,
+
+        quantity,
+
+        type:
+          "etf" as const,
+
+        unit:
+          "shares" as const,
+      };
 
     await writeWorkspaceHoldings(
       workspace.id,
@@ -202,6 +293,61 @@ if (!companyData) {
         holding,
       ],
     );
+
+    const transactions =
+  await readWorkspaceTransactions(
+    workspace.id,
+  );
+
+const marketSnapshot =
+  await getYahooMarketSnapshot();
+
+const transaction = {
+  id:
+    `transaction-${Date.now()}`,
+
+  holdingId:
+    holding.id,
+
+  type:
+    "buy" as const,
+
+  quantity,
+
+  price:
+    purchasePrice,
+
+  currency:
+    purchaseCurrency,
+
+  transactionValueEur:
+    quantity *
+    convertPriceToEur(
+      purchasePrice,
+      purchaseCurrency as
+        | "EUR"
+        | "CAD"
+        | "USD"
+        | "AUD"
+        | "GBP"
+        | "HKD",
+      marketSnapshot.exchangeRates,
+    ),
+
+  date:
+    new Date().toISOString(),
+
+  costs:
+    null,
+};
+
+await writeWorkspaceTransactions(
+  workspace.id,
+  [
+    ...transactions,
+    transaction,
+  ],
+);
 
     return NextResponse.json({
       success: true,

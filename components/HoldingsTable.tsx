@@ -46,12 +46,15 @@ type HoldingsTableProps = {
 
 function formatLocalPrice(
   value: number | null,
+  currency: string,
 ): string {
   if (value === null) {
     return "—";
   }
 
   return value.toLocaleString("nl-NL", {
+    style: "currency",
+    currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 4,
   });
@@ -147,6 +150,16 @@ const [
 ] = useState("");
 
 const [
+  newHoldingPurchasePrice,
+  setNewHoldingPurchasePrice,
+] = useState("");
+
+const [
+  newHoldingPurchaseCurrency,
+  setNewHoldingPurchaseCurrency,
+] = useState("EUR");
+
+const [
   isAddingHolding,
   setIsAddingHolding,
 ] = useState(false);
@@ -179,26 +192,25 @@ const [
 const addableCompanies =
   useMemo(
     () => {
-      const existingCompanyIds =
-        new Set(
-          positions
-            .map(
-              (position) =>
-                position.holding.companyId,
-            )
-            .filter(
-              (
-                companyId,
-              ): companyId is string =>
-                typeof companyId ===
-                "string",
-            ),
-        );
+      const existingInstrumentIds =
+  new Set(
+    positions.flatMap(
+      (position) => [
+        position.holding.companyId,
+        position.holding.id,
+      ],
+    ).filter(
+      (
+        id,
+      ): id is string =>
+        typeof id === "string",
+    ),
+  );
 
       return availableCompanies
         .filter(
           (company) =>
-            !existingCompanyIds.has(
+            !existingInstrumentIds.has(
               company.id,
             ),
         )
@@ -614,6 +626,14 @@ async function addHolding(): Promise<void> {
   const quantity =
     Number(normalizedQuantity);
 
+    const normalizedPurchasePrice =
+  newHoldingPurchasePrice
+    .trim()
+    .replace(",", ".");
+
+const purchasePrice =
+  Number(normalizedPurchasePrice);
+
   if (!newHoldingCompanyId) {
     setAddHoldingError(
       "Selecteer eerst een aandeel.",
@@ -634,6 +654,18 @@ async function addHolding(): Promise<void> {
     return;
   }
 
+  if (
+  normalizedPurchasePrice.length === 0 ||
+  !Number.isFinite(purchasePrice) ||
+  purchasePrice <= 0
+) {
+  setAddHoldingError(
+    "Vul een geldige aankoopprijs per aandeel groter dan 0 in.",
+  );
+
+  return;
+}
+
   setIsAddingHolding(true);
   setAddHoldingError(null);
 
@@ -650,11 +682,16 @@ async function addHolding(): Promise<void> {
           },
 
           body: JSON.stringify({
-            companyId:
-              newHoldingCompanyId,
+  companyId:
+    newHoldingCompanyId,
 
-            quantity,
-          }),
+  quantity,
+
+  purchasePrice,
+
+  purchaseCurrency:
+    newHoldingPurchaseCurrency,
+}),
         },
       );
 
@@ -674,9 +711,11 @@ async function addHolding(): Promise<void> {
       );
     }
 
-    setNewHoldingCompanyId("");
-    setNewHoldingQuantity("");
-    setIsAddHoldingOpen(false);
+   setNewHoldingCompanyId("");
+setNewHoldingQuantity("");
+setNewHoldingPurchasePrice("");
+setNewHoldingPurchaseCurrency("EUR");
+setIsAddHoldingOpen(false);
 
     window.location.reload();
   } catch (saveError) {
@@ -835,14 +874,14 @@ async function addHolding(): Promise<void> {
     addableCompanies.length === 0
   }
 >
-  + Aandeel toevoegen
+  + Positie toevoegen
 </button>
       </div>
 
       {isAddHoldingOpen && (
   <div className="workspace-create-form">
     <label>
-      <span>Aandeel</span>
+      <span>Instrument</span>
 
       <select
         value={
@@ -856,7 +895,7 @@ async function addHolding(): Promise<void> {
         disabled={isAddingHolding}
       >
         <option value="">
-          Selecteer een aandeel
+          Selecteer een instrument
         </option>
 
         {addableCompanies.map(
@@ -875,7 +914,7 @@ async function addHolding(): Promise<void> {
     </label>
 
     <label>
-      <span>Aantal aandelen</span>
+      <span>Aantal</span>
 
       <input
         type="text"
@@ -891,6 +930,44 @@ async function addHolding(): Promise<void> {
       />
     </label>
 
+    <label>
+  <span>Aankoopprijs per aandeel</span>
+
+  <input
+    type="text"
+    inputMode="decimal"
+    value={newHoldingPurchasePrice}
+    onChange={(event) =>
+      setNewHoldingPurchasePrice(
+        event.target.value,
+      )
+    }
+    placeholder="Bijvoorbeeld 50,25"
+    disabled={isAddingHolding}
+  />
+</label>
+
+<label>
+  <span>Valuta aankoopprijs</span>
+
+  <select
+    value={newHoldingPurchaseCurrency}
+    onChange={(event) =>
+      setNewHoldingPurchaseCurrency(
+        event.target.value,
+      )
+    }
+    disabled={isAddingHolding}
+  >
+    <option value="EUR">EUR (€)</option>
+    <option value="CAD">CAD ($)</option>
+    <option value="USD">USD ($)</option>
+    <option value="AUD">AUD ($)</option>
+    <option value="GBP">GBP (£)</option>
+    <option value="HKD">HKD ($)</option>
+  </select>
+</label>
+
     {addHoldingError && (
       <p className="workspace-selector-error">
         {addHoldingError}
@@ -905,8 +982,10 @@ async function addHolding(): Promise<void> {
           if (!isAddingHolding) {
             setIsAddHoldingOpen(false);
             setNewHoldingCompanyId("");
-            setNewHoldingQuantity("");
-            setAddHoldingError(null);
+setNewHoldingQuantity("");
+setNewHoldingPurchasePrice("");
+setNewHoldingPurchaseCurrency("EUR");
+setAddHoldingError(null);
           }
         }}
         disabled={isAddingHolding}
@@ -920,13 +999,16 @@ async function addHolding(): Promise<void> {
         onClick={() =>
           void addHolding()
         }
-        disabled={
-          isAddingHolding ||
-          !newHoldingCompanyId ||
-          newHoldingQuantity
-            .trim()
-            .length === 0
-        }
+      disabled={
+  isAddingHolding ||
+  !newHoldingCompanyId ||
+  newHoldingQuantity
+    .trim()
+    .length === 0 ||
+  newHoldingPurchasePrice
+    .trim()
+    .length === 0
+}
       >
         {isAddingHolding
           ? "Toevoegen..."
@@ -1126,6 +1208,7 @@ const phoenixAdvice =
                     <td>
   {formatLocalPrice(
     position.quote.price,
+    position.currency,
   )}
 </td>
 

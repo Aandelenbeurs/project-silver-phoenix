@@ -18,6 +18,10 @@ import {
   companies,
 } from "../../data/companies";
 
+import {
+  holdings,
+} from "../../data/holdings";
+
 export default async function HoldingsPage() {
   const portfolio = await getLivePortfolio();
 
@@ -118,15 +122,29 @@ const investmentScores =
   positions={positions}
   portfolioV2={portfolioV2}
   investmentScores={investmentScores}
-  availableCompanies={
-    companies.map(
-      (company) => ({
-        id: company.id,
-        name: company.name,
-        ticker: company.ticker,
-      }),
+ availableCompanies={[
+  ...companies.map(
+    (company) => ({
+      id: company.id,
+      name: company.name,
+      ticker: company.ticker,
+    }),
+  ),
+
+  ...holdings
+    .filter(
+      (holding) =>
+        holding.type === "etf" &&
+        typeof holding.ticker === "string",
     )
-  }
+    .map(
+      (holding) => ({
+        id: holding.id,
+        name: holding.name,
+        ticker: holding.ticker as string,
+      }),
+    ),
+]}
 />
       </section>
 
