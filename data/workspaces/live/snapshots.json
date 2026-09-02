@@ -518,5 +518,1523 @@
         "allocationPercent": 1.3939892702190295
       }
     ]
+  },
+  {
+    "id": "snapshot-live-2026-08-27",
+    "workspaceId": "live",
+    "capturedAt": "2026-08-27T07:07:33.065Z",
+    "totalMarketValueEur": 156436.33238412737,
+    "positions": [
+      {
+        "companyId": "onyx-gold",
+        "quantity": 660,
+        "marketValueEur": 664.7716739788667,
+        "allocationPercent": 0.42494711033401666
+      },
+      {
+        "companyId": "solstice-gold",
+        "quantity": 5000,
+        "marketValueEur": 278.0695791880368,
+        "allocationPercent": 0.17775255591216532
+      },
+      {
+        "companyId": "cassiar-gold",
+        "quantity": 14000,
+        "marketValueEur": 3738,
+        "allocationPercent": 2.3894704913059392
+      },
+      {
+        "companyId": "great-pacific-gold",
+        "quantity": 1908.396947,
+        "marketValueEur": 362.59541993,
+        "allocationPercent": 0.2317846592309846
+      },
+      {
+        "companyId": "walhalla-gold",
+        "quantity": 1908,
+        "marketValueEur": 117.90150157572762,
+        "allocationPercent": 0.07536708370675811
+      },
+      {
+        "companyId": "first-mining-gold",
+        "quantity": 14548,
+        "marketValueEur": 8306.908,
+        "allocationPercent": 5.310088694487222
+      },
+      {
+        "companyId": "freeman-gold",
+        "quantity": 19410,
+        "marketValueEur": 4309.02,
+        "allocationPercent": 2.7544879979794326
+      },
+      {
+        "companyId": "trx-gold",
+        "quantity": 3000,
+        "marketValueEur": 3000,
+        "allocationPercent": 1.9177130748843814
+      },
+      {
+        "companyId": "golden-goliath",
+        "quantity": 28000,
+        "marketValueEur": 1288,
+        "allocationPercent": 0.8233381468170277
+      },
+      {
+        "companyId": "vista-gold",
+        "quantity": 806.451612,
+        "marketValueEur": 1566.129030504,
+        "allocationPercent": 1.0011287062511736
+      },
+      {
+        "companyId": "spanish-mountain",
+        "quantity": 12500,
+        "marketValueEur": 2725,
+        "allocationPercent": 1.741922709686646
+      },
+      {
+        "companyId": "minnova",
+        "quantity": 10000,
+        "marketValueEur": 985,
+        "allocationPercent": 0.6296491262537052
+      },
+      {
+        "companyId": "new-murchison",
+        "quantity": 23750,
+        "marketValueEur": 914.375,
+        "allocationPercent": 0.5845029642824687
+      },
+      {
+        "companyId": "silver-x",
+        "quantity": 21500,
+        "marketValueEur": 12620.5,
+        "allocationPercent": 8.067499287192778
+      },
+      {
+        "companyId": "impact-silver",
+        "quantity": 63880,
+        "marketValueEur": 11766.696,
+        "allocationPercent": 7.521715589129917
+      },
+      {
+        "companyId": "silver47",
+        "quantity": 13407,
+        "marketValueEur": 6167.22,
+        "allocationPercent": 3.942319476562818
+      },
+      {
+        "companyId": "alaska-silver",
+        "quantity": 11500,
+        "marketValueEur": 5100.25,
+        "allocationPercent": 3.2602720367263553
+      },
+      {
+        "companyId": "silver-dollar",
+        "quantity": 7000,
+        "marketValueEur": 1169,
+        "allocationPercent": 0.7472688615132805
+      },
+      {
+        "companyId": "first-andes",
+        "quantity": 17500,
+        "marketValueEur": 831.25,
+        "allocationPercent": 0.5313663311658806
+      },
+      {
+        "companyId": "silver-hammer",
+        "quantity": 16000,
+        "marketValueEur": 600,
+        "allocationPercent": 0.38354261497687625
+      },
+      {
+        "companyId": "tier-one-silver",
+        "quantity": 92000,
+        "marketValueEur": 4379.200000000001,
+        "allocationPercent": 2.7993496991778946
+      },
+      {
+        "companyId": "silver-elephant",
+        "quantity": 1477,
+        "marketValueEur": 116.683,
+        "allocationPercent": 0.07458817157224476
+      },
+      {
+        "companyId": "americore",
+        "quantity": 22365,
+        "marketValueEur": 4383.54,
+        "allocationPercent": 2.80212399075956
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 10975,
+        "marketValueEur": 8560.5,
+        "allocationPercent": 5.472194259182582
+      },
+      {
+        "companyId": "defiance-silver",
+        "quantity": 15250,
+        "marketValueEur": 1714.1,
+        "allocationPercent": 1.0957173272197724
+      },
+      {
+        "companyId": "discovery-mining",
+        "quantity": 1950,
+        "marketValueEur": 15288,
+        "allocationPercent": 9.772665829610807
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 13550,
+        "marketValueEur": 3644.9500000000003,
+        "allocationPercent": 2.329989424099942
+      },
+      {
+        "companyId": "gr-silver",
+        "quantity": 21950,
+        "marketValueEur": 5487.5,
+        "allocationPercent": 3.5078168328093478
+      },
+      {
+        "companyId": "kuya-silver",
+        "quantity": 23435,
+        "marketValueEur": 9819.265,
+        "allocationPercent": 6.276844292084862
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 13700,
+        "marketValueEur": 3137.3,
+        "allocationPercent": 2.0054804099449233
+      },
+      {
+        "companyId": "abrasilver",
+        "quantity": 100,
+        "marketValueEur": 992.3994315021935,
+        "allocationPercent": 0.6343791217665278
+      },
+      {
+        "companyId": "captain-silver",
+        "quantity": 400,
+        "marketValueEur": 484.4590001853797,
+        "allocationPercent": 0.3096844529669725
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 2133,
+        "marketValueEur": 1726.6452450101958,
+        "allocationPercent": 1.1037367206809996
+      },
+      {
+        "companyId": "silver-storm",
+        "quantity": 1500,
+        "marketValueEur": 489,
+        "allocationPercent": 0.31258723120615417
+      },
+      {
+        "companyId": "argentum-silver",
+        "quantity": 19609,
+        "marketValueEur": 969.3629116974603,
+        "allocationPercent": 0.6196533100234045
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 20500,
+        "marketValueEur": 570.0426373354755,
+        "allocationPercent": 0.364392739619939
+      },
+      {
+        "companyId": "monarca-minerals",
+        "quantity": 75000,
+        "marketValueEur": 695.1739479700921,
+        "allocationPercent": 0.44438138978041336
+      },
+      {
+        "companyId": "southern-silver",
+        "quantity": 28000,
+        "marketValueEur": 10346,
+        "allocationPercent": 6.613553157584602
+      },
+      {
+        "companyId": "zacatecas-silver",
+        "quantity": 142500,
+        "marketValueEur": 4987.500000000001,
+        "allocationPercent": 3.1881979869952843
+      },
+      {
+        "companyId": "excellon",
+        "quantity": 15000,
+        "marketValueEur": 3885,
+        "allocationPercent": 2.4834384319752734
+      },
+      {
+        "companyId": "americas-gold-silver",
+        "quantity": 480,
+        "marketValueEur": 2217.6,
+        "allocationPercent": 1.4175735049545346
+      }
+    ]
+  },
+  {
+    "id": "snapshot-live-2026-08-28",
+    "workspaceId": "live",
+    "capturedAt": "2026-08-28T07:37:48.623Z",
+    "totalMarketValueEur": 159616.64853609467,
+    "positions": [
+      {
+        "companyId": "onyx-gold",
+        "quantity": 660,
+        "marketValueEur": 654.5995536821225,
+        "allocationPercent": 0.41010731630171754
+      },
+      {
+        "companyId": "solstice-gold",
+        "quantity": 5000,
+        "marketValueEur": 278.9486734440863,
+        "allocationPercent": 0.1747616404694819
+      },
+      {
+        "companyId": "cassiar-gold",
+        "quantity": 14000,
+        "marketValueEur": 3878.0000000000005,
+        "allocationPercent": 2.429571122791151
+      },
+      {
+        "companyId": "great-pacific-gold",
+        "quantity": 1908.396947,
+        "marketValueEur": 347.328244354,
+        "allocationPercent": 0.21760151434044014
+      },
+      {
+        "companyId": "walhalla-gold",
+        "quantity": 1908,
+        "marketValueEur": 130.10166129432184,
+        "allocationPercent": 0.08150882911496635
+      },
+      {
+        "companyId": "first-mining-gold",
+        "quantity": 14548,
+        "marketValueEur": 8408.743999999999,
+        "allocationPercent": 5.268087055529486
+      },
+      {
+        "companyId": "freeman-gold",
+        "quantity": 19410,
+        "marketValueEur": 4464.3,
+        "allocationPercent": 2.7968886961001895
+      },
+      {
+        "companyId": "trx-gold",
+        "quantity": 3000,
+        "marketValueEur": 3030,
+        "allocationPercent": 1.8982982212628126
+      },
+      {
+        "companyId": "golden-goliath",
+        "quantity": 28000,
+        "marketValueEur": 1302,
+        "allocationPercent": 0.8157043841861986
+      },
+      {
+        "companyId": "vista-gold",
+        "quantity": 806.451612,
+        "marketValueEur": 1575.8064498479998,
+        "allocationPercent": 0.987244416105916
+      },
+      {
+        "companyId": "spanish-mountain",
+        "quantity": 12500,
+        "marketValueEur": 2750,
+        "allocationPercent": 1.7228779235883611
+      },
+      {
+        "companyId": "minnova",
+        "quantity": 10000,
+        "marketValueEur": 955,
+        "allocationPercent": 0.5983085152825035
+      },
+      {
+        "companyId": "new-murchison",
+        "quantity": 23750,
+        "marketValueEur": 950,
+        "allocationPercent": 0.5951760099668884
+      },
+      {
+        "companyId": "silver-x",
+        "quantity": 21500,
+        "marketValueEur": 12383.999999999998,
+        "allocationPercent": 7.7585891657157315
+      },
+      {
+        "companyId": "impact-silver",
+        "quantity": 63880,
+        "marketValueEur": 11907.232,
+        "allocationPercent": 7.459893506852687
+      },
+      {
+        "companyId": "silver47",
+        "quantity": 13407,
+        "marketValueEur": 6234.255,
+        "allocationPercent": 3.9057673852801305
+      },
+      {
+        "companyId": "alaska-silver",
+        "quantity": 11500,
+        "marketValueEur": 5255.5,
+        "allocationPercent": 3.2925763372431387
+      },
+      {
+        "companyId": "silver-dollar",
+        "quantity": 7000,
+        "marketValueEur": 1288,
+        "allocationPercent": 0.8069333693024761
+      },
+      {
+        "companyId": "first-andes",
+        "quantity": 17500,
+        "marketValueEur": 831.25,
+        "allocationPercent": 0.5207790087210273
+      },
+      {
+        "companyId": "silver-hammer",
+        "quantity": 16000,
+        "marketValueEur": 600,
+        "allocationPercent": 0.3759006378738242
+      },
+      {
+        "companyId": "tier-one-silver",
+        "quantity": 92000,
+        "marketValueEur": 4342.4,
+        "allocationPercent": 2.7205182165054906
+      },
+      {
+        "companyId": "silver-elephant",
+        "quantity": 1477,
+        "marketValueEur": 134.40699999999998,
+        "allocationPercent": 0.08420612839117848
+      },
+      {
+        "companyId": "americore",
+        "quantity": 22365,
+        "marketValueEur": 4338.81,
+        "allocationPercent": 2.718269077688879
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 10975,
+        "marketValueEur": 8549.525,
+        "allocationPercent": 5.356286501697012
+      },
+      {
+        "companyId": "defiance-silver",
+        "quantity": 15250,
+        "marketValueEur": 1817.8,
+        "allocationPercent": 1.1388536325450627
+      },
+      {
+        "companyId": "discovery-mining",
+        "quantity": 1950,
+        "marketValueEur": 15385.5,
+        "allocationPercent": 9.639032106679538
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 13550,
+        "marketValueEur": 3753.3500000000004,
+        "allocationPercent": 2.351477765272864
+      },
+      {
+        "companyId": "gr-silver",
+        "quantity": 21950,
+        "marketValueEur": 5333.849999999999,
+        "allocationPercent": 3.3416626955388287
+      },
+      {
+        "companyId": "kuya-silver",
+        "quantity": 23435,
+        "marketValueEur": 10241.095,
+        "allocationPercent": 6.416056905044052
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 13700,
+        "marketValueEur": 3123.6,
+        "allocationPercent": 1.956938720771129
+      },
+      {
+        "companyId": "abrasilver",
+        "quantity": 100,
+        "marketValueEur": 1050.706669972725,
+        "allocationPercent": 0.6582688457683817
+      },
+      {
+        "companyId": "captain-silver",
+        "quantity": 400,
+        "marketValueEur": 518.2246466650137,
+        "allocationPercent": 0.32466829207219305
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 2133,
+        "marketValueEur": 1784.9925613687083,
+        "allocationPercent": 1.1182997373642147
+      },
+      {
+        "companyId": "silver-storm",
+        "quantity": 1500,
+        "marketValueEur": 522,
+        "allocationPercent": 0.3270335549502271
+      },
+      {
+        "companyId": "argentum-silver",
+        "quantity": 19609,
+        "marketValueEur": 972.4274733449046,
+        "allocationPercent": 0.6092268458606348
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 20500,
+        "marketValueEur": 571.8447805603769,
+        "allocationPercent": 0.3582613629624379
+      },
+      {
+        "companyId": "monarca-minerals",
+        "quantity": 75000,
+        "marketValueEur": 697.3716836102158,
+        "allocationPercent": 0.43690410117370476
+      },
+      {
+        "companyId": "southern-silver",
+        "quantity": 28000,
+        "marketValueEur": 10990,
+        "allocationPercent": 6.885246683722214
+      },
+      {
+        "companyId": "zacatecas-silver",
+        "quantity": 142500,
+        "marketValueEur": 5272.5,
+        "allocationPercent": 3.3032268553162303
+      },
+      {
+        "companyId": "excellon",
+        "quantity": 15000,
+        "marketValueEur": 4417.5,
+        "allocationPercent": 2.767568446346031
+      },
+      {
+        "companyId": "americas-gold-silver",
+        "quantity": 480,
+        "marketValueEur": 2304.96,
+        "allocationPercent": 1.444059890456083
+      }
+    ]
+  },
+  {
+    "id": "snapshot-live-2026-08-29",
+    "workspaceId": "live",
+    "capturedAt": "2026-08-29T08:15:49.603Z",
+    "totalMarketValueEur": 162112.9469914689,
+    "positions": [
+      {
+        "companyId": "onyx-gold",
+        "quantity": 660,
+        "marketValueEur": 655.8598844792249,
+        "allocationPercent": 0.4045697130616836
+      },
+      {
+        "companyId": "solstice-gold",
+        "quantity": 5000,
+        "marketValueEur": 310.539718029936,
+        "allocationPercent": 0.19155762929056985
+      },
+      {
+        "companyId": "cassiar-gold",
+        "quantity": 14000,
+        "marketValueEur": 4043.227128749767,
+        "allocationPercent": 2.4940803333632195
+      },
+      {
+        "companyId": "great-pacific-gold",
+        "quantity": 1908.396947,
+        "marketValueEur": 391.1378128749767,
+        "allocationPercent": 0.24127487664236968
+      },
+      {
+        "companyId": "walhalla-gold",
+        "quantity": 1908,
+        "marketValueEur": 118.50195640022359,
+        "allocationPercent": 0.07309839133728147
+      },
+      {
+        "companyId": "first-mining-gold",
+        "quantity": 14548,
+        "marketValueEur": 8041.562635861126,
+        "allocationPercent": 4.960469095836195
+      },
+      {
+        "companyId": "freeman-gold",
+        "quantity": 19410,
+        "marketValueEur": 4460.406185951183,
+        "allocationPercent": 2.7514188525521712
+      },
+      {
+        "companyId": "trx-gold",
+        "quantity": 3000,
+        "marketValueEur": 2981.1812930873857,
+        "allocationPercent": 1.8389532411894707
+      },
+      {
+        "companyId": "golden-goliath",
+        "quantity": 28000,
+        "marketValueEur": 1565.1201788708775,
+        "allocationPercent": 0.965450451624472
+      },
+      {
+        "companyId": "vista-gold",
+        "quantity": 806.451612,
+        "marketValueEur": 1538.1531565720202,
+        "allocationPercent": 0.9488157393455839
+      },
+      {
+        "companyId": "spanish-mountain",
+        "quantity": 12500,
+        "marketValueEur": 2872.4923917769083,
+        "allocationPercent": 1.7719080709377715
+      },
+      {
+        "companyId": "minnova",
+        "quantity": 10000,
+        "marketValueEur": 1086.889013104776,
+        "allocationPercent": 0.6704517025169945
+      },
+      {
+        "companyId": "new-murchison",
+        "quantity": 23750,
+        "marketValueEur": 1072.1353039391504,
+        "allocationPercent": 0.6613508198056327
+      },
+      {
+        "companyId": "silver-x",
+        "quantity": 21500,
+        "marketValueEur": 12418.483324017141,
+        "allocationPercent": 7.660389595329889
+      },
+      {
+        "companyId": "impact-silver",
+        "quantity": 63880,
+        "marketValueEur": 11902.366312651387,
+        "allocationPercent": 7.3420208154489615
+      },
+      {
+        "companyId": "silver47",
+        "quantity": 13407,
+        "marketValueEur": 6411.645239426122,
+        "allocationPercent": 3.955048229283952
+      },
+      {
+        "companyId": "alaska-silver",
+        "quantity": 11500,
+        "marketValueEur": 5356.810136016396,
+        "allocationPercent": 3.3043691052623303
+      },
+      {
+        "companyId": "silver-dollar",
+        "quantity": 7000,
+        "marketValueEur": 1282.5290354636359,
+        "allocationPercent": 0.7911330089700537
+      },
+      {
+        "companyId": "first-andes",
+        "quantity": 17500,
+        "marketValueEur": 923.8556611390596,
+        "allocationPercent": 0.5698839471394453
+      },
+      {
+        "companyId": "silver-hammer",
+        "quantity": 16000,
+        "marketValueEur": 745.2953232718464,
+        "allocationPercent": 0.45973831029736767
+      },
+      {
+        "companyId": "tier-one-silver",
+        "quantity": 92000,
+        "marketValueEur": 4856.8411899882,
+        "allocationPercent": 2.995961322104513
+      },
+      {
+        "companyId": "silver-elephant",
+        "quantity": 1477,
+        "marketValueEur": 133.01347742376248,
+        "allocationPercent": 0.08204987935402978
+      },
+      {
+        "companyId": "americore",
+        "quantity": 22365,
+        "marketValueEur": 4583.845723868083,
+        "allocationPercent": 2.827563010195173
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 10975,
+        "marketValueEur": 8520.433513446369,
+        "allocationPercent": 5.2558624536600105
+      },
+      {
+        "companyId": "defiance-silver",
+        "quantity": 15250,
+        "marketValueEur": 1752.220358983914,
+        "allocationPercent": 1.0808639232720403
+      },
+      {
+        "companyId": "discovery-mining",
+        "quantity": 1950,
+        "marketValueEur": 15114.589155953046,
+        "allocationPercent": 9.323492932830616
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 13550,
+        "marketValueEur": 3829.109993168126,
+        "allocationPercent": 2.3620013479673716
+      },
+      {
+        "companyId": "gr-silver",
+        "quantity": 21950,
+        "marketValueEur": 5453.077448605676,
+        "allocationPercent": 3.3637519703424066
+      },
+      {
+        "companyId": "kuya-silver",
+        "quantity": 23435,
+        "marketValueEur": 10625.147506366064,
+        "allocationPercent": 6.554163441939777
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 13700,
+        "marketValueEur": 3063.163778647289,
+        "allocationPercent": 1.889524455322181
+      },
+      {
+        "companyId": "abrasilver",
+        "quantity": 100,
+        "marketValueEur": 986.2741444630768,
+        "allocationPercent": 0.60838703062685
+      },
+      {
+        "companyId": "captain-silver",
+        "quantity": 400,
+        "marketValueEur": 509.285137569095,
+        "allocationPercent": 0.31415451203653455
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 2133,
+        "marketValueEur": 1735.4387926215763,
+        "allocationPercent": 1.070512148985178
+      },
+      {
+        "companyId": "silver-storm",
+        "quantity": 1500,
+        "marketValueEur": 521.7067262902926,
+        "allocationPercent": 0.32181681720815747
+      },
+      {
+        "companyId": "argentum-silver",
+        "quantity": 19609,
+        "marketValueEur": 974.2997329358425,
+        "allocationPercent": 0.6010005684414056
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 20500,
+        "marketValueEur": 509.28513756909507,
+        "allocationPercent": 0.31415451203653455
+      },
+      {
+        "companyId": "monarca-minerals",
+        "quantity": 75000,
+        "marketValueEur": 698.714365567356,
+        "allocationPercent": 0.4310046659037822
+      },
+      {
+        "companyId": "southern-silver",
+        "quantity": 28000,
+        "marketValueEur": 10955.841252096143,
+        "allocationPercent": 6.758153161371306
+      },
+      {
+        "companyId": "zacatecas-silver",
+        "quantity": 142500,
+        "marketValueEur": 6195.267374697225,
+        "allocationPercent": 3.8215747043468697
+      },
+      {
+        "companyId": "excellon",
+        "quantity": 15000,
+        "marketValueEur": 4518.352897335569,
+        "allocationPercent": 2.7871635061777913
+      },
+      {
+        "companyId": "americas-gold-silver",
+        "quantity": 480,
+        "marketValueEur": 2247.810694987889,
+        "allocationPercent": 1.3865707438568609
+      }
+    ]
+  },
+  {
+    "id": "snapshot-live-2026-08-31",
+    "workspaceId": "live",
+    "capturedAt": "2026-08-31T11:47:58.473Z",
+    "totalMarketValueEur": 155690.43214886193,
+    "positions": [
+      {
+        "companyId": "onyx-gold",
+        "quantity": 660,
+        "marketValueEur": 655.7784263801775,
+        "allocationPercent": 0.42120663250080853
+      },
+      {
+        "companyId": "solstice-gold",
+        "quantity": 5000,
+        "marketValueEur": 310.50114885425074,
+        "allocationPercent": 0.1994349585704586
+      },
+      {
+        "companyId": "cassiar-gold",
+        "quantity": 14000,
+        "marketValueEur": 3738,
+        "allocationPercent": 2.400918250664207
+      },
+      {
+        "companyId": "great-pacific-gold",
+        "quantity": 1908.396947,
+        "marketValueEur": 372.137404665,
+        "allocationPercent": 0.23902393970439006
+      },
+      {
+        "companyId": "walhalla-gold",
+        "quantity": 1908,
+        "marketValueEur": 118.48723840278208,
+        "allocationPercent": 0.076104380190487
+      },
+      {
+        "companyId": "first-mining-gold",
+        "quantity": 14548,
+        "marketValueEur": 7724.988,
+        "allocationPercent": 4.961761550391116
+      },
+      {
+        "companyId": "freeman-gold",
+        "quantity": 19410,
+        "marketValueEur": 3882,
+        "allocationPercent": 2.4934094834345775
+      },
+      {
+        "companyId": "trx-gold",
+        "quantity": 3000,
+        "marketValueEur": 2880,
+        "allocationPercent": 1.8498246554074147
+      },
+      {
+        "companyId": "golden-goliath",
+        "quantity": 28000,
+        "marketValueEur": 1302,
+        "allocationPercent": 0.8362748962987687
+      },
+      {
+        "companyId": "vista-gold",
+        "quantity": 806.451612,
+        "marketValueEur": 1522.5806434559997,
+        "allocationPercent": 0.9779538937885397
+      },
+      {
+        "companyId": "spanish-mountain",
+        "quantity": 12500,
+        "marketValueEur": 2737.5,
+        "allocationPercent": 1.7582968729784019
+      },
+      {
+        "companyId": "minnova",
+        "quantity": 10000,
+        "marketValueEur": 990,
+        "allocationPercent": 0.6358772252962988
+      },
+      {
+        "companyId": "new-murchison",
+        "quantity": 23750,
+        "marketValueEur": 902.5,
+        "allocationPercent": 0.579675955383747
+      },
+      {
+        "companyId": "silver-x",
+        "quantity": 21500,
+        "marketValueEur": 12104.499999999998,
+        "allocationPercent": 7.774723104645502
+      },
+      {
+        "companyId": "impact-silver",
+        "quantity": 63880,
+        "marketValueEur": 11830.576000000001,
+        "allocationPercent": 7.598781657108066
+      },
+      {
+        "companyId": "silver47",
+        "quantity": 13407,
+        "marketValueEur": 6140.406,
+        "allocationPercent": 3.9439841711845904
+      },
+      {
+        "companyId": "alaska-silver",
+        "quantity": 11500,
+        "marketValueEur": 5175,
+        "allocationPercent": 3.3239036776851987
+      },
+      {
+        "companyId": "silver-dollar",
+        "quantity": 7000,
+        "marketValueEur": 1218,
+        "allocationPercent": 0.7823216771827192
+      },
+      {
+        "companyId": "first-andes",
+        "quantity": 17500,
+        "marketValueEur": 743.75,
+        "allocationPercent": 0.4777107942566891
+      },
+      {
+        "companyId": "silver-hammer",
+        "quantity": 16000,
+        "marketValueEur": 504,
+        "allocationPercent": 0.32371931469629756
+      },
+      {
+        "companyId": "tier-one-silver",
+        "quantity": 92000,
+        "marketValueEur": 4618.400000000001,
+        "allocationPercent": 2.9663993710186127
+      },
+      {
+        "companyId": "silver-elephant",
+        "quantity": 1477,
+        "marketValueEur": 122.59100000000001,
+        "allocationPercent": 0.07874022719828139
+      },
+      {
+        "companyId": "americore",
+        "quantity": 22365,
+        "marketValueEur": 4361.175,
+        "allocationPercent": 2.8011836949814
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 10975,
+        "marketValueEur": 8253.2,
+        "allocationPercent": 5.301032238197387
+      },
+      {
+        "companyId": "defiance-silver",
+        "quantity": 15250,
+        "marketValueEur": 1747.6499999999999,
+        "allocationPercent": 1.122515992716239
+      },
+      {
+        "companyId": "discovery-mining",
+        "quantity": 1950,
+        "marketValueEur": 15093,
+        "allocationPercent": 9.694237334744482
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 13550,
+        "marketValueEur": 3699.15,
+        "allocationPercent": 2.375964886823034
+      },
+      {
+        "companyId": "gr-silver",
+        "quantity": 21950,
+        "marketValueEur": 5333.849999999999,
+        "allocationPercent": 3.425933068835013
+      },
+      {
+        "companyId": "kuya-silver",
+        "quantity": 23435,
+        "marketValueEur": 9842.699999999999,
+        "allocationPercent": 6.32196844992311
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 13700,
+        "marketValueEur": 2945.5,
+        "allocationPercent": 1.8918953203133821
+      },
+      {
+        "companyId": "abrasilver",
+        "quantity": 100,
+        "marketValueEur": 986.1516487611003,
+        "allocationPercent": 0.6334054284197764
+      },
+      {
+        "companyId": "captain-silver",
+        "quantity": 400,
+        "marketValueEur": 509.22188412097114,
+        "allocationPercent": 0.32707333205555206
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 2133,
+        "marketValueEur": 1735.2232503260261,
+        "allocationPercent": 1.114534288572665
+      },
+      {
+        "companyId": "silver-storm",
+        "quantity": 1500,
+        "marketValueEur": 520.5,
+        "allocationPercent": 0.3343172684512359
+      },
+      {
+        "companyId": "argentum-silver",
+        "quantity": 19609,
+        "marketValueEur": 974.1787244612805,
+        "allocationPercent": 0.6257152164172997
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 20500,
+        "marketValueEur": 509.2218841209712,
+        "allocationPercent": 0.3270733320555521
+      },
+      {
+        "companyId": "monarca-minerals",
+        "quantity": 75000,
+        "marketValueEur": 698.6275849220641,
+        "allocationPercent": 0.4487286567835318
+      },
+      {
+        "companyId": "southern-silver",
+        "quantity": 28000,
+        "marketValueEur": 11312,
+        "allocationPercent": 7.265700174294679
+      },
+      {
+        "companyId": "zacatecas-silver",
+        "quantity": 142500,
+        "marketValueEur": 4845,
+        "allocationPercent": 3.111944602586432
+      },
+      {
+        "companyId": "excellon",
+        "quantity": 15000,
+        "marketValueEur": 4335,
+        "allocationPercent": 2.784371486524702
+      },
+      {
+        "companyId": "americas-gold-silver",
+        "quantity": 480,
+        "marketValueEur": 2293.4399999999996,
+        "allocationPercent": 1.473077033922771
+      }
+    ]
+  },
+  {
+    "id": "snapshot-live-2026-09-01",
+    "workspaceId": "live",
+    "capturedAt": "2026-09-01T15:23:02.889Z",
+    "totalMarketValueEur": 144828.98522209068,
+    "positions": [
+      {
+        "companyId": "onyx-gold",
+        "quantity": 660,
+        "marketValueEur": 655.4121151936446,
+        "allocationPercent": 0.45254208899454124
+      },
+      {
+        "companyId": "solstice-gold",
+        "quantity": 5000,
+        "marketValueEur": 341.36047666335656,
+        "allocationPercent": 0.2356990046846569
+      },
+      {
+        "companyId": "cassiar-gold",
+        "quantity": 14000,
+        "marketValueEur": 3736.345580933466,
+        "allocationPercent": 2.5798327421847898
+      },
+      {
+        "companyId": "great-pacific-gold",
+        "quantity": 1908.396947,
+        "marketValueEur": 343.4924991497021,
+        "allocationPercent": 0.23717110122878177
+      },
+      {
+        "companyId": "walhalla-gold",
+        "quantity": 1908,
+        "marketValueEur": 118.42105263157896,
+        "allocationPercent": 0.08176612744333189
+      },
+      {
+        "companyId": "first-mining-gold",
+        "quantity": 14548,
+        "marketValueEur": 7674.900695134062,
+        "allocationPercent": 5.299285003871872
+      },
+      {
+        "companyId": "freeman-gold",
+        "quantity": 19410,
+        "marketValueEur": 4638.064796425026,
+        "allocationPercent": 3.2024423766504335
+      },
+      {
+        "companyId": "trx-gold",
+        "quantity": 3000,
+        "marketValueEur": 2830.1886792452833,
+        "allocationPercent": 1.9541590206582464
+      },
+      {
+        "companyId": "golden-goliath",
+        "quantity": 28000,
+        "marketValueEur": 955.8093346573983,
+        "allocationPercent": 0.6599572131170393
+      },
+      {
+        "companyId": "vista-gold",
+        "quantity": 806.451612,
+        "marketValueEur": 1477.7180956281798,
+        "allocationPercent": 1.0203193051184787
+      },
+      {
+        "companyId": "spanish-mountain",
+        "quantity": 12500,
+        "marketValueEur": 2715.3674280039722,
+        "allocationPercent": 1.874878446355225
+      },
+      {
+        "companyId": "minnova",
+        "quantity": 10000,
+        "marketValueEur": 1086.146971201589,
+        "allocationPercent": 0.74995137854209
+      },
+      {
+        "companyId": "new-murchison",
+        "quantity": 23750,
+        "marketValueEur": 1128.858024691358,
+        "allocationPercent": 0.7794420591708834
+      },
+      {
+        "companyId": "silver-x",
+        "quantity": 21500,
+        "marketValueEur": 11876.24131082423,
+        "allocationPercent": 8.200182644801652
+      },
+      {
+        "companyId": "impact-silver",
+        "quantity": 63880,
+        "marketValueEur": 11497.765640516385,
+        "allocationPercent": 7.9388567301531
+      },
+      {
+        "companyId": "silver47",
+        "quantity": 13407,
+        "marketValueEur": 6324.056603773585,
+        "allocationPercent": 4.366568331660851
+      },
+      {
+        "companyId": "alaska-silver",
+        "quantity": 11500,
+        "marketValueEur": 4996.276067527308,
+        "allocationPercent": 3.4497763412936138
+      },
+      {
+        "companyId": "silver-dollar",
+        "quantity": 7000,
+        "marketValueEur": 1259.9304865938432,
+        "allocationPercent": 0.8699435991088245
+      },
+      {
+        "companyId": "first-andes",
+        "quantity": 17500,
+        "marketValueEur": 868.9175769612712,
+        "allocationPercent": 0.599961102833672
+      },
+      {
+        "companyId": "silver-hammer",
+        "quantity": 16000,
+        "marketValueEur": 794.4389275074479,
+        "allocationPercent": 0.5485358654479288
+      },
+      {
+        "companyId": "tier-one-silver",
+        "quantity": 92000,
+        "marketValueEur": 4568.023833167826,
+        "allocationPercent": 3.1540812263255904
+      },
+      {
+        "companyId": "silver-elephant",
+        "quantity": 1477,
+        "marketValueEur": 137.50620655412115,
+        "allocationPercent": 0.0949438445234286
+      },
+      {
+        "companyId": "americore",
+        "quantity": 22365,
+        "marketValueEur": 4580.716236345582,
+        "allocationPercent": 3.162844943863411
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 10975,
+        "marketValueEur": 8037.797914597816,
+        "allocationPercent": 5.549854473033907
+      },
+      {
+        "companyId": "defiance-silver",
+        "quantity": 15250,
+        "marketValueEur": 1751.0240814299902,
+        "allocationPercent": 1.2090287581210695
+      },
+      {
+        "companyId": "discovery-mining",
+        "quantity": 1950,
+        "marketValueEur": 14680.672790466735,
+        "allocationPercent": 10.136557104197331
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 13550,
+        "marketValueEur": 3658.2981628599805,
+        "allocationPercent": 2.5259433788409797
+      },
+      {
+        "companyId": "gr-silver",
+        "quantity": 21950,
+        "marketValueEur": 5108.769860973188,
+        "allocationPercent": 3.5274498769283307
+      },
+      {
+        "companyId": "kuya-silver",
+        "quantity": 23435,
+        "marketValueEur": 10326.99230387289,
+        "allocationPercent": 7.13047342563146
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 13700,
+        "marketValueEur": 2976.042701092354,
+        "allocationPercent": 2.0548667772053273
+      },
+      {
+        "companyId": "abrasilver",
+        "quantity": 100,
+        "marketValueEur": 929.121151936445,
+        "allocationPercent": 0.641529836387148
+      },
+      {
+        "companyId": "captain-silver",
+        "quantity": 400,
+        "marketValueEur": 501.4895729890765,
+        "allocationPercent": 0.346263265064005
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 2133,
+        "marketValueEur": 1654.8224925521351,
+        "allocationPercent": 1.1426044931644845
+      },
+      {
+        "companyId": "silver-storm",
+        "quantity": 1500,
+        "marketValueEur": 488.766137040715,
+        "allocationPercent": 0.33747812034394054
+      },
+      {
+        "companyId": "argentum-silver",
+        "quantity": 19609,
+        "marketValueEur": 973.6345580933466,
+        "allocationPercent": 0.6722649865980271
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 20500,
+        "marketValueEur": 572.5546176762662,
+        "allocationPercent": 0.39533151240290176
+      },
+      {
+        "companyId": "monarca-minerals",
+        "quantity": 75000,
+        "marketValueEur": 698.237338629593,
+        "allocationPercent": 0.4821116004913436
+      },
+      {
+        "companyId": "zacatecas-silver",
+        "quantity": 142500,
+        "marketValueEur": 5748.820754716981,
+        "allocationPercent": 3.9693855107120624
+      },
+      {
+        "companyId": "excellon",
+        "quantity": 15000,
+        "marketValueEur": 4189.4240317775575,
+        "allocationPercent": 2.892669602948062
+      },
+      {
+        "companyId": "americas-gold-silver",
+        "quantity": 480,
+        "marketValueEur": 2147.9642502482625,
+        "allocationPercent": 1.4831038462048374
+      }
+    ]
+  },
+  {
+    "id": "snapshot-live-2026-09-02",
+    "workspaceId": "live",
+    "capturedAt": "2026-09-02T08:17:21.511Z",
+    "totalMarketValueEur": 154246.44981615408,
+    "positions": [
+      {
+        "companyId": "onyx-gold",
+        "quantity": 660,
+        "marketValueEur": 648.5430874147551,
+        "allocationPercent": 0.42045900452668555
+      },
+      {
+        "companyId": "solstice-gold",
+        "quantity": 5000,
+        "marketValueEur": 340.97954122752634,
+        "allocationPercent": 0.22106151657554446
+      },
+      {
+        "companyId": "cassiar-gold",
+        "quantity": 14000,
+        "marketValueEur": 3775.573465592064,
+        "allocationPercent": 2.447753883536483
+      },
+      {
+        "companyId": "great-pacific-gold",
+        "quantity": 1908.396947,
+        "marketValueEur": 325.362157734036,
+        "allocationPercent": 0.21093656166597952
+      },
+      {
+        "companyId": "walhalla-gold",
+        "quantity": 1908,
+        "marketValueEur": 124.20334779913205,
+        "allocationPercent": 0.08052266223771741
+      },
+      {
+        "companyId": "first-mining-gold",
+        "quantity": 14548,
+        "marketValueEur": 7305.567265964042,
+        "allocationPercent": 4.736295243534959
+      },
+      {
+        "companyId": "freeman-gold",
+        "quantity": 19410,
+        "marketValueEur": 4632.8890266584,
+        "allocationPercent": 3.003562825711923
+      },
+      {
+        "companyId": "trx-gold",
+        "quantity": 3000,
+        "marketValueEur": 2789.8326100433974,
+        "allocationPercent": 1.8086851356180913
+      },
+      {
+        "companyId": "golden-goliath",
+        "quantity": 28000,
+        "marketValueEur": 1041.537507749535,
+        "allocationPercent": 0.675242450630754
+      },
+      {
+        "companyId": "vista-gold",
+        "quantity": 806.451612,
+        "marketValueEur": 1462.0982346542346,
+        "allocationPercent": 0.9478974954670952
+      },
+      {
+        "companyId": "spanish-mountain",
+        "quantity": 12500,
+        "marketValueEur": 2634.8419094854307,
+        "allocationPercent": 1.7082026280837528
+      },
+      {
+        "companyId": "minnova",
+        "quantity": 10000,
+        "marketValueEur": 1022.938623682579,
+        "allocationPercent": 0.6631845497266334
+      },
+      {
+        "companyId": "new-murchison",
+        "quantity": 23750,
+        "marketValueEur": 1097.9781791283979,
+        "allocationPercent": 0.7118336794377278
+      },
+      {
+        "companyId": "silver-x",
+        "quantity": 21500,
+        "marketValueEur": 11596.404215747054,
+        "allocationPercent": 7.5181012137191985
+      },
+      {
+        "companyId": "impact-silver",
+        "quantity": 63880,
+        "marketValueEur": 11564.141351518907,
+        "allocationPercent": 7.497184774950849
+      },
+      {
+        "companyId": "silver47",
+        "quantity": 13407,
+        "marketValueEur": 6150.762554246745,
+        "allocationPercent": 3.987620176398109
+      },
+      {
+        "companyId": "alaska-silver",
+        "quantity": 11500,
+        "marketValueEur": 4990.700557966521,
+        "allocationPercent": 3.235536742605696
+      },
+      {
+        "companyId": "silver-dollar",
+        "quantity": 7000,
+        "marketValueEur": 1258.524488530688,
+        "allocationPercent": 0.8159179611788278
+      },
+      {
+        "companyId": "first-andes",
+        "quantity": 17500,
+        "marketValueEur": 867.9479231246124,
+        "allocationPercent": 0.5627020421922949
+      },
+      {
+        "companyId": "silver-hammer",
+        "quantity": 16000,
+        "marketValueEur": 743.9553626782392,
+        "allocationPercent": 0.48231603616482427
+      },
+      {
+        "companyId": "tier-one-silver",
+        "quantity": 92000,
+        "marketValueEur": 4562.926224426535,
+        "allocationPercent": 2.958205021810923
+      },
+      {
+        "companyId": "silver-elephant",
+        "quantity": 1477,
+        "marketValueEur": 141.93118412895225,
+        "allocationPercent": 0.09201585144949503
+      },
+      {
+        "companyId": "americore",
+        "quantity": 22365,
+        "marketValueEur": 4852.913825170489,
+        "allocationPercent": 3.146207793407669
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 10975,
+        "marketValueEur": 7824.705517668938,
+        "allocationPercent": 5.072859392871073
+      },
+      {
+        "companyId": "defiance-silver",
+        "quantity": 15250,
+        "marketValueEur": 1749.070055796652,
+        "allocationPercent": 1.1339450975250087
+      },
+      {
+        "companyId": "discovery-mining",
+        "quantity": 1950,
+        "marketValueEur": 14422.504649721017,
+        "allocationPercent": 9.350299256100325
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 13550,
+        "marketValueEur": 3612.2132672039675,
+        "allocationPercent": 2.3418453205952905
+      },
+      {
+        "companyId": "gr-silver",
+        "quantity": 21950,
+        "marketValueEur": 4966.986980781153,
+        "allocationPercent": 3.2201629189529424
+      },
+      {
+        "companyId": "kuya-silver",
+        "quantity": 23435,
+        "marketValueEur": 9879.603223806573,
+        "allocationPercent": 6.40507657426284
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 13700,
+        "marketValueEur": 2972.7216367017977,
+        "allocationPercent": 1.9272544945086103
+      },
+      {
+        "companyId": "abrasilver",
+        "quantity": 100,
+        "marketValueEur": 910.7253564786113,
+        "allocationPercent": 0.5904352142717724
+      },
+      {
+        "companyId": "captain-silver",
+        "quantity": 400,
+        "marketValueEur": 463.7321760694358,
+        "allocationPercent": 0.30064366254274044
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 4133,
+        "marketValueEur": 3126.013639181649,
+        "allocationPercent": 2.0266357137603728
+      },
+      {
+        "companyId": "silver-storm",
+        "quantity": 1500,
+        "marketValueEur": 474.27154370737753,
+        "allocationPercent": 0.30747647305507547
+      },
+      {
+        "companyId": "argentum-silver",
+        "quantity": 19609,
+        "marketValueEur": 972.5480471171729,
+        "allocationPercent": 0.6305156768770693
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 30500,
+        "marketValueEur": 756.3546187228766,
+        "allocationPercent": 0.49035463676757135
+      },
+      {
+        "companyId": "monarca-minerals",
+        "quantity": 75000,
+        "marketValueEur": 697.4581525108493,
+        "allocationPercent": 0.4521712839045228
+      },
+      {
+        "companyId": "southern-silver",
+        "quantity": 28000,
+        "marketValueEur": 9894.606323620581,
+        "allocationPercent": 6.414803280992162
+      },
+      {
+        "companyId": "zacatecas-silver",
+        "quantity": 142500,
+        "marketValueEur": 5742.40545567266,
+        "allocationPercent": 3.7228769041472374
+      },
+      {
+        "companyId": "excellon",
+        "quantity": 15000,
+        "marketValueEur": 4045.257284562926,
+        "allocationPercent": 2.622593446646232
+      },
+      {
+        "companyId": "americas-gold-silver",
+        "quantity": 480,
+        "marketValueEur": 2083.07501549907,
+        "allocationPercent": 1.350484901261508
+      }
+    ]
   }
 ]
