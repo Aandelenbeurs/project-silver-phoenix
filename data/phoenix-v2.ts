@@ -1482,6 +1482,168 @@ export const phoenixCompaniesV2: PhoenixCompanyV2[] =
       idealMax: 7,
       hardMax: 9,
     }),
+
+        createPhoenixCompany({
+  companyId:
+    "vizsla-silver",
+
+  quality: 94,
+  growth: 91,
+
+  leverage: {
+    silver: 88,
+    gold: 78,
+  },
+
+  valuation: 75,
+  catalysts: 95,
+
+  riskPenalty: 4,
+
+  confidence: "high",
+  dataStatus: "complete",
+
+  bucket: "core",
+
+  idealMin: 3,
+  idealMax: 5,
+  hardMax: 7,
+}),
+
+createPhoenixCompany({
+  companyId:
+    "g-mining-ventures",
+
+  quality: 97,
+  growth: 96,
+
+  leverage: {
+    silver: 0,
+    gold: 82,
+  },
+
+  valuation: 68,
+  catalysts: 96,
+
+  riskPenalty: 3,
+
+  confidence: "high",
+  dataStatus: "complete",
+
+  bucket: "optionality",
+
+  idealMin: 3,
+  idealMax: 5,
+  hardMax: 7,
+}),
+
+createPhoenixCompany({
+  companyId:
+    "aya-gold-silver",
+
+  quality: 94,
+  growth: 96,
+
+  leverage: {
+    silver: 91,
+    gold: 55,
+  },
+
+  valuation: 74,
+  catalysts: 97,
+
+  riskPenalty: 5,
+
+  confidence: "high",
+  dataStatus: "complete",
+
+  bucket: "core",
+
+  idealMin: 3,
+  idealMax: 5,
+  hardMax: 7,
+}),
+
+createPhoenixCompany({
+  companyId:
+    "artemis-gold",
+
+  quality: 98,
+  growth: 97,
+
+  leverage: {
+    silver: 0,
+    gold: 88,
+  },
+
+  valuation: 78,
+  catalysts: 97,
+
+  riskPenalty: 3,
+
+  confidence: "high",
+  dataStatus: "complete",
+
+  bucket: "core",
+
+  idealMin: 4,
+  idealMax: 7,
+  hardMax: 9,
+}),
+
+createPhoenixCompany({
+  companyId:
+    "sitka-gold",
+
+  quality: 89,
+  growth: 98,
+
+  leverage: {
+    silver: 0,
+    gold: 96,
+  },
+
+  valuation: 86,
+  catalysts: 98,
+
+  riskPenalty: 7,
+
+  confidence: "high",
+  dataStatus: "complete",
+
+  bucket: "growth",
+
+  idealMin: 2,
+  idealMax: 5,
+  hardMax: 7,
+}),
+
+createPhoenixCompany({
+  companyId:
+    "snowline-gold",
+
+  quality: 96,
+  growth: 95,
+
+  leverage: {
+    silver: 0,
+    gold: 92,
+  },
+
+  valuation: 72,
+  catalysts: 96,
+
+  riskPenalty: 4,
+
+  confidence: "high",
+  dataStatus: "complete",
+
+  bucket: "optionality",
+
+  idealMin: 3,
+  idealMax: 5,
+  hardMax: 7,
+}),
   ];
 
 export const phoenixCompanyV2ById =

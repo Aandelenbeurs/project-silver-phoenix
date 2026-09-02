@@ -805,6 +805,168 @@ export const companies: Company[] = [
     maximumAllocation: 0,
     status: "review",
   },
+  {
+  id: "vizsla-silver",
+
+  name: "Vizsla Silver Corp",
+
+  ticker: "VZLA",
+
+  yahooSymbol: "VZLA",
+
+  commodity: "mixed",
+
+  stage: "developer",
+
+  silverExposure: 0.65,
+  scenarioLeverage: 1.7,
+
+  goldExposure: 0.35,
+  goldScenarioLeverage: 1.4,
+
+  rank: 0,
+
+  masterScore: 0,
+
+  tier: "S",
+
+  targetAllocation: 0,
+  maximumAllocation: 0,
+
+  status: "review",
+},
+
+{
+  id: "g-mining-ventures",
+
+  name: "G Mining Ventures Corp",
+
+  ticker: "GMIN",
+
+  yahooSymbol: "GMIN.TO",
+
+  commodity: "gold",
+  stage: "producer",
+
+  goldExposure: 1.0,
+  goldScenarioLeverage: 1.45,
+
+  rank: 0,
+  masterScore: 0,
+  tier: "S",
+
+  targetAllocation: 0,
+  maximumAllocation: 0,
+
+  status: "review",
+},
+
+{
+  id: "aya-gold-silver",
+
+  name: "Aya Gold & Silver Inc",
+
+  ticker: "AYA",
+
+  yahooSymbol: "AYA.TO",
+
+  commodity: "mixed",
+
+  stage: "producer",
+
+  silverExposure: 0.75,
+  scenarioLeverage: 1.75,
+
+  goldExposure: 0.20,
+  goldScenarioLeverage: 1.25,
+
+  rank: 0,
+  masterScore: 0,
+  tier: "S",
+
+  targetAllocation: 0,
+  maximumAllocation: 0,
+
+  status: "review",
+},
+
+{
+  id: "artemis-gold",
+
+  name: "Artemis Gold Inc",
+
+  ticker: "ARTG",
+
+  yahooSymbol: "ARTG.V",
+
+  commodity: "gold",
+
+  stage: "producer",
+
+  goldExposure: 1.0,
+  goldScenarioLeverage: 1.65,
+
+  rank: 0,
+  masterScore: 0,
+  tier: "S",
+
+  targetAllocation: 0,
+  maximumAllocation: 0,
+
+  status: "review",
+},
+
+{
+  id: "sitka-gold",
+
+  name: "Sitka Gold Corp",
+
+  ticker: "SIG",
+
+  yahooSymbol: "SIG.V",
+
+  commodity: "gold",
+
+  stage: "explorer",
+
+  goldExposure: 1.0,
+  goldScenarioLeverage: 2.35,
+
+  rank: 0,
+  masterScore: 0,
+  tier: "A",
+
+  targetAllocation: 0,
+  maximumAllocation: 0,
+
+  status: "review",
+},
+
+{
+  id: "snowline-gold",
+
+  name: "Snowline Gold Corp",
+
+  ticker: "SGD",
+
+  yahooSymbol: "SGD.TO",
+
+  commodity: "gold",
+
+  stage: "developer",
+
+  goldExposure: 1.0,
+  goldScenarioLeverage: 1.9,
+
+  rank: 0,
+  masterScore: 0,
+  tier: "S",
+
+  targetAllocation: 0,
+  maximumAllocation: 0,
+
+  status: "review",
+},
 ];
 
 export const companyById = new Map(
