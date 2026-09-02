@@ -292,7 +292,7 @@
     "companyId": "kootenay-silver",
     "name": "Kootenay Silver Inc",
     "ticker": "KTN",
-    "quantity": 2133,
+    "quantity": 4133,
     "type": "equity",
     "unit": "shares"
   },
@@ -319,7 +319,7 @@
     "companyId": "canasil",
     "name": "Canasil Resources",
     "ticker": "CLZ",
-    "quantity": 20500,
+    "quantity": 30500,
     "type": "equity",
     "unit": "shares"
   },

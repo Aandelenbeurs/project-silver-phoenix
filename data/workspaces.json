@@ -24,6 +24,38 @@
       "isReadOnly": false,
       "createdAt": "2026-08-21T07:09:22.417Z",
       "updatedAt": "2026-08-22T09:05:44.120Z"
+    },
+    {
+      "id": "fwpc-portfolio",
+      "name": "FWPC portfolio",
+      "type": "portfolio",
+      "isReadOnly": false,
+      "createdAt": "2026-08-27T07:08:49.624Z",
+      "updatedAt": "2026-08-27T07:08:49.624Z"
+    },
+    {
+      "id": "portfolio-dolly",
+      "name": "Portfolio Dolly",
+      "type": "portfolio",
+      "isReadOnly": false,
+      "createdAt": "2026-08-27T13:57:22.853Z",
+      "updatedAt": "2026-08-27T13:57:22.853Z"
+    },
+    {
+      "id": "portfolio-devota",
+      "name": "Portfolio Devota",
+      "type": "portfolio",
+      "isReadOnly": false,
+      "createdAt": "2026-08-27T13:57:39.855Z",
+      "updatedAt": "2026-08-27T13:57:39.855Z"
+    },
+    {
+      "id": "portfolio-marthen",
+      "name": "Portfolio Marthen",
+      "type": "portfolio",
+      "isReadOnly": false,
+      "createdAt": "2026-08-31T11:51:15.033Z",
+      "updatedAt": "2026-08-31T11:51:15.033Z"
     }
   ]
 }

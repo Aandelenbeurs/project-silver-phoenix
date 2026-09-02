@@ -1,0 +1,47 @@
+[
+  {
+    "id": "holding-blackrock-silver",
+    "companyId": "blackrock-silver",
+    "name": "Blackrock Silver Corp",
+    "ticker": "AHZ0",
+    "quantity": 256,
+    "type": "equity",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-discovery-mining",
+    "companyId": "discovery-mining",
+    "name": "Discovery Mining Ltd",
+    "ticker": "1CU",
+    "quantity": 25,
+    "type": "equity",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-silver-one",
+    "companyId": "silver-one",
+    "name": "Silver One Resources",
+    "ticker": "BRK1",
+    "quantity": 744,
+    "type": "equity",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-outcrop-silver",
+    "companyId": "outcrop-silver",
+    "name": "Outcrop Silver & Gold Corp",
+    "ticker": "MRG",
+    "quantity": 874,
+    "type": "equity",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-kootenay-silver",
+    "companyId": "kootenay-silver",
+    "name": "Kootenay Silver Inc",
+    "ticker": "KTN",
+    "quantity": 281,
+    "type": "equity",
+    "unit": "shares"
+  }
+]

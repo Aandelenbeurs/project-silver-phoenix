@@ -1,0 +1,13 @@
+[
+  {
+    "id": "transaction-1787815451835",
+    "holdingId": "holding-kootenay-silver",
+    "type": "buy",
+    "quantity": 125,
+    "price": 1.31,
+    "currency": "CAD",
+    "transactionValueEur": 101.19268322827833,
+    "date": "2026-08-27T07:24:11.835Z",
+    "costs": null
+  }
+]
