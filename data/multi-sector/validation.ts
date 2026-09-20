@@ -204,29 +204,35 @@ function validateConfidence(
 ): void {
   const components = confidence.components;
 
-  const componentEntries: Array<[string, number]> = [
-    ["dataQuality", components.dataQuality],
-    ["economicModelMaturity", components.economicModelMaturity],
-    ["outcomeVisibility", components.outcomeVisibility],
-    ["financingVisibility", components.financingVisibility],
-    ["forecastReliability", components.forecastReliability],
-  ];
+  const componentEntries: Array<[string, number | undefined]> = [
+  ["dataQuality", components.dataQuality],
+  ["economicModelMaturity", components.economicModelMaturity],
+  ["outcomeVisibility", components.outcomeVisibility],
+  ["financingVisibility", components.financingVisibility],
+  ["forecastReliability", components.forecastReliability],
+];
 
-  for (const [key, value] of componentEntries) {
-    if (!isNumberBetween(value, 0, 100)) {
-      errors.push({
-        field: `confidence.components.${key}`,
-        message: "Confidence component must be between 0 and 100.",
-      });
-    }
-  }
-
-  if (!isNumberBetween(confidence.valuationConfidenceScore, 0, 100)) {
+for (const [key, value] of componentEntries) {
+  if (
+    value !== undefined &&
+    !isNumberBetween(value, 0, 100)
+  ) {
     errors.push({
-      field: "confidence.valuationConfidenceScore",
-      message: "Valuation confidence score must be between 0 and 100.",
+      field: `confidence.components.${key}`,
+      message: "Confidence component must be between 0 and 100.",
     });
   }
+}
+
+  if (
+  confidence.valuationConfidenceScore !== undefined &&
+  !isNumberBetween(confidence.valuationConfidenceScore, 0, 100)
+) {
+  errors.push({
+    field: "confidence.valuationConfidenceScore",
+    message: "Valuation confidence score must be between 0 and 100.",
+  });
+}
 }
 
 // -----------------------------------------------------------------------------

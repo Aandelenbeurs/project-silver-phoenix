@@ -245,12 +245,16 @@ export interface ValueRealization {
 export interface ConfidenceComponents {
   /**
    * Component scores use a 0-100 scale.
+   *
+   * Components may be unavailable during legacy migration or when a
+   * sector model does not yet provide enough information to score them
+   * responsibly.
    */
-  dataQuality: number;
-  economicModelMaturity: number;
-  outcomeVisibility: number;
-  financingVisibility: number;
-  forecastReliability: number;
+  dataQuality?: number;
+  economicModelMaturity?: number;
+  outcomeVisibility?: number;
+  financingVisibility?: number;
+  forecastReliability?: number;
 }
 
 export interface DataStatusEntry {
@@ -265,7 +269,7 @@ export interface ConfidenceAssessment {
   /**
    * Overall valuation confidence score, 0-100.
    */
-  valuationConfidenceScore: number;
+  valuationConfidenceScore?: number;
   valuationConfidence: ConfidenceLevel;
 
   timingConfidence: ConfidenceLevel;
