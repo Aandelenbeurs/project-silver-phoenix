@@ -1,1 +1,28 @@
-[]
+[
+  {
+    "id": "holding-phag",
+    "name": "WisdomTree Physical Silver",
+    "ticker": "PHAG",
+    "quantity": 10,
+    "type": "etf",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-captain-silver",
+    "companyId": "captain-silver",
+    "name": "Captain Silver Corp",
+    "ticker": "CAPT",
+    "quantity": 100,
+    "type": "equity",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-kootenay-silver",
+    "companyId": "kootenay-silver",
+    "name": "Kootenay Silver Inc",
+    "ticker": "KTN",
+    "quantity": 300,
+    "type": "equity",
+    "unit": "shares"
+  }
+]

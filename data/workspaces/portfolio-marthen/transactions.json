@@ -1,1 +1,35 @@
-[]
+[
+  {
+    "id": "transaction-1788691679226",
+    "holdingId": "holding-phag",
+    "type": "buy",
+    "quantity": 10,
+    "price": 52.4,
+    "currency": "EUR",
+    "transactionValueEur": 524,
+    "date": "2026-09-06T10:47:59.226Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1788691707609",
+    "holdingId": "holding-captain-silver",
+    "type": "buy",
+    "quantity": 100,
+    "price": 2.08,
+    "currency": "CAD",
+    "transactionValueEur": 129.44178231377185,
+    "date": "2026-09-06T10:48:27.609Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1788691748085",
+    "holdingId": "holding-kootenay-silver",
+    "type": "buy",
+    "quantity": 300,
+    "price": 1.35,
+    "currency": "CAD",
+    "transactionValueEur": 252.0380857551808,
+    "date": "2026-09-06T10:49:08.085Z",
+    "costs": null
+  }
+]

@@ -1,1 +1,64 @@
-[]
+[
+  {
+    "id": "holding-kootenay-silver",
+    "companyId": "kootenay-silver",
+    "name": "Kootenay Silver Inc",
+    "ticker": "KTN",
+    "quantity": 1000,
+    "type": "equity",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-blackrock-silver",
+    "companyId": "blackrock-silver",
+    "name": "Blackrock Silver Corp",
+    "ticker": "AHZ0",
+    "quantity": 1100,
+    "type": "equity",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-outcrop-silver",
+    "companyId": "outcrop-silver",
+    "name": "Outcrop Silver & Gold Corp",
+    "ticker": "MRG",
+    "quantity": 3200,
+    "type": "equity",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-canasil",
+    "companyId": "canasil",
+    "name": "Canasil Resources",
+    "ticker": "CLZ",
+    "quantity": 8750,
+    "type": "equity",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-phag",
+    "name": "WisdomTree Physical Silver",
+    "ticker": "PHAG",
+    "quantity": 10,
+    "type": "etf",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-silver-one",
+    "companyId": "silver-one",
+    "name": "Silver One Resources",
+    "ticker": "BRK1",
+    "quantity": 2900,
+    "type": "equity",
+    "unit": "shares"
+  },
+  {
+    "id": "holding-first-mining-gold",
+    "companyId": "first-mining-gold",
+    "name": "First Mining Gold Corp",
+    "ticker": "FMG",
+    "quantity": 1800,
+    "type": "equity",
+    "unit": "shares"
+  }
+]

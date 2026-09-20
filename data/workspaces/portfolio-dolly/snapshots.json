@@ -1,0 +1,346 @@
+[
+  {
+    "id": "snapshot-portfolio-dolly-2026-09-03",
+    "workspaceId": "portfolio-dolly",
+    "capturedAt": "2026-09-03T15:57:01.196Z",
+    "totalMarketValueEur": 842.907092907093,
+    "positions": [
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 1000,
+        "marketValueEur": 842.907092907093,
+        "allocationPercent": 100
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-dolly-2026-09-04",
+    "workspaceId": "portfolio-dolly",
+    "capturedAt": "2026-09-04T10:44:56.538Z",
+    "totalMarketValueEur": 3260.280239696697,
+    "positions": [
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 1000,
+        "marketValueEur": 860.3491271820448,
+        "allocationPercent": 26.38880905716506
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 1100,
+        "marketValueEur": 864.0897755610971,
+        "allocationPercent": 26.503543009587517
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 3200,
+        "marketValueEur": 768.079800498753,
+        "allocationPercent": 23.558704897411126
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 8750,
+        "marketValueEur": 245.4800498753117,
+        "allocationPercent": 7.5294156277237265
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-dolly-2026-09-06",
+    "workspaceId": "portfolio-dolly",
+    "capturedAt": "2026-09-06T10:45:44.323Z",
+    "totalMarketValueEur": 3196.126147945508,
+    "positions": [
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 1000,
+        "marketValueEur": 815.2343020723131,
+        "allocationPercent": 25.506950111977005
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 1100,
+        "marketValueEur": 841.9939013006409,
+        "allocationPercent": 26.344201146186936
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 3200,
+        "marketValueEur": 776.6506938826311,
+        "allocationPercent": 24.299750946371987
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 8750,
+        "marketValueEur": 245.03702781753685,
+        "allocationPercent": 7.666688249306065
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-dolly-2026-09-09",
+    "workspaceId": "portfolio-dolly",
+    "capturedAt": "2026-09-09T10:44:35.037Z",
+    "totalMarketValueEur": 4023.5552927661674,
+    "positions": [
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 1000,
+        "marketValueEur": 792.5117004680187,
+        "allocationPercent": 19.696801530051104
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 1100,
+        "marketValueEur": 830.5772230889236,
+        "allocationPercent": 20.642868375195295
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 3200,
+        "marketValueEur": 758.8143525741029,
+        "allocationPercent": 18.85929973271035
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 8750,
+        "marketValueEur": 273.01092043681746,
+        "allocationPercent": 6.785315487714455
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 2900,
+        "marketValueEur": 850.5460218408737,
+        "allocationPercent": 21.139165736582406
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-dolly-2026-09-10",
+    "workspaceId": "portfolio-dolly",
+    "capturedAt": "2026-09-10T08:37:52.491Z",
+    "totalMarketValueEur": 4001.642254456488,
+    "positions": [
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 1000,
+        "marketValueEur": 809.1622059006598,
+        "allocationPercent": 20.220753241985197
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 1100,
+        "marketValueEur": 855.8446408564671,
+        "allocationPercent": 21.387335159792034
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 3200,
+        "marketValueEur": 736.9600398356779,
+        "allocationPercent": 18.41643987577729
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 8750,
+        "marketValueEur": 245.0827835179883,
+        "allocationPercent": 6.1245550684859005
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 2900,
+        "marketValueEur": 830.3249097472925,
+        "allocationPercent": 20.749603711390964
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-dolly-2026-09-11",
+    "workspaceId": "portfolio-dolly",
+    "capturedAt": "2026-09-11T10:03:28.601Z",
+    "totalMarketValueEur": 3817.2248122109077,
+    "positions": [
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 1000,
+        "marketValueEur": 765.9733466185079,
+        "allocationPercent": 20.066236187301264
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 1100,
+        "marketValueEur": 794.6195042969237,
+        "allocationPercent": 20.81668079268001
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 3200,
+        "marketValueEur": 697.4716652136008,
+        "allocationPercent": 18.27169473965644
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 8750,
+        "marketValueEur": 272.44986922406275,
+        "allocationPercent": 7.1373807576782955
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 2900,
+        "marketValueEur": 785.5897372026404,
+        "allocationPercent": 20.5801276018541
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-dolly-2026-09-12",
+    "workspaceId": "portfolio-dolly",
+    "capturedAt": "2026-09-12T08:36:54.795Z",
+    "totalMarketValueEur": 3774.0555756173153,
+    "positions": [
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 1000,
+        "marketValueEur": 764.6875971401927,
+        "allocationPercent": 20.261694132978267
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 1100,
+        "marketValueEur": 806.9630090146098,
+        "allocationPercent": 21.381852833012836
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 3200,
+        "marketValueEur": 686.3537457258315,
+        "allocationPercent": 18.186105953502445
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 8750,
+        "marketValueEur": 217.5940317065589,
+        "allocationPercent": 5.765522720766173
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 2900,
+        "marketValueEur": 793.285669878769,
+        "allocationPercent": 21.019448547707533
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-dolly-2026-09-15",
+    "workspaceId": "portfolio-dolly",
+    "capturedAt": "2026-09-15T09:45:52.112Z",
+    "totalMarketValueEur": 3651.9950457347763,
+    "positions": [
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 1000,
+        "marketValueEur": 735.7984660472658,
+        "allocationPercent": 20.14784951328498
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 1100,
+        "marketValueEur": 795.6600361663653,
+        "allocationPercent": 21.786996592331896
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 3200,
+        "marketValueEur": 648.5003429569122,
+        "allocationPercent": 17.757426689674897
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 8750,
+        "marketValueEur": 190.96464426014848,
+        "allocationPercent": 5.229049926647058
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 2900,
+        "marketValueEur": 786.6184448462931,
+        "allocationPercent": 21.53941708560085
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-dolly-2026-09-16",
+    "workspaceId": "portfolio-dolly",
+    "capturedAt": "2026-09-16T06:46:54.474Z",
+    "totalMarketValueEur": 3626.1334315197555,
+    "positions": [
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 1000,
+        "marketValueEur": 721.1239587218699,
+        "allocationPercent": 19.886856684687366
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 1100,
+        "marketValueEur": 793.2363545940569,
+        "allocationPercent": 21.875542353156106
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 3200,
+        "marketValueEur": 666.4180032326246,
+        "allocationPercent": 18.378198591366257
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 8750,
+        "marketValueEur": 190.38294168842475,
+        "allocationPercent": 5.250301603177162
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 2900,
+        "marketValueEur": 757.1801566579635,
+        "allocationPercent": 20.88119951892174
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-dolly-2026-09-19",
+    "workspaceId": "portfolio-dolly",
+    "capturedAt": "2026-09-19T07:07:26.887Z",
+    "totalMarketValueEur": 3703.6112440998386,
+    "positions": [
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 1000,
+        "marketValueEur": 765.8302720876658,
+        "allocationPercent": 20.677933552224122
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 1100,
+        "marketValueEur": 787.6221903991034,
+        "allocationPercent": 21.26633003541749
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 3200,
+        "marketValueEur": 657.4933067679472,
+        "allocationPercent": 17.752762464348514
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 8750,
+        "marketValueEur": 217.91918311437644,
+        "allocationPercent": 5.883964831933693
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 2900,
+        "marketValueEur": 749.3306767947201,
+        "allocationPercent": 20.232433357806286
+      }
+    ]
+  }
+]

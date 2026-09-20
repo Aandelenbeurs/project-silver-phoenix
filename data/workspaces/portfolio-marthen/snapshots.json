@@ -1,0 +1,149 @@
+[
+  {
+    "id": "snapshot-portfolio-marthen-2026-09-06",
+    "workspaceId": "portfolio-marthen",
+    "capturedAt": "2026-09-06T10:47:59.561Z",
+    "totalMarketValueEur": 517.2102228723862,
+    "positions": []
+  },
+  {
+    "id": "snapshot-portfolio-marthen-2026-09-09",
+    "workspaceId": "portfolio-marthen",
+    "capturedAt": "2026-09-09T10:44:46.956Z",
+    "totalMarketValueEur": 879.4055267755282,
+    "positions": [
+      {
+        "companyId": "captain-silver",
+        "quantity": 100,
+        "marketValueEur": 123.5569422776911,
+        "allocationPercent": 14.050052963702775
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 300,
+        "marketValueEur": 237.75351014040564,
+        "allocationPercent": 27.035707975609892
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-marthen-2026-09-10",
+    "workspaceId": "portfolio-marthen",
+    "capturedAt": "2026-09-10T08:38:00.444Z",
+    "totalMarketValueEur": 889.0130997197765,
+    "positions": [
+      {
+        "companyId": "captain-silver",
+        "quantity": 100,
+        "marketValueEur": 121.9967633511764,
+        "allocationPercent": 13.722718302984587
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 300,
+        "marketValueEur": 242.74866177019794,
+        "allocationPercent": 27.305408868183616
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-marthen-2026-09-11",
+    "workspaceId": "portfolio-marthen",
+    "capturedAt": "2026-09-11T10:02:36.212Z",
+    "totalMarketValueEur": 855.4612052860107,
+    "positions": [
+      {
+        "companyId": "captain-silver",
+        "quantity": 100,
+        "marketValueEur": 124.54851164528584,
+        "allocationPercent": 14.559223828700087
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 300,
+        "marketValueEur": 229.79200398555238,
+        "allocationPercent": 26.86176796395166
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-marthen-2026-09-12",
+    "workspaceId": "portfolio-marthen",
+    "capturedAt": "2026-09-12T08:37:09.142Z",
+    "totalMarketValueEur": 861.4040369166626,
+    "positions": [
+      {
+        "companyId": "captain-silver",
+        "quantity": 100,
+        "marketValueEur": 126.82623562325146,
+        "allocationPercent": 14.723199589035755
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 300,
+        "marketValueEur": 229.4062791420578,
+        "allocationPercent": 26.631669844873496
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-marthen-2026-09-15",
+    "workspaceId": "portfolio-marthen",
+    "capturedAt": "2026-09-15T09:45:57.521Z",
+    "totalMarketValueEur": 844.2691618412799,
+    "positions": [
+      {
+        "companyId": "captain-silver",
+        "quantity": 100,
+        "marketValueEur": 129.07651056930848,
+        "allocationPercent": 15.288549718883903
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 300,
+        "marketValueEur": 220.73953981417972,
+        "allocationPercent": 26.145635751134787
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-marthen-2026-09-16",
+    "workspaceId": "portfolio-marthen",
+    "capturedAt": "2026-09-16T06:47:08.502Z",
+    "totalMarketValueEur": 840.3258970177042,
+    "positions": [
+      {
+        "companyId": "captain-silver",
+        "quantity": 100,
+        "marketValueEur": 126.19669277632723,
+        "allocationPercent": 15.01758939290056
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 300,
+        "marketValueEur": 216.337187616561,
+        "allocationPercent": 25.744438959258108
+      }
+    ]
+  },
+  {
+    "id": "snapshot-portfolio-marthen-2026-09-19",
+    "workspaceId": "portfolio-marthen",
+    "capturedAt": "2026-09-19T07:07:35.900Z",
+    "totalMarketValueEur": 899.6139836552835,
+    "positions": [
+      {
+        "companyId": "captain-silver",
+        "quantity": 100,
+        "marketValueEur": 144.4492870929581,
+        "allocationPercent": 16.056807666109883
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 300,
+        "marketValueEur": 229.74908162629973,
+        "allocationPercent": 25.53862943445926
+      }
+    ]
+  }
+]

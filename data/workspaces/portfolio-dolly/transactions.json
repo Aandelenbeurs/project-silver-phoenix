@@ -1,1 +1,79 @@
-[]
+[
+  {
+    "id": "transaction-1788451020200",
+    "holdingId": "holding-kootenay-silver",
+    "type": "buy",
+    "quantity": 1000,
+    "price": 1.25,
+    "currency": "CAD",
+    "transactionValueEur": 780.4695304695306,
+    "date": "2026-09-03T15:57:00.200Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1788451057183",
+    "holdingId": "holding-blackrock-silver",
+    "type": "buy",
+    "quantity": 1100,
+    "price": 0.79,
+    "currency": "EUR",
+    "transactionValueEur": 869,
+    "date": "2026-09-03T15:57:37.183Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1788451091650",
+    "holdingId": "holding-outcrop-silver",
+    "type": "buy",
+    "quantity": 3200,
+    "price": 0.2303,
+    "currency": "EUR",
+    "transactionValueEur": 736.96,
+    "date": "2026-09-03T15:58:11.650Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1788451134325",
+    "holdingId": "holding-canasil",
+    "type": "buy",
+    "quantity": 8750,
+    "price": 0.04,
+    "currency": "CAD",
+    "transactionValueEur": 218.53146853146856,
+    "date": "2026-09-03T15:58:54.325Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1788451172755",
+    "holdingId": "holding-phag",
+    "type": "buy",
+    "quantity": 10,
+    "price": 52.49,
+    "currency": "EUR",
+    "transactionValueEur": 524.9,
+    "date": "2026-09-03T15:59:32.755Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1788691610861",
+    "holdingId": "holding-silver-one",
+    "type": "buy",
+    "quantity": 2900,
+    "price": 0.294,
+    "currency": "EUR",
+    "transactionValueEur": 852.5999999999999,
+    "date": "2026-09-06T10:46:50.861Z",
+    "costs": null
+  },
+  {
+    "id": "transaction-1789801737562",
+    "holdingId": "holding-first-mining-gold",
+    "type": "buy",
+    "quantity": 1800,
+    "price": 0.542,
+    "currency": "EUR",
+    "transactionValueEur": 975.6,
+    "date": "2026-09-19T07:08:57.562Z",
+    "costs": null
+  }
+]
