@@ -342,5 +342,49 @@
         "allocationPercent": 20.232433357806286
       }
     ]
+  },
+  {
+    "id": "snapshot-portfolio-dolly-2026-09-21",
+    "workspaceId": "portfolio-dolly",
+    "capturedAt": "2026-09-21T14:30:56.845Z",
+    "totalMarketValueEur": 4652.909942645844,
+    "positions": [
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 1000,
+        "marketValueEur": 752.5811668117926,
+        "allocationPercent": 16.174419365268065
+      },
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 1100,
+        "marketValueEur": 779.9477546958578,
+        "allocationPercent": 16.76258006945963
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 3200,
+        "marketValueEur": 650.8272173155866,
+        "allocationPercent": 13.98753092877397
+      },
+      {
+        "companyId": "canasil",
+        "quantity": 8750,
+        "marketValueEur": 217.68876725960942,
+        "allocationPercent": 4.678551056069274
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 2900,
+        "marketValueEur": 775.5939793506656,
+        "allocationPercent": 16.669009048338243
+      },
+      {
+        "companyId": "first-mining-gold",
+        "quantity": 1800,
+        "marketValueEur": 951.6108968777212,
+        "allocationPercent": 20.451951759388542
+      }
+    ]
   }
 ]

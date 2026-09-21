@@ -145,5 +145,25 @@
         "allocationPercent": 25.53862943445926
       }
     ]
+  },
+  {
+    "id": "snapshot-portfolio-marthen-2026-09-21",
+    "workspaceId": "portfolio-marthen",
+    "capturedAt": "2026-09-21T14:31:02.192Z",
+    "totalMarketValueEur": 893.4871288630353,
+    "positions": [
+      {
+        "companyId": "captain-silver",
+        "quantity": 100,
+        "marketValueEur": 143.05261848488618,
+        "allocationPercent": 16.010596444396576
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 300,
+        "marketValueEur": 225.7743500435378,
+        "allocationPercent": 25.26889786659112
+      }
+    ]
   }
 ]

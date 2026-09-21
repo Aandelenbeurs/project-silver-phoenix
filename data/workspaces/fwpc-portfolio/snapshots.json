@@ -568,5 +568,43 @@
         "allocationPercent": 22.393194511033652
       }
     ]
+  },
+  {
+    "id": "snapshot-fwpc-portfolio-2026-09-21",
+    "workspaceId": "fwpc-portfolio",
+    "capturedAt": "2026-09-21T14:30:50.534Z",
+    "totalMarketValueEur": 961.7601691752707,
+    "positions": [
+      {
+        "companyId": "blackrock-silver",
+        "quantity": 256,
+        "marketValueEur": 181.51511382012689,
+        "allocationPercent": 18.873220126778577
+      },
+      {
+        "companyId": "discovery-mining",
+        "quantity": 25,
+        "marketValueEur": 192.0325911182983,
+        "allocationPercent": 19.966785615895308
+      },
+      {
+        "companyId": "silver-one",
+        "quantity": 744,
+        "marketValueEur": 198.97997263341216,
+        "allocationPercent": 20.689146734371587
+      },
+      {
+        "companyId": "outcrop-silver",
+        "quantity": 874,
+        "marketValueEur": 177.7571837293196,
+        "allocationPercent": 18.482485491341365
+      },
+      {
+        "companyId": "kootenay-silver",
+        "quantity": 281,
+        "marketValueEur": 211.47530787411372,
+        "allocationPercent": 21.988362031613164
+      }
+    ]
   }
 ]
