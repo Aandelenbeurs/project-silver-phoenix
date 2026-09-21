@@ -9,6 +9,13 @@ import {
   calculateBalanceSheetRollForward,
 } from "../data/multi-sector/sectors/canadian-natural-gas/economics";
 
+import {
+  calculateProductionRollForward,
+  calculateMultiYearProduction,
+  calculateEconomicProjectionYear,
+  calculateMultiYearEconomicProjection,
+} from "../data/multi-sector/sectors/canadian-natural-gas/scenario-engine";
+
 const tolerance = 1e-7;
 
 // -----------------------------------------------------------------------------
@@ -846,4 +853,990 @@ if (!negativeDebtRepaymentRejected) {
 
 console.log(
   "PASS: Negative debt repayment rejected"
+);
+
+// -----------------------------------------------------------------------------
+// Production roll-forward tests
+// -----------------------------------------------------------------------------
+
+// Case 1:
+// Natural decline with no replacement production.
+const declineOnlyProduction =
+  calculateProductionRollForward({
+    beginningGasProductionMmcfPerDay: 500,
+    beginningLiquidsProductionBblPerDay: 20_000,
+
+    annualBaseDeclineRate: 0.30,
+
+    annualGasProductionAddedMmcfPerDay: 0,
+    annualLiquidsProductionAddedBblPerDay: 0,
+  });
+
+if (
+  Math.abs(
+    declineOnlyProduction.endingGasProductionMmcfPerDay -
+      350
+  ) > tolerance
+) {
+  throw new Error(
+    `Decline-only gas production test failed: expected 350, received ${declineOnlyProduction.endingGasProductionMmcfPerDay}.`
+  );
+}
+
+if (
+  Math.abs(
+    declineOnlyProduction.endingLiquidsProductionBblPerDay -
+      14_000
+  ) > tolerance
+) {
+  throw new Error(
+    `Decline-only liquids production test failed: expected 14000, received ${declineOnlyProduction.endingLiquidsProductionBblPerDay}.`
+  );
+}
+
+console.log(
+  "PASS: 30% decline reduces gas production from 500 to 350 MMcf/d"
+);
+
+console.log(
+  "PASS: 30% decline reduces liquids production from 20,000 to 14,000 bbl/d"
+);
+
+// -----------------------------------------------------------------------------
+// Case 2:
+// Development exactly replaces natural decline.
+// -----------------------------------------------------------------------------
+
+const maintenanceProduction =
+  calculateProductionRollForward({
+    beginningGasProductionMmcfPerDay: 500,
+    beginningLiquidsProductionBblPerDay: 20_000,
+
+    annualBaseDeclineRate: 0.30,
+
+    annualGasProductionAddedMmcfPerDay: 150,
+    annualLiquidsProductionAddedBblPerDay: 6_000,
+  });
+
+if (
+  Math.abs(
+    maintenanceProduction.endingGasProductionMmcfPerDay -
+      500
+  ) > tolerance
+) {
+  throw new Error(
+    `Maintenance gas production test failed: expected 500, received ${maintenanceProduction.endingGasProductionMmcfPerDay}.`
+  );
+}
+
+if (
+  Math.abs(
+    maintenanceProduction.endingLiquidsProductionBblPerDay -
+      20_000
+  ) > tolerance
+) {
+  throw new Error(
+    `Maintenance liquids production test failed: expected 20000, received ${maintenanceProduction.endingLiquidsProductionBblPerDay}.`
+  );
+}
+
+console.log(
+  "PASS: Replacement development maintains gas production at 500 MMcf/d"
+);
+
+console.log(
+  "PASS: Replacement development maintains liquids production at 20,000 bbl/d"
+);
+
+// -----------------------------------------------------------------------------
+// Case 3:
+// Development exceeds natural decline and creates net growth.
+// -----------------------------------------------------------------------------
+
+const growthProduction =
+  calculateProductionRollForward({
+    beginningGasProductionMmcfPerDay: 500,
+    beginningLiquidsProductionBblPerDay: 20_000,
+
+    annualBaseDeclineRate: 0.30,
+
+    annualGasProductionAddedMmcfPerDay: 175,
+    annualLiquidsProductionAddedBblPerDay: 7_000,
+  });
+
+// Gas:
+// 500 × 70% = 350
+// + 175 = 525 MMcf/d
+//
+// Liquids:
+// 20,000 × 70% = 14,000
+// + 7,000 = 21,000 bbl/d
+
+if (
+  Math.abs(
+    growthProduction.endingGasProductionMmcfPerDay -
+      525
+  ) > tolerance
+) {
+  throw new Error(
+    `Growth gas production test failed: expected 525, received ${growthProduction.endingGasProductionMmcfPerDay}.`
+  );
+}
+
+if (
+  Math.abs(
+    growthProduction.endingLiquidsProductionBblPerDay -
+      21_000
+  ) > tolerance
+) {
+  throw new Error(
+    `Growth liquids production test failed: expected 21000, received ${growthProduction.endingLiquidsProductionBblPerDay}.`
+  );
+}
+
+console.log(
+  "PASS: Development creates gas growth from 500 to 525 MMcf/d"
+);
+
+console.log(
+  "PASS: Development creates liquids growth from 20,000 to 21,000 bbl/d"
+);
+
+// -----------------------------------------------------------------------------
+// Invalid decline-rate guard
+// -----------------------------------------------------------------------------
+
+let invalidDeclineRateRejected = false;
+
+try {
+  calculateProductionRollForward({
+    beginningGasProductionMmcfPerDay: 500,
+
+    annualBaseDeclineRate: 1.10,
+
+    annualGasProductionAddedMmcfPerDay: 0,
+  });
+} catch {
+  invalidDeclineRateRejected = true;
+}
+
+if (!invalidDeclineRateRejected) {
+  throw new Error(
+    "A decline rate above 100% should be rejected."
+  );
+}
+
+console.log(
+  "PASS: Decline rate above 100% rejected"
+);
+
+// -----------------------------------------------------------------------------
+// Multi-year production projection tests
+// -----------------------------------------------------------------------------
+
+const fiveYearProduction =
+  calculateMultiYearProduction({
+    beginningGasProductionMmcfPerDay: 500,
+    beginningLiquidsProductionBblPerDay: 20_000,
+
+    years: [
+      {
+        projectionYear: 1,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 175,
+        annualLiquidsProductionAddedBblPerDay: 7_000,
+      },
+      {
+        projectionYear: 2,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 175,
+        annualLiquidsProductionAddedBblPerDay: 7_000,
+      },
+      {
+        projectionYear: 3,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 175,
+        annualLiquidsProductionAddedBblPerDay: 7_000,
+      },
+      {
+        projectionYear: 4,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 175,
+        annualLiquidsProductionAddedBblPerDay: 7_000,
+      },
+      {
+        projectionYear: 5,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 175,
+        annualLiquidsProductionAddedBblPerDay: 7_000,
+      },
+    ],
+  });
+
+const expectedGasByYear = [
+  525,
+  542.5,
+  554.75,
+  563.325,
+  569.3275,
+];
+
+const expectedLiquidsByYear = [
+  21_000,
+  21_700,
+  22_190,
+  22_533,
+  22_773.1,
+];
+
+for (
+  let index = 0;
+  index < fiveYearProduction.years.length;
+  index += 1
+) {
+  const year =
+    fiveYearProduction.years[index];
+
+  if (
+    Math.abs(
+      year.endingGasProductionMmcfPerDay -
+        expectedGasByYear[index]
+    ) > tolerance
+  ) {
+    throw new Error(
+      `Multi-year gas production failed in year ${year.projectionYear}: expected ${expectedGasByYear[index]}, received ${year.endingGasProductionMmcfPerDay}.`
+    );
+  }
+
+  if (
+    Math.abs(
+      year.endingLiquidsProductionBblPerDay -
+        expectedLiquidsByYear[index]
+    ) > tolerance
+  ) {
+    throw new Error(
+      `Multi-year liquids production failed in year ${year.projectionYear}: expected ${expectedLiquidsByYear[index]}, received ${year.endingLiquidsProductionBblPerDay}.`
+    );
+  }
+}
+
+console.log(
+  "PASS: Five-year gas production roll-forward matches expected values"
+);
+
+console.log(
+  "PASS: Five-year liquids production roll-forward matches expected values"
+);
+
+// -----------------------------------------------------------------------------
+// Year-to-year continuity
+// -----------------------------------------------------------------------------
+
+for (
+  let index = 1;
+  index < fiveYearProduction.years.length;
+  index += 1
+) {
+  const previousYear =
+    fiveYearProduction.years[index - 1];
+
+  const currentYear =
+    fiveYearProduction.years[index];
+
+  if (
+    Math.abs(
+      previousYear.endingGasProductionMmcfPerDay -
+        currentYear.beginningGasProductionMmcfPerDay
+    ) > tolerance
+  ) {
+    throw new Error(
+      `Gas production continuity failed between years ${previousYear.projectionYear} and ${currentYear.projectionYear}.`
+    );
+  }
+
+  if (
+    Math.abs(
+      previousYear.endingLiquidsProductionBblPerDay -
+        currentYear.beginningLiquidsProductionBblPerDay
+    ) > tolerance
+  ) {
+    throw new Error(
+      `Liquids production continuity failed between years ${previousYear.projectionYear} and ${currentYear.projectionYear}.`
+    );
+  }
+}
+
+console.log(
+  "PASS: Year-to-year production continuity preserved"
+);
+
+console.log(
+  `PASS: Five-year ending gas production = ${fiveYearProduction.endingGasProductionMmcfPerDay.toFixed(4)} MMcf/d`
+);
+
+console.log(
+  `PASS: Five-year ending liquids production = ${fiveYearProduction.endingLiquidsProductionBblPerDay.toFixed(1)} bbl/d`
+);
+
+// -----------------------------------------------------------------------------
+// Sequential projection-year guard
+// -----------------------------------------------------------------------------
+
+let nonSequentialYearsRejected = false;
+
+try {
+  calculateMultiYearProduction({
+    beginningGasProductionMmcfPerDay: 500,
+
+    years: [
+      {
+        projectionYear: 1,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 150,
+      },
+      {
+        projectionYear: 3,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 150,
+      },
+    ],
+  });
+} catch {
+  nonSequentialYearsRejected = true;
+}
+
+if (!nonSequentialYearsRejected) {
+  throw new Error(
+    "Non-sequential projection years should be rejected."
+  );
+}
+
+console.log(
+  "PASS: Non-sequential projection years rejected"
+);
+
+// -----------------------------------------------------------------------------
+// Complete single-year economic projection test
+// -----------------------------------------------------------------------------
+
+const economicYear =
+  calculateEconomicProjectionYear({
+    projectionYear: 1,
+
+    // Production:
+    // 500 × 70% + 175 = 525 MMcf/d
+    beginningGasProductionMmcfPerDay: 500,
+    beginningLiquidsProductionBblPerDay: 20_000,
+
+    annualBaseDeclineRate: 0.30,
+
+    annualGasProductionAddedMmcfPerDay: 175,
+    annualLiquidsProductionAddedBblPerDay: 7_000,
+
+    // Prices
+    realizedGasPriceCadPerMcf: 4,
+    realizedLiquidsPriceCadPerBbl: 70,
+
+    // Operating economics
+    royaltiesCadPerMcfe: 0.50,
+    operatingCostCadPerMcfe: 1.00,
+    transportationCostCadPerMcfe: 0.50,
+    gAndACostCadPerMcfe: 0.25,
+
+    annualInterestExpenseCad: 10_000_000,
+    cashTaxesCad: 5_000_000,
+
+    // Capex
+    sustainingCapexCad: 100_000_000,
+    growthCapexCad: 50_000_000,
+
+    // Beginning balance sheet
+    beginningNetDebtCad: 300_000_000,
+    beginningDilutedShares: 100_000_000,
+
+    // Capital allocation
+    dividendsCad: 20_000_000,
+    shareBuybacksCad: 25_000_000,
+    debtRepaymentCad: 40_000_000,
+
+    averageBuybackPriceCad: 5,
+  });
+
+// -----------------------------------------------------------------------------
+// Production
+// -----------------------------------------------------------------------------
+
+if (
+  Math.abs(
+    economicYear.production.endingGasProductionMmcfPerDay -
+      525
+  ) > tolerance
+) {
+  throw new Error(
+    "Economic-year ending gas production failed."
+  );
+}
+
+if (
+  Math.abs(
+    economicYear.production.endingLiquidsProductionBblPerDay -
+      21_000
+  ) > tolerance
+) {
+  throw new Error(
+    "Economic-year ending liquids production failed."
+  );
+}
+
+console.log(
+  "PASS: Economic year production = 525 MMcf/d + 21,000 bbl/d"
+);
+
+// -----------------------------------------------------------------------------
+// Revenue
+// -----------------------------------------------------------------------------
+
+const expectedEconomicYearGasRevenue =
+  525 *
+  1_000 *
+  365 *
+  4;
+
+const expectedEconomicYearLiquidsRevenue =
+  21_000 *
+  365 *
+  70;
+
+const expectedEconomicYearRevenue =
+  expectedEconomicYearGasRevenue +
+  expectedEconomicYearLiquidsRevenue;
+
+if (
+  Math.abs(
+    economicYear.totalRevenueCad -
+      expectedEconomicYearRevenue
+  ) > tolerance
+) {
+  throw new Error(
+    `Economic-year revenue failed: expected ${expectedEconomicYearRevenue}, received ${economicYear.totalRevenueCad}.`
+  );
+}
+
+console.log(
+  `PASS: Economic year revenue = CAD ${(economicYear.totalRevenueCad / 1_000_000).toFixed(1)}m`
+);
+
+// -----------------------------------------------------------------------------
+// Operating economics
+// -----------------------------------------------------------------------------
+
+const expectedEconomicYearMcfe =
+  525 *
+  1_000 *
+  365 +
+  21_000 *
+  365 *
+  6;
+
+const expectedEconomicYearOperatingCosts =
+  expectedEconomicYearMcfe *
+  (0.50 + 1.00 + 0.50 + 0.25);
+
+const expectedEconomicYearOcf =
+  expectedEconomicYearRevenue -
+  expectedEconomicYearOperatingCosts -
+  10_000_000 -
+  5_000_000;
+
+if (
+  Math.abs(
+    economicYear.operatingCashFlowBeforeCapexCad -
+      expectedEconomicYearOcf
+  ) > tolerance
+) {
+  throw new Error(
+    `Economic-year OCF failed: expected ${expectedEconomicYearOcf}, received ${economicYear.operatingCashFlowBeforeCapexCad}.`
+  );
+}
+
+console.log(
+  `PASS: Economic year OCF before capex = CAD ${(economicYear.operatingCashFlowBeforeCapexCad / 1_000_000).toFixed(1)}m`
+);
+
+// -----------------------------------------------------------------------------
+// Free cash flow
+// -----------------------------------------------------------------------------
+
+const expectedEconomicYearFcf =
+  expectedEconomicYearOcf -
+  100_000_000 -
+  50_000_000;
+
+if (
+  Math.abs(
+    economicYear.freeCashFlowCad -
+      expectedEconomicYearFcf
+  ) > tolerance
+) {
+  throw new Error(
+    `Economic-year FCF failed: expected ${expectedEconomicYearFcf}, received ${economicYear.freeCashFlowCad}.`
+  );
+}
+
+console.log(
+  `PASS: Economic year FCF = CAD ${(economicYear.freeCashFlowCad / 1_000_000).toFixed(1)}m`
+);
+
+// -----------------------------------------------------------------------------
+// Buybacks / share count
+// -----------------------------------------------------------------------------
+
+if (
+  Math.abs(
+    economicYear.sharesRepurchased -
+      5_000_000
+  ) > tolerance
+) {
+  throw new Error(
+    "Economic-year share repurchase calculation failed."
+  );
+}
+
+if (
+  Math.abs(
+    economicYear.endingDilutedShares -
+      95_000_000
+  ) > tolerance
+) {
+  throw new Error(
+    "Economic-year ending diluted shares failed."
+  );
+}
+
+console.log(
+  "PASS: Economic year diluted shares = 95,000,000"
+);
+
+// -----------------------------------------------------------------------------
+// Balance sheet
+// -----------------------------------------------------------------------------
+
+const expectedEconomicYearResidualCash =
+  expectedEconomicYearFcf -
+  20_000_000 -
+  25_000_000 -
+  40_000_000;
+
+const expectedEconomicYearEndingNetDebt =
+  300_000_000 -
+  40_000_000 -
+  expectedEconomicYearResidualCash;
+
+if (
+  Math.abs(
+    economicYear.residualCashFlowCad -
+      expectedEconomicYearResidualCash
+  ) > tolerance
+) {
+  throw new Error(
+    `Economic-year residual cash failed: expected ${expectedEconomicYearResidualCash}, received ${economicYear.residualCashFlowCad}.`
+  );
+}
+
+if (
+  Math.abs(
+    economicYear.endingNetDebtCad -
+      expectedEconomicYearEndingNetDebt
+  ) > tolerance
+) {
+  throw new Error(
+    `Economic-year ending net debt failed: expected ${expectedEconomicYearEndingNetDebt}, received ${economicYear.endingNetDebtCad}.`
+  );
+}
+
+console.log(
+  `PASS: Economic year residual cash = CAD ${(economicYear.residualCashFlowCad / 1_000_000).toFixed(1)}m`
+);
+
+console.log(
+  `PASS: Economic year ending net debt = CAD ${(economicYear.endingNetDebtCad / 1_000_000).toFixed(1)}m`
+);
+
+// -----------------------------------------------------------------------------
+// Multi-year economic projection tests
+// -----------------------------------------------------------------------------
+
+const fiveYearEconomicProjection =
+  calculateMultiYearEconomicProjection({
+    beginningGasProductionMmcfPerDay: 500,
+    beginningLiquidsProductionBblPerDay: 20_000,
+
+    beginningNetDebtCad: 300_000_000,
+    beginningDilutedShares: 100_000_000,
+
+    years: [
+      {
+        projectionYear: 1,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 175,
+        annualLiquidsProductionAddedBblPerDay: 7_000,
+        realizedGasPriceCadPerMcf: 4,
+        realizedLiquidsPriceCadPerBbl: 70,
+        royaltiesCadPerMcfe: 0.50,
+        operatingCostCadPerMcfe: 1.00,
+        transportationCostCadPerMcfe: 0.50,
+        gAndACostCadPerMcfe: 0.25,
+        annualInterestExpenseCad: 10_000_000,
+        cashTaxesCad: 5_000_000,
+        sustainingCapexCad: 100_000_000,
+        growthCapexCad: 50_000_000,
+        dividendsCad: 20_000_000,
+        shareBuybacksCad: 25_000_000,
+        debtRepaymentCad: 40_000_000,
+        averageBuybackPriceCad: 5,
+      },
+      {
+        projectionYear: 2,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 175,
+        annualLiquidsProductionAddedBblPerDay: 7_000,
+        realizedGasPriceCadPerMcf: 4,
+        realizedLiquidsPriceCadPerBbl: 70,
+        royaltiesCadPerMcfe: 0.50,
+        operatingCostCadPerMcfe: 1.00,
+        transportationCostCadPerMcfe: 0.50,
+        gAndACostCadPerMcfe: 0.25,
+        annualInterestExpenseCad: 10_000_000,
+        cashTaxesCad: 5_000_000,
+        sustainingCapexCad: 100_000_000,
+        growthCapexCad: 50_000_000,
+        dividendsCad: 20_000_000,
+        shareBuybacksCad: 25_000_000,
+        debtRepaymentCad: 40_000_000,
+        averageBuybackPriceCad: 5,
+      },
+      {
+        projectionYear: 3,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 175,
+        annualLiquidsProductionAddedBblPerDay: 7_000,
+        realizedGasPriceCadPerMcf: 4,
+        realizedLiquidsPriceCadPerBbl: 70,
+        royaltiesCadPerMcfe: 0.50,
+        operatingCostCadPerMcfe: 1.00,
+        transportationCostCadPerMcfe: 0.50,
+        gAndACostCadPerMcfe: 0.25,
+        annualInterestExpenseCad: 10_000_000,
+        cashTaxesCad: 5_000_000,
+        sustainingCapexCad: 100_000_000,
+        growthCapexCad: 50_000_000,
+        dividendsCad: 20_000_000,
+        shareBuybacksCad: 25_000_000,
+        debtRepaymentCad: 40_000_000,
+        averageBuybackPriceCad: 5,
+      },
+      {
+        projectionYear: 4,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 175,
+        annualLiquidsProductionAddedBblPerDay: 7_000,
+        realizedGasPriceCadPerMcf: 4,
+        realizedLiquidsPriceCadPerBbl: 70,
+        royaltiesCadPerMcfe: 0.50,
+        operatingCostCadPerMcfe: 1.00,
+        transportationCostCadPerMcfe: 0.50,
+        gAndACostCadPerMcfe: 0.25,
+        annualInterestExpenseCad: 10_000_000,
+        cashTaxesCad: 5_000_000,
+        sustainingCapexCad: 100_000_000,
+        growthCapexCad: 50_000_000,
+        dividendsCad: 20_000_000,
+        shareBuybacksCad: 25_000_000,
+        debtRepaymentCad: 40_000_000,
+        averageBuybackPriceCad: 5,
+      },
+      {
+        projectionYear: 5,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 175,
+        annualLiquidsProductionAddedBblPerDay: 7_000,
+        realizedGasPriceCadPerMcf: 4,
+        realizedLiquidsPriceCadPerBbl: 70,
+        royaltiesCadPerMcfe: 0.50,
+        operatingCostCadPerMcfe: 1.00,
+        transportationCostCadPerMcfe: 0.50,
+        gAndACostCadPerMcfe: 0.25,
+        annualInterestExpenseCad: 10_000_000,
+        cashTaxesCad: 5_000_000,
+        sustainingCapexCad: 100_000_000,
+        growthCapexCad: 50_000_000,
+        dividendsCad: 20_000_000,
+        shareBuybacksCad: 25_000_000,
+        debtRepaymentCad: 40_000_000,
+        averageBuybackPriceCad: 5,
+      },
+    ],
+  });
+
+// -----------------------------------------------------------------------------
+// Production continuity
+// -----------------------------------------------------------------------------
+
+for (
+  let index = 1;
+  index < fiveYearEconomicProjection.years.length;
+  index += 1
+) {
+  const previousYear =
+    fiveYearEconomicProjection.years[index - 1];
+
+  const currentYear =
+    fiveYearEconomicProjection.years[index];
+
+  if (
+    Math.abs(
+      previousYear.production
+        .endingGasProductionMmcfPerDay -
+        currentYear.production
+          .beginningGasProductionMmcfPerDay
+    ) > tolerance
+  ) {
+    throw new Error(
+      `Economic gas-production continuity failed between years ${previousYear.projectionYear} and ${currentYear.projectionYear}.`
+    );
+  }
+
+  if (
+    Math.abs(
+      previousYear.production
+        .endingLiquidsProductionBblPerDay -
+        currentYear.production
+          .beginningLiquidsProductionBblPerDay
+    ) > tolerance
+  ) {
+    throw new Error(
+      `Economic liquids-production continuity failed between years ${previousYear.projectionYear} and ${currentYear.projectionYear}.`
+    );
+  }
+}
+
+console.log(
+  "PASS: Multi-year economic production continuity preserved"
+);
+
+// -----------------------------------------------------------------------------
+// Balance-sheet continuity
+// -----------------------------------------------------------------------------
+
+for (
+  let index = 1;
+  index < fiveYearEconomicProjection.years.length;
+  index += 1
+) {
+  const previousYear =
+    fiveYearEconomicProjection.years[index - 1];
+
+  const currentYear =
+    fiveYearEconomicProjection.years[index];
+
+  if (
+    Math.abs(
+      previousYear.endingNetDebtCad -
+        currentYear.beginningNetDebtCad
+    ) > tolerance
+  ) {
+    throw new Error(
+      `Net-debt continuity failed between years ${previousYear.projectionYear} and ${currentYear.projectionYear}.`
+    );
+  }
+}
+
+console.log(
+  "PASS: Multi-year economic net-debt continuity preserved"
+);
+
+// -----------------------------------------------------------------------------
+// Share-count continuity
+// -----------------------------------------------------------------------------
+
+for (
+  let index = 1;
+  index < fiveYearEconomicProjection.years.length;
+  index += 1
+) {
+  const previousYear =
+    fiveYearEconomicProjection.years[index - 1];
+
+  const currentYear =
+    fiveYearEconomicProjection.years[index];
+
+  if (
+    Math.abs(
+      previousYear.endingDilutedShares -
+        currentYear.beginningDilutedShares
+    ) > tolerance
+  ) {
+    throw new Error(
+      `Diluted-share continuity failed between years ${previousYear.projectionYear} and ${currentYear.projectionYear}.`
+    );
+  }
+}
+
+console.log(
+  "PASS: Multi-year economic diluted-share continuity preserved"
+);
+
+// -----------------------------------------------------------------------------
+// Final production
+// -----------------------------------------------------------------------------
+
+if (
+  Math.abs(
+    fiveYearEconomicProjection
+      .endingGasProductionMmcfPerDay -
+      569.3275
+  ) > tolerance
+) {
+  throw new Error(
+    "Five-year economic ending gas production failed."
+  );
+}
+
+if (
+  Math.abs(
+    fiveYearEconomicProjection
+      .endingLiquidsProductionBblPerDay -
+      22_773.1
+  ) > tolerance
+) {
+  throw new Error(
+    "Five-year economic ending liquids production failed."
+  );
+}
+
+console.log(
+  `PASS: Economic projection ends at ${fiveYearEconomicProjection.endingGasProductionMmcfPerDay.toFixed(4)} MMcf/d gas`
+);
+
+console.log(
+  `PASS: Economic projection ends at ${fiveYearEconomicProjection.endingLiquidsProductionBblPerDay.toFixed(1)} bbl/d liquids`
+);
+
+// -----------------------------------------------------------------------------
+// Cumulative capital allocation
+// -----------------------------------------------------------------------------
+
+if (
+  Math.abs(
+    fiveYearEconomicProjection
+      .cumulativeDividendsCad -
+      100_000_000
+  ) > tolerance
+) {
+  throw new Error(
+    "Five-year cumulative dividends failed."
+  );
+}
+
+if (
+  Math.abs(
+    fiveYearEconomicProjection
+      .cumulativeShareBuybacksCad -
+      125_000_000
+  ) > tolerance
+) {
+  throw new Error(
+    "Five-year cumulative buybacks failed."
+  );
+}
+
+if (
+  Math.abs(
+    fiveYearEconomicProjection
+      .cumulativeDebtRepaymentCad -
+      200_000_000
+  ) > tolerance
+) {
+  throw new Error(
+    "Five-year cumulative debt repayment failed."
+  );
+}
+
+console.log(
+  "PASS: Five-year cumulative dividends = CAD 100.0m"
+);
+
+console.log(
+  "PASS: Five-year cumulative buybacks = CAD 125.0m"
+);
+
+console.log(
+  "PASS: Five-year cumulative debt repayment = CAD 200.0m"
+);
+
+// -----------------------------------------------------------------------------
+// Buyback effect
+// -----------------------------------------------------------------------------
+
+const expectedEndingShares =
+  100_000_000 -
+  5 * 5_000_000;
+
+if (
+  Math.abs(
+    fiveYearEconomicProjection.endingDilutedShares -
+      expectedEndingShares
+  ) > tolerance
+) {
+  throw new Error(
+    `Five-year ending diluted shares failed: expected ${expectedEndingShares}, received ${fiveYearEconomicProjection.endingDilutedShares}.`
+  );
+}
+
+console.log(
+  `PASS: Five-year ending diluted shares = ${fiveYearEconomicProjection.endingDilutedShares.toLocaleString()}`
+);
+
+// -----------------------------------------------------------------------------
+// Economic projection-year guard
+// -----------------------------------------------------------------------------
+
+let nonSequentialEconomicYearsRejected = false;
+
+try {
+  calculateMultiYearEconomicProjection({
+    beginningGasProductionMmcfPerDay: 500,
+    beginningNetDebtCad: 300_000_000,
+    beginningDilutedShares: 100_000_000,
+
+    years: [
+      {
+        projectionYear: 2,
+        annualBaseDeclineRate: 0.30,
+        annualGasProductionAddedMmcfPerDay: 150,
+        realizedGasPriceCadPerMcf: 4,
+        royaltiesCadPerMcfe: 0.50,
+        operatingCostCadPerMcfe: 1,
+        transportationCostCadPerMcfe: 0.50,
+        gAndACostCadPerMcfe: 0.25,
+        sustainingCapexCad: 100_000_000,
+        growthCapexCad: 50_000_000,
+        dividendsCad: 0,
+        shareBuybacksCad: 0,
+        debtRepaymentCad: 0,
+      },
+    ],
+  });
+} catch {
+  nonSequentialEconomicYearsRejected = true;
+}
+
+if (!nonSequentialEconomicYearsRejected) {
+  throw new Error(
+    "Non-sequential economic projection years should be rejected."
+  );
+}
+
+console.log(
+  "PASS: Non-sequential economic projection years rejected"
 );
