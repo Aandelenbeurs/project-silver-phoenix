@@ -7,6 +7,7 @@ import {
   calculateFreeCashFlow,
   calculateCapitalAllocation,
   calculateBalanceSheetRollForward,
+  calculateShareholderValue,
 } from "../data/multi-sector/sectors/canadian-natural-gas/economics";
 
 import {
@@ -14,7 +15,16 @@ import {
   calculateMultiYearProduction,
   calculateEconomicProjectionYear,
   calculateMultiYearEconomicProjection,
+  calculateScenarioValuation,
 } from "../data/multi-sector/sectors/canadian-natural-gas/scenario-engine";
+
+import {
+  adaptCanadianGasScenarioOutcome,
+} from "../data/multi-sector/sectors/canadian-natural-gas/scenario-adapter";
+
+import {
+  getScenarioShareholderValue,
+} from "../data/multi-sector/cross-asset";
 
 const tolerance = 1e-7;
 
@@ -1839,4 +1849,736 @@ if (!nonSequentialEconomicYearsRejected) {
 
 console.log(
   "PASS: Non-sequential economic projection years rejected"
+);
+
+// -----------------------------------------------------------------------------
+// Cumulative dividend-per-share test with changing share count
+// -----------------------------------------------------------------------------
+
+const expectedCumulativeDividendsPerShare =
+  20_000_000 / 100_000_000 +
+  20_000_000 / 95_000_000 +
+  20_000_000 / 90_000_000 +
+  20_000_000 / 85_000_000 +
+  20_000_000 / 80_000_000;
+
+if (
+  Math.abs(
+    fiveYearEconomicProjection
+      .cumulativeDividendsPerShareCad -
+      expectedCumulativeDividendsPerShare
+  ) > tolerance
+) {
+  throw new Error(
+    `Cumulative dividend per share failed: expected ${expectedCumulativeDividendsPerShare}, received ${fiveYearEconomicProjection.cumulativeDividendsPerShareCad}.`
+  );
+}
+
+console.log(
+  `PASS: Five-year cumulative dividend per share = CAD ${fiveYearEconomicProjection.cumulativeDividendsPerShareCad.toFixed(6)}`
+);
+
+// -----------------------------------------------------------------------------
+// Shareholder value tests
+// -----------------------------------------------------------------------------
+
+// Case 1:
+// Normal positive net debt.
+//
+// Gross assets:
+// 800m + 300m + 100m + 50m = 1,250m
+//
+// Equity value:
+// 1,250m - 250m net debt = 1,000m
+//
+// Equity value per share:
+// 1,000m / 100m shares = CAD 10.00
+//
+// + CAD 1.25 cumulative dividends
+// = CAD 11.25 total shareholder value per share
+
+const shareholderValueWithNetDebt =
+  calculateShareholderValue({
+    producingAssetValueCad: 800_000_000,
+    undevelopedInventoryValueCad: 300_000_000,
+    unbookedOptionalityValueCad: 100_000_000,
+    otherAssetValueCad: 50_000_000,
+
+    netDebtCad: 250_000_000,
+    dilutedShares: 100_000_000,
+
+    cumulativeDividendsPerShareCad: 1.25,
+  });
+
+if (
+  Math.abs(
+    shareholderValueWithNetDebt.grossAssetValueCad -
+      1_250_000_000
+  ) > tolerance
+) {
+  throw new Error(
+    "Gross asset value with net debt failed."
+  );
+}
+
+if (
+  Math.abs(
+    shareholderValueWithNetDebt.equityValueCad -
+      1_000_000_000
+  ) > tolerance
+) {
+  throw new Error(
+    "Equity value with net debt failed."
+  );
+}
+
+if (
+  Math.abs(
+    shareholderValueWithNetDebt.equityValuePerShareCad -
+      10
+  ) > tolerance
+) {
+  throw new Error(
+    "Equity value per share with net debt failed."
+  );
+}
+
+if (
+  Math.abs(
+    shareholderValueWithNetDebt
+      .totalShareholderValuePerShareCad -
+      11.25
+  ) > tolerance
+) {
+  throw new Error(
+    "Total shareholder value with net debt failed."
+  );
+}
+
+console.log(
+  "PASS: Shareholder value with net debt = CAD 11.25/share"
+);
+
+// -----------------------------------------------------------------------------
+// Case 2:
+// Net cash must increase equity value.
+//
+// Gross assets = CAD 1,000m
+// Net debt = -CAD 200m
+//
+// Equity value:
+// 1,000m - (-200m) = 1,200m
+//
+// / 100m shares = CAD 12.00
+// + CAD 0.50 dividends
+// = CAD 12.50 total shareholder value per share
+
+const shareholderValueWithNetCash =
+  calculateShareholderValue({
+    producingAssetValueCad: 700_000_000,
+    undevelopedInventoryValueCad: 200_000_000,
+    unbookedOptionalityValueCad: 75_000_000,
+    otherAssetValueCad: 25_000_000,
+
+    netDebtCad: -200_000_000,
+    dilutedShares: 100_000_000,
+
+    cumulativeDividendsPerShareCad: 0.50,
+  });
+
+if (
+  Math.abs(
+    shareholderValueWithNetCash.equityValueCad -
+      1_200_000_000
+  ) > tolerance
+) {
+  throw new Error(
+    "Net-cash equity value failed."
+  );
+}
+
+if (
+  Math.abs(
+    shareholderValueWithNetCash
+      .totalShareholderValuePerShareCad -
+      12.50
+  ) > tolerance
+) {
+  throw new Error(
+    "Total shareholder value with net cash failed."
+  );
+}
+
+console.log(
+  "PASS: Net cash increases shareholder value to CAD 12.50/share"
+);
+
+// -----------------------------------------------------------------------------
+// Case 3:
+// Fundamental equity value may be negative.
+//
+// Assets = CAD 100m
+// Net debt = CAD 250m
+//
+// Equity value = -CAD 150m
+//
+// / 100m shares = -CAD 1.50/share
+//
+// No zero-floor is applied in this fundamental layer.
+
+const negativeEquityValue =
+  calculateShareholderValue({
+    producingAssetValueCad: 75_000_000,
+    undevelopedInventoryValueCad: 20_000_000,
+    unbookedOptionalityValueCad: 5_000_000,
+    otherAssetValueCad: 0,
+
+    netDebtCad: 250_000_000,
+    dilutedShares: 100_000_000,
+
+    cumulativeDividendsPerShareCad: 0,
+  });
+
+if (
+  Math.abs(
+    negativeEquityValue.equityValueCad -
+      -150_000_000
+  ) > tolerance
+) {
+  throw new Error(
+    "Negative fundamental equity value failed."
+  );
+}
+
+if (
+  Math.abs(
+    negativeEquityValue.equityValuePerShareCad -
+      -1.50
+  ) > tolerance
+) {
+  throw new Error(
+    "Negative fundamental equity value per share failed."
+  );
+}
+
+if (
+  Math.abs(
+    negativeEquityValue
+      .totalShareholderValuePerShareCad -
+      -1.50
+  ) > tolerance
+) {
+  throw new Error(
+    "Negative total shareholder value failed."
+  );
+}
+
+console.log(
+  "PASS: Fundamental equity value may remain negative at CAD -1.50/share"
+);
+
+// -----------------------------------------------------------------------------
+// Guard: diluted shares must be positive
+// -----------------------------------------------------------------------------
+
+let zeroDilutedSharesRejected = false;
+
+try {
+  calculateShareholderValue({
+    producingAssetValueCad: 100_000_000,
+    undevelopedInventoryValueCad: 0,
+    unbookedOptionalityValueCad: 0,
+    otherAssetValueCad: 0,
+
+    netDebtCad: 0,
+    dilutedShares: 0,
+
+    cumulativeDividendsPerShareCad: 0,
+  });
+} catch {
+  zeroDilutedSharesRejected = true;
+}
+
+if (!zeroDilutedSharesRejected) {
+  throw new Error(
+    "Zero diluted shares should be rejected."
+  );
+}
+
+console.log(
+  "PASS: Zero diluted shares rejected"
+);
+
+// -----------------------------------------------------------------------------
+// Full scenario valuation integration test
+// -----------------------------------------------------------------------------
+
+const fullScenarioValuation =
+  calculateScenarioValuation({
+    economicProjection: {
+      beginningGasProductionMmcfPerDay: 500,
+      beginningLiquidsProductionBblPerDay: 20_000,
+
+      beginningNetDebtCad: 300_000_000,
+      beginningDilutedShares: 100_000_000,
+
+      years: [
+        {
+          projectionYear: 1,
+          annualBaseDeclineRate: 0.30,
+          annualGasProductionAddedMmcfPerDay: 175,
+          annualLiquidsProductionAddedBblPerDay: 7_000,
+          realizedGasPriceCadPerMcf: 4,
+          realizedLiquidsPriceCadPerBbl: 70,
+          royaltiesCadPerMcfe: 0.50,
+          operatingCostCadPerMcfe: 1.00,
+          transportationCostCadPerMcfe: 0.50,
+          gAndACostCadPerMcfe: 0.25,
+          annualInterestExpenseCad: 10_000_000,
+          cashTaxesCad: 5_000_000,
+          sustainingCapexCad: 100_000_000,
+          growthCapexCad: 50_000_000,
+          dividendsCad: 20_000_000,
+          shareBuybacksCad: 25_000_000,
+          debtRepaymentCad: 40_000_000,
+          averageBuybackPriceCad: 5,
+        },
+        {
+          projectionYear: 2,
+          annualBaseDeclineRate: 0.30,
+          annualGasProductionAddedMmcfPerDay: 175,
+          annualLiquidsProductionAddedBblPerDay: 7_000,
+          realizedGasPriceCadPerMcf: 4,
+          realizedLiquidsPriceCadPerBbl: 70,
+          royaltiesCadPerMcfe: 0.50,
+          operatingCostCadPerMcfe: 1.00,
+          transportationCostCadPerMcfe: 0.50,
+          gAndACostCadPerMcfe: 0.25,
+          annualInterestExpenseCad: 10_000_000,
+          cashTaxesCad: 5_000_000,
+          sustainingCapexCad: 100_000_000,
+          growthCapexCad: 50_000_000,
+          dividendsCad: 20_000_000,
+          shareBuybacksCad: 25_000_000,
+          debtRepaymentCad: 40_000_000,
+          averageBuybackPriceCad: 5,
+        },
+        {
+          projectionYear: 3,
+          annualBaseDeclineRate: 0.30,
+          annualGasProductionAddedMmcfPerDay: 175,
+          annualLiquidsProductionAddedBblPerDay: 7_000,
+          realizedGasPriceCadPerMcf: 4,
+          realizedLiquidsPriceCadPerBbl: 70,
+          royaltiesCadPerMcfe: 0.50,
+          operatingCostCadPerMcfe: 1.00,
+          transportationCostCadPerMcfe: 0.50,
+          gAndACostCadPerMcfe: 0.25,
+          annualInterestExpenseCad: 10_000_000,
+          cashTaxesCad: 5_000_000,
+          sustainingCapexCad: 100_000_000,
+          growthCapexCad: 50_000_000,
+          dividendsCad: 20_000_000,
+          shareBuybacksCad: 25_000_000,
+          debtRepaymentCad: 40_000_000,
+          averageBuybackPriceCad: 5,
+        },
+        {
+          projectionYear: 4,
+          annualBaseDeclineRate: 0.30,
+          annualGasProductionAddedMmcfPerDay: 175,
+          annualLiquidsProductionAddedBblPerDay: 7_000,
+          realizedGasPriceCadPerMcf: 4,
+          realizedLiquidsPriceCadPerBbl: 70,
+          royaltiesCadPerMcfe: 0.50,
+          operatingCostCadPerMcfe: 1.00,
+          transportationCostCadPerMcfe: 0.50,
+          gAndACostCadPerMcfe: 0.25,
+          annualInterestExpenseCad: 10_000_000,
+          cashTaxesCad: 5_000_000,
+          sustainingCapexCad: 100_000_000,
+          growthCapexCad: 50_000_000,
+          dividendsCad: 20_000_000,
+          shareBuybacksCad: 25_000_000,
+          debtRepaymentCad: 40_000_000,
+          averageBuybackPriceCad: 5,
+        },
+        {
+          projectionYear: 5,
+          annualBaseDeclineRate: 0.30,
+          annualGasProductionAddedMmcfPerDay: 175,
+          annualLiquidsProductionAddedBblPerDay: 7_000,
+          realizedGasPriceCadPerMcf: 4,
+          realizedLiquidsPriceCadPerBbl: 70,
+          royaltiesCadPerMcfe: 0.50,
+          operatingCostCadPerMcfe: 1.00,
+          transportationCostCadPerMcfe: 0.50,
+          gAndACostCadPerMcfe: 0.25,
+          annualInterestExpenseCad: 10_000_000,
+          cashTaxesCad: 5_000_000,
+          sustainingCapexCad: 100_000_000,
+          growthCapexCad: 50_000_000,
+          dividendsCad: 20_000_000,
+          shareBuybacksCad: 25_000_000,
+          debtRepaymentCad: 40_000_000,
+          averageBuybackPriceCad: 5,
+        },
+      ],
+    },
+
+    // Explicit remaining asset values at year 5
+    producingAssetValueCad: 1_000_000_000,
+    undevelopedInventoryValueCad: 400_000_000,
+    unbookedOptionalityValueCad: 100_000_000,
+    otherAssetValueCad: 50_000_000,
+  });
+
+// -----------------------------------------------------------------------------
+// Verify that the integrated valuation uses the projection outputs
+// -----------------------------------------------------------------------------
+
+if (
+  Math.abs(
+    fullScenarioValuation.endingNetDebtCad -
+      fiveYearEconomicProjection.endingNetDebtCad
+  ) > tolerance
+) {
+  throw new Error(
+    "Scenario valuation did not use projected ending net debt."
+  );
+}
+
+if (
+  Math.abs(
+    fullScenarioValuation.endingDilutedShares -
+      fiveYearEconomicProjection.endingDilutedShares
+  ) > tolerance
+) {
+  throw new Error(
+    "Scenario valuation did not use projected ending diluted shares."
+  );
+}
+
+if (
+  Math.abs(
+    fullScenarioValuation.cumulativeDividendsPerShareCad -
+      fiveYearEconomicProjection.cumulativeDividendsPerShareCad
+  ) > tolerance
+) {
+  throw new Error(
+    "Scenario valuation did not use projected cumulative dividends per share."
+  );
+}
+
+console.log(
+  "PASS: Scenario valuation consumes projected debt, shares and dividends"
+);
+
+// -----------------------------------------------------------------------------
+// Verify valuation mathematics independently
+// -----------------------------------------------------------------------------
+
+const expectedGrossAssetValueCad =
+  1_000_000_000 +
+  400_000_000 +
+  100_000_000 +
+  50_000_000;
+
+const expectedIntegratedEquityValueCad =
+  expectedGrossAssetValueCad -
+  fiveYearEconomicProjection.endingNetDebtCad;
+
+const expectedIntegratedEquityValuePerShareCad =
+  expectedIntegratedEquityValueCad /
+  fiveYearEconomicProjection.endingDilutedShares;
+
+const expectedIntegratedTotalShareholderValuePerShareCad =
+  expectedIntegratedEquityValuePerShareCad +
+  fiveYearEconomicProjection.cumulativeDividendsPerShareCad;
+
+if (
+  Math.abs(
+    fullScenarioValuation.grossAssetValueCad -
+      expectedGrossAssetValueCad
+  ) > tolerance
+) {
+  throw new Error(
+    "Integrated gross asset value failed."
+  );
+}
+
+if (
+  Math.abs(
+    fullScenarioValuation.equityValueCad -
+      expectedIntegratedEquityValueCad
+  ) > tolerance
+) {
+  throw new Error(
+    "Integrated equity value failed."
+  );
+}
+
+if (
+  Math.abs(
+    fullScenarioValuation.equityValuePerShareCad -
+      expectedIntegratedEquityValuePerShareCad
+  ) > tolerance
+) {
+  throw new Error(
+    "Integrated equity value per share failed."
+  );
+}
+
+if (
+  Math.abs(
+    fullScenarioValuation.totalShareholderValuePerShareCad -
+      expectedIntegratedTotalShareholderValuePerShareCad
+  ) > tolerance
+) {
+  throw new Error(
+    "Integrated total shareholder value per share failed."
+  );
+}
+
+console.log(
+  `PASS: Scenario gross asset value = CAD ${(fullScenarioValuation.grossAssetValueCad / 1_000_000).toFixed(1)}m`
+);
+
+console.log(
+  `PASS: Scenario ending net debt = CAD ${(fullScenarioValuation.endingNetDebtCad / 1_000_000).toFixed(1)}m`
+);
+
+console.log(
+  `PASS: Scenario equity value = CAD ${(fullScenarioValuation.equityValueCad / 1_000_000).toFixed(1)}m`
+);
+
+console.log(
+  `PASS: Scenario equity value per share = CAD ${fullScenarioValuation.equityValuePerShareCad.toFixed(4)}`
+);
+
+console.log(
+  `PASS: Scenario cumulative dividends per share = CAD ${fullScenarioValuation.cumulativeDividendsPerShareCad.toFixed(6)}`
+);
+
+console.log(
+  `PASS: Scenario total shareholder value per share = CAD ${fullScenarioValuation.totalShareholderValuePerShareCad.toFixed(4)}`
+);
+
+// -----------------------------------------------------------------------------
+// Canadian Gas -> Multi-Sector ScenarioOutcome adapter tests
+// -----------------------------------------------------------------------------
+
+const adaptedGasScenario =
+  adaptCanadianGasScenarioOutcome({
+    scenario: "base",
+    probability: 0.50,
+    realizationYears: 5,
+
+    valuation: fullScenarioValuation,
+
+    drivers: [
+      "LNG export market access",
+      "Production growth",
+      "Balance-sheet improvement",
+    ],
+
+    criticalAssumptions: [
+      "Realized gas pricing remains supportive",
+      "Development capital delivers planned production",
+    ],
+  });
+
+// -----------------------------------------------------------------------------
+// Core ScenarioOutcome fields
+// -----------------------------------------------------------------------------
+
+if (adaptedGasScenario.scenario !== "base") {
+  throw new Error(
+    "Canadian gas scenario adapter did not preserve scenario name."
+  );
+}
+
+if (
+  Math.abs(
+    adaptedGasScenario.probability -
+      0.50
+  ) > tolerance
+) {
+  throw new Error(
+    "Canadian gas scenario adapter did not preserve probability."
+  );
+}
+if (
+  adaptedGasScenario.realizationYears === undefined ||
+  Math.abs(
+    adaptedGasScenario.realizationYears -
+      5
+  ) > tolerance
+) {
+  throw new Error(
+    "Canadian gas scenario adapter did not preserve realization timing."
+  );
+}
+
+console.log(
+  "PASS: Canadian gas scenario identity, probability and timing preserved"
+);
+
+// -----------------------------------------------------------------------------
+// Equity value per share
+// -----------------------------------------------------------------------------
+
+if (
+  Math.abs(
+    adaptedGasScenario.valuePerShare.mid -
+      fullScenarioValuation.equityValuePerShareCad
+  ) > tolerance
+) {
+  throw new Error(
+    "Canadian gas adapter equity value per share failed."
+  );
+}
+
+console.log(
+  `PASS: Adapted equity value per share = CAD ${adaptedGasScenario.valuePerShare.mid.toFixed(4)}`
+);
+
+// -----------------------------------------------------------------------------
+// Cash distributions
+// -----------------------------------------------------------------------------
+
+if (
+  Math.abs(
+    (adaptedGasScenario.cashDistributionsPerShare ?? 0) -
+      fullScenarioValuation.cumulativeDividendsPerShareCad
+  ) > tolerance
+) {
+  throw new Error(
+    "Canadian gas adapter cash distributions failed."
+  );
+}
+
+console.log(
+  `PASS: Adapted cash distributions = CAD ${(adaptedGasScenario.cashDistributionsPerShare ?? 0).toFixed(6)}/share`
+);
+
+// -----------------------------------------------------------------------------
+// Explicit total shareholder value
+// -----------------------------------------------------------------------------
+
+if (
+  adaptedGasScenario.shareholderValuePerShare ===
+  undefined
+) {
+  throw new Error(
+    "Canadian gas adapter must provide explicit shareholder value per share."
+  );
+}
+
+if (
+  Math.abs(
+    adaptedGasScenario.shareholderValuePerShare.mid -
+      fullScenarioValuation.totalShareholderValuePerShareCad
+  ) > tolerance
+) {
+  throw new Error(
+    "Canadian gas adapter total shareholder value failed."
+  );
+}
+
+console.log(
+  `PASS: Adapted total shareholder value = CAD ${adaptedGasScenario.shareholderValuePerShare.mid.toFixed(4)}`
+);
+
+// -----------------------------------------------------------------------------
+// Cross-Asset anti-double-counting
+// -----------------------------------------------------------------------------
+
+const crossAssetShareholderValue =
+  getScenarioShareholderValue(
+    adaptedGasScenario
+  );
+
+if (
+  Math.abs(
+    crossAssetShareholderValue -
+      fullScenarioValuation.totalShareholderValuePerShareCad
+  ) > tolerance
+) {
+  throw new Error(
+    `Cross-Asset shareholder value failed: expected ${fullScenarioValuation.totalShareholderValuePerShareCad}, received ${crossAssetShareholderValue}.`
+  );
+}
+
+const incorrectlyDoubleCountedValue =
+  fullScenarioValuation.totalShareholderValuePerShareCad +
+  fullScenarioValuation.cumulativeDividendsPerShareCad;
+
+if (
+  Math.abs(
+    crossAssetShareholderValue -
+      incorrectlyDoubleCountedValue
+  ) <= tolerance
+) {
+  throw new Error(
+    "Cross-Asset incorrectly double-counted cash distributions."
+  );
+}
+
+console.log(
+  `PASS: Cross-Asset shareholder value = CAD ${crossAssetShareholderValue.toFixed(4)}`
+);
+
+console.log(
+  "PASS: Cross-Asset does not double-count Canadian gas dividends"
+);
+
+// -----------------------------------------------------------------------------
+// Adapter guards
+// -----------------------------------------------------------------------------
+
+let invalidGasScenarioProbabilityRejected = false;
+
+try {
+  adaptCanadianGasScenarioOutcome({
+    scenario: "base",
+    probability: 1.10,
+    realizationYears: 5,
+    valuation: fullScenarioValuation,
+  });
+} catch {
+  invalidGasScenarioProbabilityRejected = true;
+}
+
+if (!invalidGasScenarioProbabilityRejected) {
+  throw new Error(
+    "Canadian gas scenario probability above 100% should be rejected."
+  );
+}
+
+console.log(
+  "PASS: Canadian gas scenario probability above 100% rejected"
+);
+
+let invalidGasScenarioTimingRejected = false;
+
+try {
+  adaptCanadianGasScenarioOutcome({
+    scenario: "bull",
+    probability: 0.25,
+    realizationYears: 0,
+    valuation: fullScenarioValuation,
+  });
+} catch {
+  invalidGasScenarioTimingRejected = true;
+}
+
+if (!invalidGasScenarioTimingRejected) {
+  throw new Error(
+    "Canadian gas scenario realization timing of zero should be rejected."
+  );
+}
+
+console.log(
+  "PASS: Canadian gas scenario realization timing of zero rejected"
 );

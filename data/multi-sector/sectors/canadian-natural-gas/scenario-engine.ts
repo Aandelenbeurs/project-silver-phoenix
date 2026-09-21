@@ -4,6 +4,7 @@ import {
   calculateFreeCashFlow,
   calculateCapitalAllocation,
   calculateBalanceSheetRollForward,
+  calculateShareholderValue,
 } from "./economics";
 
 // -----------------------------------------------------------------------------
@@ -724,7 +725,7 @@ export interface CanadianGasMultiYearEconomicResult {
 
   cumulativeFreeCashFlowCad: number;
   cumulativeDividendsCad: number;
-  cumulativeDividendsPerBeginningShareCad: number;
+  cumulativeDividendsPerShareCad: number;
   cumulativeShareBuybacksCad: number;
   cumulativeDebtRepaymentCad: number;
 
@@ -810,10 +811,11 @@ export function calculateMultiYearEconomicProjection(
   let currentDilutedShares =
     input.beginningDilutedShares;
 
-  let cumulativeFreeCashFlowCad = 0;
-  let cumulativeDividendsCad = 0;
-  let cumulativeShareBuybacksCad = 0;
-  let cumulativeDebtRepaymentCad = 0;
+ let cumulativeFreeCashFlowCad = 0;
+let cumulativeDividendsCad = 0;
+let cumulativeDividendsPerShareCad = 0;
+let cumulativeShareBuybacksCad = 0;
+let cumulativeDebtRepaymentCad = 0;
 
   const years: CanadianGasEconomicYearResult[] = [];
 
@@ -910,10 +912,13 @@ export function calculateMultiYearEconomicProjection(
       year.freeCashFlowCad;
 
     cumulativeDividendsCad +=
-      year.dividendsCad;
+  year.dividendsCad;
 
-    cumulativeShareBuybacksCad +=
-      year.shareBuybacksCad;
+cumulativeDividendsPerShareCad +=
+  year.dividendPerBeginningShareCad;
+
+cumulativeShareBuybacksCad +=
+  year.shareBuybacksCad;
 
     cumulativeDebtRepaymentCad +=
       year.debtRepaymentCad;
@@ -948,9 +953,7 @@ export function calculateMultiYearEconomicProjection(
     cumulativeFreeCashFlowCad,
     cumulativeDividendsCad,
 
-    cumulativeDividendsPerBeginningShareCad:
-      cumulativeDividendsCad /
-      input.beginningDilutedShares,
+    cumulativeDividendsPerShareCad,
 
     cumulativeShareBuybacksCad,
     cumulativeDebtRepaymentCad,
@@ -966,5 +969,148 @@ export function calculateMultiYearEconomicProjection(
 
     endingDilutedShares:
       currentDilutedShares,
+  };
+}
+
+// -----------------------------------------------------------------------------
+// Economic Projection + Remaining Asset Value
+// -----------------------------------------------------------------------------
+
+export interface CanadianGasScenarioValuationInput {
+  economicProjection: CanadianGasMultiYearEconomicInput;
+
+  /**
+   * Remaining asset values at the end of the projection horizon.
+   *
+   * These values are explicit scenario inputs in v1.
+   * They are NOT derived from a terminal FCF multiple.
+   */
+  producingAssetValueCad: number;
+  undevelopedInventoryValueCad: number;
+  unbookedOptionalityValueCad: number;
+  otherAssetValueCad: number;
+}
+
+export interface CanadianGasScenarioValuationResult {
+  economicProjection: CanadianGasMultiYearEconomicResult;
+
+  producingAssetValueCad: number;
+  undevelopedInventoryValueCad: number;
+  unbookedOptionalityValueCad: number;
+  otherAssetValueCad: number;
+
+  grossAssetValueCad: number;
+
+  endingNetDebtCad: number;
+  endingDilutedShares: number;
+
+  equityValueCad: number;
+  equityValuePerShareCad: number;
+
+  cumulativeDividendsPerShareCad: number;
+
+  totalShareholderValuePerShareCad: number;
+}
+
+/**
+ * Runs the full multi-year economic projection and converts
+ * the remaining asset value into total shareholder value.
+ *
+ * Economic projection:
+ *
+ * production
+ * -> revenue
+ * -> OCF
+ * -> capex
+ * -> FCF
+ * -> capital allocation
+ * -> ending net debt / diluted shares
+ *
+ * Valuation:
+ *
+ * producing asset value
+ * + risked undeveloped inventory
+ * + unbooked optionality
+ * + other assets
+ * - ending net debt
+ * = equity value
+ *
+ * / ending diluted shares
+ * = equity value per share
+ *
+ * + cumulative dividends per share
+ * = total shareholder value per share
+ *
+ * IMPORTANT:
+ * Buybacks are not added as cash distributions.
+ * Their effect is captured through ending diluted shares.
+ */
+export function calculateScenarioValuation(
+  input: CanadianGasScenarioValuationInput
+): CanadianGasScenarioValuationResult {
+  const economicProjection =
+    calculateMultiYearEconomicProjection(
+      input.economicProjection
+    );
+
+  const shareholderValue =
+    calculateShareholderValue({
+      producingAssetValueCad:
+        input.producingAssetValueCad,
+
+      undevelopedInventoryValueCad:
+        input.undevelopedInventoryValueCad,
+
+      unbookedOptionalityValueCad:
+        input.unbookedOptionalityValueCad,
+
+      otherAssetValueCad:
+        input.otherAssetValueCad,
+
+      netDebtCad:
+        economicProjection.endingNetDebtCad,
+
+      dilutedShares:
+        economicProjection.endingDilutedShares,
+
+      cumulativeDividendsPerShareCad:
+        economicProjection.cumulativeDividendsPerShareCad,
+    });
+
+  return {
+    economicProjection,
+
+    producingAssetValueCad:
+      shareholderValue.producingAssetValueCad,
+
+    undevelopedInventoryValueCad:
+      shareholderValue.undevelopedInventoryValueCad,
+
+    unbookedOptionalityValueCad:
+      shareholderValue.unbookedOptionalityValueCad,
+
+    otherAssetValueCad:
+      shareholderValue.otherAssetValueCad,
+
+    grossAssetValueCad:
+      shareholderValue.grossAssetValueCad,
+
+    endingNetDebtCad:
+      economicProjection.endingNetDebtCad,
+
+    endingDilutedShares:
+      economicProjection.endingDilutedShares,
+
+    equityValueCad:
+      shareholderValue.equityValueCad,
+
+    equityValuePerShareCad:
+      shareholderValue.equityValuePerShareCad,
+
+    cumulativeDividendsPerShareCad:
+      shareholderValue.cumulativeDividendsPerShareCad,
+
+    totalShareholderValuePerShareCad:
+      shareholderValue.totalShareholderValuePerShareCad,
   };
 }

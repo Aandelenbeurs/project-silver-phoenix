@@ -700,3 +700,195 @@ export function calculateBalanceSheetRollForward(
     endingNetDebtCad,
   };
 }
+
+// -----------------------------------------------------------------------------
+// Remaining Asset Value / Total Shareholder Value
+// -----------------------------------------------------------------------------
+
+export interface CanadianGasShareholderValueInput {
+  producingAssetValueCad: number;
+  undevelopedInventoryValueCad: number;
+  unbookedOptionalityValueCad: number;
+  otherAssetValueCad: number;
+
+  netDebtCad: number;
+  dilutedShares: number;
+
+  /**
+   * Cash dividends received by one share over the scenario horizon.
+   *
+   * Buybacks are deliberately excluded here because their economic
+   * effect is already reflected in the diluted share count.
+   */
+  cumulativeDividendsPerShareCad: number;
+}
+
+export interface CanadianGasShareholderValueResult {
+  grossAssetValueCad: number;
+
+  producingAssetValueCad: number;
+  undevelopedInventoryValueCad: number;
+  unbookedOptionalityValueCad: number;
+  otherAssetValueCad: number;
+
+  netDebtCad: number;
+
+  equityValueCad: number;
+  dilutedShares: number;
+  equityValuePerShareCad: number;
+
+  cumulativeDividendsPerShareCad: number;
+
+  totalShareholderValuePerShareCad: number;
+}
+
+/**
+ * Converts remaining asset value into equity value and total
+ * shareholder value per share.
+ *
+ * Producing Asset Value
+ * + Risked Undeveloped Inventory
+ * + Unbooked Optionality
+ * + Other Assets
+ * - Net Debt
+ * = Equity Value
+ *
+ * Equity Value / Diluted Shares
+ * = Equity Value per Share
+ *
+ * + Cumulative Dividends per Share
+ * = Total Shareholder Value per Share
+ *
+ * IMPORTANT:
+ * Net debt may be negative. Negative net debt represents net cash
+ * and therefore increases equity value.
+ *
+ * Buybacks must NOT be added as shareholder distributions here.
+ * Their effect is already captured through dilutedShares.
+ */
+export function calculateShareholderValue(
+  input: CanadianGasShareholderValueInput
+): CanadianGasShareholderValueResult {
+  const numericInputs = [
+    [
+      "Producing asset value",
+      input.producingAssetValueCad,
+    ],
+    [
+      "Undeveloped inventory value",
+      input.undevelopedInventoryValueCad,
+    ],
+    [
+      "Unbooked optionality value",
+      input.unbookedOptionalityValueCad,
+    ],
+    [
+      "Other asset value",
+      input.otherAssetValueCad,
+    ],
+    [
+      "Net debt",
+      input.netDebtCad,
+    ],
+    [
+      "Diluted shares",
+      input.dilutedShares,
+    ],
+    [
+      "Cumulative dividends per share",
+      input.cumulativeDividendsPerShareCad,
+    ],
+  ] as const;
+
+  for (const [label, value] of numericInputs) {
+    if (!Number.isFinite(value)) {
+      throw new Error(
+        `${label} must be a finite number.`
+      );
+    }
+  }
+
+  if (input.producingAssetValueCad < 0) {
+    throw new Error(
+      "Producing asset value cannot be negative."
+    );
+  }
+
+  if (input.undevelopedInventoryValueCad < 0) {
+    throw new Error(
+      "Undeveloped inventory value cannot be negative."
+    );
+  }
+
+  if (input.unbookedOptionalityValueCad < 0) {
+    throw new Error(
+      "Unbooked optionality value cannot be negative."
+    );
+  }
+
+  if (input.otherAssetValueCad < 0) {
+    throw new Error(
+      "Other asset value cannot be negative."
+    );
+  }
+
+  if (input.dilutedShares <= 0) {
+    throw new Error(
+      "Diluted shares must be greater than zero."
+    );
+  }
+
+  if (input.cumulativeDividendsPerShareCad < 0) {
+    throw new Error(
+      "Cumulative dividends per share cannot be negative."
+    );
+  }
+
+  const grossAssetValueCad =
+    input.producingAssetValueCad +
+    input.undevelopedInventoryValueCad +
+    input.unbookedOptionalityValueCad +
+    input.otherAssetValueCad;
+
+  const equityValueCad =
+    grossAssetValueCad -
+    input.netDebtCad;
+
+  const equityValuePerShareCad =
+    equityValueCad /
+    input.dilutedShares;
+
+  const totalShareholderValuePerShareCad =
+    equityValuePerShareCad +
+    input.cumulativeDividendsPerShareCad;
+
+  return {
+    grossAssetValueCad,
+
+    producingAssetValueCad:
+      input.producingAssetValueCad,
+
+    undevelopedInventoryValueCad:
+      input.undevelopedInventoryValueCad,
+
+    unbookedOptionalityValueCad:
+      input.unbookedOptionalityValueCad,
+
+    otherAssetValueCad:
+      input.otherAssetValueCad,
+
+    netDebtCad:
+      input.netDebtCad,
+
+    equityValueCad,
+    dilutedShares:
+      input.dilutedShares,
+
+    equityValuePerShareCad,
+
+    cumulativeDividendsPerShareCad:
+  input.cumulativeDividendsPerShareCad,
+
+    totalShareholderValuePerShareCad,
+  };
+}
