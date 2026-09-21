@@ -53,6 +53,27 @@ function getLatestStoredReview(
   return null;
 }
 
+function isReviewDue(
+  reviewDate: string | null,
+) {
+  if (!reviewDate) {
+    return true;
+  }
+
+  const reviewTime =
+    new Date(
+      `${reviewDate}T00:00:00Z`,
+    ).getTime();
+
+  const now = Date.now();
+
+  const ageInDays =
+    (now - reviewTime) /
+    (1000 * 60 * 60 * 24);
+
+  return ageInDays >= 30;
+}
+
     const liveMetalPrices =
   portfolio.referenceSilverPriceUsd !== null &&
   portfolio.referenceGoldPriceUsd !== null
@@ -78,10 +99,19 @@ const totalPositions =
 
 const reviewedPositions =
   portfolio.portfolioV2.positions.filter(
-    (position) =>
-      getLatestStoredReview(
-        position.companyId,
-      ) !== null,
+    (position) => {
+      const latestReview =
+        getLatestStoredReview(
+          position.companyId,
+        );
+
+      return (
+        latestReview !== null &&
+        !isReviewDue(
+          latestReview.reviewDate,
+        )
+      );
+    },
   );
 
 const reviewedCount =
@@ -169,6 +199,12 @@ const brokenCount =
                 getLatestStoredReview(
                   position.companyId,
                 );
+
+                const reviewDue =
+  isReviewDue(
+    previousReview?.reviewDate ??
+      null,
+  );
 
                 const scenarioData =
   scenarioRanking.find(
@@ -268,16 +304,16 @@ return (
   </span>
 
   <strong
-    className={`review-badge ${
-      previousReview
-        ? "review-badge-ready"
-        : "review-badge-needed"
-    }`}
-  >
-    {previousReview
-      ? "KLAAR"
-      : "REVIEW NODIG"}
-  </strong>
+  className={`review-badge ${
+    reviewDue
+      ? "review-badge-needed"
+      : "review-badge-ready"
+  }`}
+>
+  {reviewDue
+    ? "REVIEW NODIG"
+    : "KLAAR"}
+</strong>
 </div>
 
    <ReviewForm
@@ -299,6 +335,7 @@ return (
     selectedCompanyId ===
     position.companyId
   }
+  reviewDue={reviewDue}
 />
     </div>
   </div>

@@ -22,12 +22,15 @@ export default function ReviewForm({
   previousThesisHealth,
   previousThesisNote,
   initiallyOpen = false,
+  reviewDue = false,
 }: {
+
   companyId: string;
   currentInvestmentScore: number | null;
   previousThesisHealth: ThesisHealth;
   previousThesisNote: string | null;
   initiallyOpen?: boolean;
+  reviewDue?: boolean;
 }) {
 
   const router = useRouter();
@@ -94,11 +97,10 @@ return (
       }
     >
       {isOpen
-        ? "Sluiten"
-        : previousThesisHealth ===
-            "UNKNOWN"
-          ? "Review"
-          : "Bekijken"}
+  ? "Sluiten"
+  : reviewDue
+    ? "Review"
+    : "Bekijken"}
     </button>
 
     {isOpen && (

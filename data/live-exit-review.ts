@@ -300,9 +300,30 @@ const unrealizedReturnPercent =
               position.companyId,
             );
 
-          const thesisHealth =
-            latestStoredReview?.thesisHealth ??
-            "UNKNOWN";
+          const latestThesisHealth =
+  latestStoredReview?.thesisHealth ??
+  "UNKNOWN";
+
+const reviewAgeInDays =
+  latestStoredReview
+    ? (
+        Date.now() -
+        new Date(
+          `${latestStoredReview.reviewDate}T00:00:00Z`,
+        ).getTime()
+      ) /
+      (1000 * 60 * 60 * 24)
+    : null;
+
+const reviewIsDue =
+  reviewAgeInDays !== null &&
+  reviewAgeInDays >= 30;
+
+const thesisHealth =
+  reviewIsDue &&
+  latestThesisHealth === "INTACT"
+    ? "UNKNOWN"
+    : latestThesisHealth;
 
           const previousInvestmentScore =
             latestStoredReview?.investmentScore ??
