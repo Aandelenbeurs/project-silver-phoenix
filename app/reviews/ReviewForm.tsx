@@ -21,11 +21,13 @@ export default function ReviewForm({
   currentInvestmentScore,
   previousThesisHealth,
   previousThesisNote,
+  initiallyOpen = false,
 }: {
   companyId: string;
   currentInvestmentScore: number | null;
   previousThesisHealth: ThesisHealth;
   previousThesisNote: string | null;
+  initiallyOpen?: boolean;
 }) {
 
   const router = useRouter();
@@ -36,7 +38,7 @@ export default function ReviewForm({
   );
 
   const [isOpen, setIsOpen] =
-  useState(false);
+  useState(initiallyOpen);
 
   const [thesisNote, setThesisNote] =
   useState(

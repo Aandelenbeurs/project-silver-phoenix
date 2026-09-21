@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   useState,
 } from "react";
@@ -379,6 +381,25 @@ actionExplanation,
     flexWrap: "wrap",
   }}
 >
+  {action === "REVIEW" ? (
+  <Link
+    href={`/reviews?company=${encodeURIComponent(
+      companyId,
+    )}`}
+    onClick={(event) =>
+      event.stopPropagation()
+    }
+    style={{
+      fontSize: "16px",
+      fontWeight: 700,
+      color: "inherit",
+      textDecoration: "underline",
+      textUnderlineOffset: "3px",
+    }}
+  >
+    REVIEW
+  </Link>
+) : (
   <strong
     style={{
       fontSize: "16px",
@@ -386,6 +407,7 @@ actionExplanation,
   >
     {action}
   </strong>
+)}
 
   <span
     style={{

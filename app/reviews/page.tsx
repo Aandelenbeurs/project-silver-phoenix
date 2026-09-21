@@ -12,7 +12,16 @@ import {
 
 import ReviewForm from "./ReviewForm";
 
-export default async function ReviewsPage() {
+export default async function ReviewsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    company?: string;
+  }>;
+}) {
+  const {
+    company: selectedCompanyId,
+  } = await searchParams;
   const portfolio =
     await getLivePortfolio();
 
@@ -285,6 +294,10 @@ return (
   previousThesisNote={
     previousReview?.thesisNote ??
     null
+  }
+   initiallyOpen={
+    selectedCompanyId ===
+    position.companyId
   }
 />
     </div>
