@@ -1,0 +1,69 @@
+{
+  "reviews": [
+    {
+      "reviewDate": "2026-09-24",
+      "companies": {
+        "advanced-gold": {
+          "companyId": "advanced-gold",
+          "reviewDate": "2026-09-24",
+          "entryStatus": "WAIT",
+          "entryNote": "Silver Belle-case sinds augustus verder technisch/corporate gede-risked via onafhankelijk NI 43-101 Technical Report en afronding resterende projectbetaling. Doyle explorationprogramma eveneens gestart. Belangrijkste Phoenix-entry trigger blijft echter pending: nog geen moderne Silver Belle-drilling die historische/high-grade mineralisatie over economische breedte en continuïteit bevestigt, geen resource en geen economics. Hoge surface/sampling grades waren reeds in baseline verwerkt. Buck Lake heeft nog geen nieuwe overtuigende Cu-Zn discovery-resultaten en Doyle nog geen moderne drill confirmation. WAIT totdat Silver Belle modern drilling oplevert, of een andere kernasset overtuigend economisch discovery-bewijs geeft; financiering/verwatering en projectfocus blijven belangrijke monitorpunten."
+        },
+        "china-silver": {
+          "companyId": "china-silver",
+          "reviewDate": "2026-09-24",
+          "entryStatus": "WATCH",
+          "entryNote": "Shigatse is sinds augustus van plan naar actieve grootschalige exploratie gegaan. ~6 drill rigs actief in Xiaqiu en eerste drilling/mapping toont indicaties van Cu-Pb-Zn-Ag-Mo mineralisatie, passend bij mogelijk groter porphyry-skarn-hydrothermal polymetallic systeem. HK$463,3m 2026-financiering volledig afgerond; 80% bestemd voor Shigatse exploration/project funding, waardoor belangrijkste Phoenix-programma financieel beter gedekt is. Nog geen economische assay-intercepties, internationaal herkenbare resource of bewijs dat zilver een materieel deel van resourcewaarde vormt. Manufacturing verslechterde sterk in H1: omzet -75,7% naar RMB508,7m en omslag naar ~RMB24,1m nettoverlies, waarmee bestaande risico van lagere silver-ingot volumes bij hoge zilverprijzen wordt bevestigd. WATCH: Shigatse verdient verhoogde aandacht; naar REVIEW bij overtuigende economische drill grades/continuïteit of eerste geloofwaardige resource."
+        },
+        "nord-precious-metals": {
+          "companyId": "nord-precious-metals",
+          "reviewDate": "2026-09-24",
+          "entryStatus": "WATCH",
+          "entryNote": "Volledige Phoenix-herbeoordeling uitgevoerd. Oorspronkelijke belangrijke trigger deels gerealiseerd: historische Gowganda tailings estimate vervangen door actuele onafhankelijke MRE van 1.845Mt @ 47.4 g/t Ag = 2.814Moz Ag, volledig Indicated. Hiermee is de oorspronkelijke ~2.96Moz historische inventory vrijwel volledig bevestigd. Permitting/engineering eveneens duidelijk gevorderd; Recovery Permit pathway actief en waterplan voor potentiële 1,000tpd reprocessing wordt uitgewerkt, maar Recovery Permit/PTTW/ECA nog niet verkregen en actuele metallurgy/economics ontbreken. Castle East blijft uitzonderlijke grades leveren (o.a. 4,683 g/t Ag over 2.0m incl. 20,676 g/t over 0.30m), maar kernprobleem schaal blijft: oude ~7.56Moz resource is nog historisch en nieuwe actuele Castle East MRE ontbreekt. Fully diluted structure gestegen naar ~220.2m door grotere warrantoverhang. WATCH na volledige reassessment: case duidelijk gede-risked maar nog niet CANDIDATE. Belangrijkste resterende triggers zijn overtuigende tailings metallurgy/economics + permits/commercial route en/of actuele Castle East MRE met materiële schaalgroei."
+        },
+        "contango": {
+          "companyId": "contango",
+          "reviewDate": "2026-09-24",
+          "entryStatus": "CANDIDATE",
+          "entryNote": "Volledige Phoenix-herbeoordeling uitgevoerd. Belangrijke oorspronkelijke entryvoorwaarden zijn gerealiseerd of duidelijk gevorderd. Kitsault Valley updated MRE verhoogt Indicated resource 93% naar 89.55Moz AgEq (7.66Mt @ 363 g/t), waaronder 58.70Moz daadwerkelijk Ag + 394.7koz Au; daarnaast 64.92Moz AgEq Inferred. >50,000m 2026 drilling zit nog niet in deze MRE en recente Torbrit/North Star results ondersteunen verdere resource upside. Manh Choh blijft sterke cashflowmotor voor development pipeline; $89m cash eind Q2. Lucky Shot levert nieuwe high-grade intercepts en aanvullende mineralized structures terwijl FS richting H1 2027 wordt voorbereid. Johnson Tract road/permitting/site work verloopt volgens planning richting underground access in 2027. Resterende risico's: Kitsault economics/IA nog niet beschikbaar, Lucky Shot FS pending, Johnson Tract nog pre-production en resterende debt/carry-trade obligations nog niet volledig verdwenen. CANDIDATE: oorspronkelijke Phoenix-thesis wordt door recente resource growth, cashflow en project execution materieel bevestigd; geschikt voor actieve entry consideration, maar geen automatische koopbeslissing."
+        },
+        "vizsla-silver": {
+          "companyId": "vizsla-silver",
+          "reviewDate": "2026-09-24",
+          "entryStatus": "WATCH",
+          "entryNote": "Panuco blijft een vergevorderde, volledig gefinancierde high-grade silver-gold development case met afgeronde FS en target voor eerste productie H2 2027. Sinds augustus geen nieuwe resource, construction decision of andere fundamentele projectmijlpaal gevonden die een volledige Phoenix-herbeoordeling afdwingt. Luis Lázaro benoemd als President Mexico om permitting/construction/operations te leiden; vertrek Chief Geologist Jesus Velador is managementwijziging om te monitoren. Underground development kende tot eind juli tijdelijk geen verdere voortgang, terwijl engineering/developmentwerk doorgaat. WATCH: actief volgen richting definitieve permits/construction decision, hervatting/voortgang underground development, updated MRE en bevestiging dat H2-2027 production schedule intact blijft."
+        },
+        "g-mining-ventures": {
+          "companyId": "g-mining-ventures",
+          "reviewDate": "2026-09-24",
+          "entryStatus": "WATCH",
+          "entryNote": "Oko West construction blijft volgens recente Q2-update on schedule en binnen bestaand US$973m initial capital budget. Per 30 Jun was project 28% complete, US$423m besteed (~44% budget), US$628m committed (~65%), engineering ~90% en procurement ~99% complete; first gold blijft gepland H2 2027. G2/Oko-Ghanie acquisitie was reeds onderdeel van augustus-baseline en wordt niet als nieuwe trigger geteld. Sinds closing is integratieprogramma gestart met infill drilling, metallurgy, geotechnical/engineering work en voorbereiding geïntegreerde MRE/FS voor groter Oko-project. Tocantinzinho blijft operationele cashflow leveren. WATCH: execution/de-risking verloopt positief, maar nog geen nieuwe geïntegreerde Oko-resource/FS of andere ontwikkeling die volledige Phoenix-herbeoordeling vereist. Naar REVIEW bij materiële CAPEX/schedule-wijziging of nieuwe integrated Oko MRE/FS die schaal/economics wezenlijk verandert."
+        },
+        "aya-gold-silver": {
+          "companyId": "aya-gold-silver",
+          "reviewDate": "2026-09-24",
+          "entryStatus": "CANDIDATE",
+          "entryNote": "Volledige Phoenix-herbeoordeling uitgevoerd. Aya combineert inmiddels bewezen Zgounder-cashflow met een materieel gede-risked transformational Boumadine growth project. Zgounder Q2: 1.49Moz Ag production, 3,889tpd throughput, 91.2% recovery; Aya genereerde $97m revenue, $35m net income en $48m operating cash flow en eindigde met $183m cash. Updated Boumadine PEA: 14.4yr mine life, 348koz AuEq/yr eerste 5 jaar, 3.89Moz AuEq LOM incl. 2.25Moz Au + 81.2Moz Ag, $463m initial CAPEX, $3.54bn after-tax NPV5 en 93% IRR. Headline economics profiteren materieel van hogere $3,500 Au/$50 Ag assumptions en PEA blijft preliminary met groot Inferred aandeel; FS/reserve conversion en financing/construction execution blijven belangrijkste risico's. 145,719m YTD Boumadine drilling met 14 rigs ondersteunt high-grade continuity; 360,000m 2026–27 infill program moet verdere conversion richting FS 2027 ondersteunen. Zgounder exploration blijft eveneens high-grade upside leveren. CANDIDATE: producer cashflow + sterke balans + Boumadine scale/economics/de-risking voldoen na volledige reassessment aan actieve entry-consideration; geen automatische koopbeslissing."
+        },
+        "artemis-gold": {
+          "companyId": "artemis-gold",
+          "reviewDate": "2026-09-24",
+          "entryStatus": "CANDIDATE",
+          "entryNote": "Volledige Phoenix-herbeoordeling uitgevoerd. Blackwater bevestigt sterke producer-case: Q2 74.1koz Au, US$955/oz AISC, C$207.5m operating cash flow en C$878.9m available liquidity; 2026 guidance 265–290koz @ US$925–1,025 AISC gehandhaafd. Phase 1A was eind Q2 57% complete richting Q4-2026 commissioning; EP2 major construction gestart, on schedule/on budget richting 21Mtpa en >500koz/yr production profile, met C$1.44bn CAPEX naar verwachting grotendeels uit operating cash flow. Eerste Blackwater expansion drilling sterk (259m @ 1.22g/t Au incl. 85m @ 2.29g/t; 191m @ 0.95g/t incl. 93m @ 1.33g/t), deels onder huidige reserve. Vista Gold acquisition voegt Mt Todd toe met 9.1Moz M&I + 1.4Moz Inferred Au via all-share transaction; bestaande Artemis holders ~95% pro-forma, geen acquisition cash/new debt. Mt Todd construction wordt bewust ná EP2 gepland. Risico's blijven EP2 execution/CAPEX, bestaande debt/hedges, toekomstige Mt Todd financing/execution en Vista transaction closing (verwacht Jan 2027). CANDIDATE: bewezen low-cost cashflow + funded Blackwater growth + beperkte-dilution Mt Todd optionality voldoen aan actieve entry consideration; geen automatische koopbeslissing."
+        },
+        "sitka-gold": {
+          "companyId": "sitka-gold",
+          "reviewDate": "2026-09-24",
+          "entryStatus": "WATCH",
+          "entryNote": "RC Gold blijft sterk uitbreiden tijdens 60,000m 2026 drill program. Sinds begin augustus leverde Blackjack o.a. 218.6m @ 1.25 g/t Au incl. 44.4m @ 3.86 g/t, plus recent 141.5m @ 1.93 g/t incl. 80.6m @ 3.20 g/t; drilling breidt high-grade mineralization zowel lateraal als op diepte uit. Rhosgobel leverde eveneens brede mineralization (159.2m @ 1.14 g/t Au incl. 7.3m @ 8.89 g/t) plus verdere tungsten mineralization. Clear Creek acquisition afgerond, waardoor Sitka nu 100% van volledige 447 km² RC Gold district bezit. Huidige officiële MRE blijft 1.291Moz Indicated + 3.829Moz Inferred Au en bevat veel van de recente drilling nog niet. WATCH: sterke resource-growth evidence, maar belangrijkste kwantitatieve trigger — nieuwe MRE/economics — ontbreekt nog. Naar REVIEW bij materiële resource update, sterke conversion naar Indicated en/of eerste economische studie."
+        },
+        "snowline-gold": {
+          "companyId": "snowline-gold",
+          "reviewDate": "2026-09-24",
+          "entryStatus": "WATCH",
+          "entryNote": "Valley development blijft sterk vooruitgaan, maar belangrijkste Phoenix re-rating trigger is nog pending. Snowline sloot 12 Aug C$172.6m financing af; B2Gold behield 9.9% belang, waardoor treasury voor development/exploration aanzienlijk is versterkt. PFS blijft on track voor Q1 2027, met engineering fieldwork grotendeels voltooid; studie moet updated MRE + eerste Proven & Probable reserves opleveren en onderzoekt o.a. hogere throughput dan 25ktpd PEA-case. Permitting wordt parallel voorbereid. 2026 Valley drilling toont mineralization buiten en onder huidige resource/PEA pit, terwijl regionale Gracie/Duke/Crossroad exploration verdere district upside kan toevoegen. WATCH: duidelijke de-risking en sterke financiering, maar nog geen nieuwe PFS/MRE/reserve/economics die volledige Phoenix-herbeoordeling vereist. Naar REVIEW bij PFS + updated MRE/reserves of andere materiële wijziging in Valley economics/development plan."
+        }
+      }
+    }
+  ]
+}

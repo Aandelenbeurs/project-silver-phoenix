@@ -48,6 +48,11 @@ import {
 } from "../../data/review-store";
 
 import {
+  readEntryReviewStore,
+  getLatestEntryReview,
+} from "../../data/entry-review-store";
+
+import {
   buildLiveExitReview,
 } from "../../data/live-exit-review";
 
@@ -140,6 +145,28 @@ const goldHistory =
 
   const reviewStore =
   await readReviewStore();
+
+  const entryReviewStore =
+  await readEntryReviewStore();
+
+  const entryCandidateCompanyIds =
+  phoenixCompaniesV2
+    .filter((company) => {
+      const entryReview =
+        getLatestEntryReview(
+          entryReviewStore,
+          company.companyId,
+        );
+
+      return (
+        entryReview?.entryStatus ===
+        "CANDIDATE"
+      );
+    })
+    .map(
+      (company) =>
+        company.companyId,
+    );
 
   function getLatestStoredReview(
   companyId: string,
@@ -527,6 +554,9 @@ const rotationSimulation =
     exitReviews.entries(),
   )
 }
+ entryCandidateCompanyIds={
+    entryCandidateCompanyIds
+  }
 />
 
       <section className="stats-grid">

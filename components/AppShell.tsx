@@ -12,6 +12,7 @@ const nav = [
   { href: '/ranking', label: 'Master Ranking', icon: '★' },
   { href: '/optimizer', label: 'Optimizer', icon: '⇄' },
   { href: '/reviews', label: 'Reviews', icon: '✓' },
+  { href: "/watchlist", label: "Watchlist", icon: "◎",},
   { href: '/exit', label: 'Exit Strategy', icon: '↗' },
 ];
 

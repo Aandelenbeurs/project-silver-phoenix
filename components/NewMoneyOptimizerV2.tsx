@@ -6,7 +6,6 @@ import {
 
 import {
   optimizeNewMoneyV2,
-  getOptimizerCandidateCompanyIds,
 getOptimizerPracticalSettings,
   type NewMoneyOptimizerResult,
 } from "../data/optimizer-v2";
@@ -26,6 +25,8 @@ import type {
 
 type Props = {
   positions: PortfolioV2PositionInput[];
+
+  entryCandidateCompanyIds: string[];
 
   liveMetalPrices: {
     silverPriceUsd: number;
@@ -82,6 +83,7 @@ function formatScore(
 
 export default function NewMoneyOptimizerV2({
   positions,
+  entryCandidateCompanyIds,
   liveMetalPrices,
   exitReviews,
 }: Props) {
@@ -125,8 +127,19 @@ export default function NewMoneyOptimizerV2({
       return;
     }
 
-   const candidateCompanyIds =
-  getOptimizerCandidateCompanyIds();
+  const ownedCompanyIds =
+  positions.map(
+    (position) =>
+      position.companyId,
+  );
+
+const candidateCompanyIds =
+  Array.from(
+    new Set([
+      ...ownedCompanyIds,
+      ...entryCandidateCompanyIds,
+    ]),
+  );
 
 const practicalSettings =
   getOptimizerPracticalSettings(
