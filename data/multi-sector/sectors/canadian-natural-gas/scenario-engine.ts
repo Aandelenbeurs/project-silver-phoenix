@@ -1046,9 +1046,11 @@ export interface CanadianGasScenarioValuationResult {
  * Their effect is captured through ending diluted shares.
  */
 export function calculateScenarioValuation(
-  input: CanadianGasScenarioValuationInput
+  input: CanadianGasScenarioValuationInput,
+  precomputedEconomicProjection?: CanadianGasMultiYearEconomicResult
 ): CanadianGasScenarioValuationResult {
   const economicProjection =
+    precomputedEconomicProjection ??
     calculateMultiYearEconomicProjection(
       input.economicProjection
     );

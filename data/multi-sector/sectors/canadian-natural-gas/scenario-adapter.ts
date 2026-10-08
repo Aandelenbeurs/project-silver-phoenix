@@ -84,9 +84,12 @@ export function adaptCanadianGasScenarioOutcome(
   const totalShareholderValuePerShareCad =
     input.valuation.totalShareholderValuePerShareCad;
 
-  return {
+    return {
     scenario: input.scenario,
     probability: input.probability,
+
+    equityValue:
+      input.valuation.equityValueCad,
 
     valuePerShare: {
       low: equityValuePerShareCad,

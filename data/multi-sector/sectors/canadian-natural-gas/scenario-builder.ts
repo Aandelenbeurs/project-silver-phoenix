@@ -16,10 +16,26 @@ import {
   createCanadianGasScenarioDistribution,
 } from "./scenario-adapter";
 
+import {
+  calculateCanadianGasReserveScenarioValuation,
+} from "./reserve-scenario-valuation";
+
+import type {
+  CanadianGasReserveCashFlowYear,
+} from "./reserve-cashflow-valuation";
+
 export interface CanadianGasEconomicScenarioInput {
   probability: number;
   realizationYears: number;
   valuation: CanadianGasScenarioValuationInput;
+
+  // Optional reserve-based valuation.
+  reserveValuation?: {
+    beginningReservesBcf: number;
+    remainingAssetDiscountRate: number;
+    remainingAssetYears: CanadianGasReserveCashFlowYear[];
+  };
+
   drivers?: string[];
   criticalAssumptions?: string[];
 }
@@ -64,8 +80,20 @@ export function buildCanadianGasEconomicDistribution(
     );
   }
 
-  const valuation =
-    calculateScenarioValuation(assumptions.valuation);
+    const valuation = assumptions.reserveValuation
+    ? calculateCanadianGasReserveScenarioValuation({
+        valuation: assumptions.valuation,
+
+        beginningReservesBcf:
+          assumptions.reserveValuation.beginningReservesBcf,
+
+        remainingAssetDiscountRate:
+          assumptions.reserveValuation.remainingAssetDiscountRate,
+
+        remainingAssetYears:
+          assumptions.reserveValuation.remainingAssetYears,
+      }).valuation
+    : calculateScenarioValuation(assumptions.valuation);
 
     return adaptCanadianGasScenarioOutcome({
       scenario,
