@@ -42,9 +42,10 @@ function makeScenario(
         beginningLiquidsProductionBblPerDay: 0,
         beginningNetDebtCad: 0,
         beginningDilutedShares: 100_000_000,
-        years: [
-          {
-            projectionYear: 1,
+        years: Array.from(
+  { length: realizationYears },
+  (_, index) => ({
+            projectionYear: index + 1,
             annualBaseDeclineRate: 0,
             annualGasProductionAddedMmcfPerDay: 0,
             annualLiquidsProductionAddedBblPerDay: 0,
@@ -61,8 +62,8 @@ function makeScenario(
             dividendsCad: 0,
             shareBuybacksCad: 0,
             debtRepaymentCad: 0,
-          },
-        ],
+           }),
+),
       },
       producingAssetValueCad,
       undevelopedInventoryValueCad: 0,
@@ -200,9 +201,10 @@ function makeGasPriceScenario(
         beginningNetDebtCad: 100_000_000,
         beginningDilutedShares: 100_000_000,
 
-        years: [
-          {
-            projectionYear: 1,
+       years: Array.from(
+  { length: realizationYears },
+  (_, index) => ({
+            projectionYear: index + 1,
 
             annualBaseDeclineRate: 0,
             annualGasProductionAddedMmcfPerDay: 0,
@@ -227,8 +229,8 @@ function makeGasPriceScenario(
             dividendsCad: 0,
             shareBuybacksCad: 0,
             debtRepaymentCad: 0,
-          },
-        ],
+           }),
+),
       },
 
       producingAssetValueCad: 500_000_000,
@@ -269,10 +271,10 @@ const operationalDistribution =
 
 const operationalCases = [
   { name: "failure", expected: 4.000 },
-  { name: "bear", expected: 4.365 },
-  { name: "base", expected: 5.095 },
-  { name: "bull", expected: 5.825 },
-] as const;
+  { name: "bear", expected: 5.825 },
+  { name: "base", expected: 9.475 },
+  { name: "bull", expected: 9.475 },
+] as const;;
 
 for (const testCase of operationalCases) {
   const outcome =
@@ -302,9 +304,9 @@ const operationalExpectedValue =
 
 const independentlyExpectedValue =
   0.10 * 4.000 +
-  0.25 * 4.365 +
-  0.45 * 5.095 +
-  0.20 * 5.825;
+  0.25 * 5.825 +
+  0.45 * 9.475 +
+  0.20 * 9.475;
 
 assertClose(
   operationalExpectedValue,
@@ -314,4 +316,44 @@ assertClose(
 
 console.log(
   `PASS: Operational expected future value = CAD ${operationalExpectedValue.toFixed(4)}/share`
+);
+
+// Verify that projection length must match realization timing.
+
+let invalidHorizonRejected = false;
+
+try {
+  buildCanadianGasEconomicDistribution({
+    failure: makeScenario(0.10, 5, 100_000_000),
+    bear: makeScenario(0.25, 5, 500_000_000),
+    base: makeScenario(0.45, 5, 1_000_000_000),
+
+    // Intentionally invalid: five projection years,
+    // but shareholder value is supposedly realized in year 3.
+    bull: {
+      ...makeScenario(0.20, 5, 2_000_000_000),
+      realizationYears: 3,
+    },
+  });
+} catch (error) {
+  if (
+    error instanceof Error &&
+    error.message.includes(
+      "projection length must match realizationYears"
+    )
+  ) {
+    invalidHorizonRejected = true;
+  } else {
+    throw error;
+  }
+}
+
+if (!invalidHorizonRejected) {
+  throw new Error(
+    "Invalid scenario projection horizon was not rejected."
+  );
+}
+
+console.log(
+  "PASS: Invalid scenario projection horizon rejected"
 );

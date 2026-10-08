@@ -48,11 +48,24 @@ export function buildCanadianGasEconomicDistribution(
   input: CanadianGasEconomicDistributionInput
 ): ScenarioDistribution {
   function buildScenario(
-    scenario: ScenarioName,
-    assumptions: CanadianGasEconomicScenarioInput
+  scenario: ScenarioName,
+  assumptions: CanadianGasEconomicScenarioInput
+) {
+  const years =
+    assumptions.valuation.economicProjection.years;
+
+  if (
+    !Number.isInteger(assumptions.realizationYears) ||
+    assumptions.realizationYears < 1 ||
+    years.length !== assumptions.realizationYears
   ) {
-    const valuation =
-      calculateScenarioValuation(assumptions.valuation);
+    throw new Error(
+      `${scenario}: projection length must match realizationYears`
+    );
+  }
+
+  const valuation =
+    calculateScenarioValuation(assumptions.valuation);
 
     return adaptCanadianGasScenarioOutcome({
       scenario,
