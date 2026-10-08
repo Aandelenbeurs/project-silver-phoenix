@@ -1,6 +1,5 @@
 import {
   optimizeNewMoneyV2,
-  getOptimizerCandidateCompanyIds,
   getOptimizerPracticalSettings,
   type NewMoneyOptimizerResult,
 } from "./optimizer-v2";
@@ -390,8 +389,10 @@ export function simulateRotation({
   selectedSellCompanyIds,
   exitReviews,
   exitRotationInstructions,
+  entryCandidateCompanyIds = [],
 }: {
   positions: PortfolioV2PositionInput[];
+  entryCandidateCompanyIds?: string[];
 
   investmentScores:
     Map<string, number>;
@@ -563,13 +564,26 @@ const practicalSettings =
     freedCapitalEur,
   );
 
+  const ownedCompanyIds =
+  positions.map(
+    (position) =>
+      position.companyId,
+  );
+
+const candidateCompanyIds =
+  Array.from(
+    new Set([
+      ...ownedCompanyIds,
+      ...entryCandidateCompanyIds,
+    ]),
+  );
+
 const buyResult =
   optimizeNewMoneyV2({
     positions:
       portfolioAfterSales,
 
-    candidateCompanyIds:
-      getOptimizerCandidateCompanyIds(),
+    candidateCompanyIds,
 
     newMoneyEur:
       freedCapitalEur,

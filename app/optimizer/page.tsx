@@ -416,6 +416,7 @@ const rotationSimulation =
       optimizerV2Positions,
 
     investmentScores,
+    entryCandidateCompanyIds,
 
     liveMetalPrices:
       liveMetalPrices ?? undefined,

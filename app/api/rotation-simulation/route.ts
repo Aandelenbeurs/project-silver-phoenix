@@ -18,6 +18,11 @@ import {
   simulateRotation,
 } from "../../../data/rotation-engine";
 
+import {
+  readEntryReviewStore,
+  getLatestEntryReview,
+} from "../../../data/entry-review-store";
+
 export async function POST(
   request: Request,
 ) {
@@ -88,11 +93,27 @@ export async function POST(
         ),
       );
 
-    const candidateCompanyIds =
-  phoenixCompaniesV2.map(
-    (company) =>
-      company.companyId,
-  );
+    const entryReviewStore =
+  await readEntryReviewStore();
+
+const entryCandidateCompanyIds =
+  phoenixCompaniesV2
+    .filter((company) => {
+      const entryReview =
+        getLatestEntryReview(
+          entryReviewStore,
+          company.companyId,
+        );
+
+      return (
+        entryReview?.entryStatus ===
+        "CANDIDATE"
+      );
+    })
+    .map(
+      (company) =>
+        company.companyId,
+    );
 
     const simulation =
       simulateRotation({
@@ -100,6 +121,8 @@ export async function POST(
           optimizerV2Positions,
 
         investmentScores,
+
+        entryCandidateCompanyIds,
 
         liveMetalPrices,
 
