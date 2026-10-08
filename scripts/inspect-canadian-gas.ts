@@ -20,10 +20,14 @@ import {
 
 import {
   adaptCanadianGasScenarioOutcome,
+  createCanadianGasScenarioDistribution,
 } from "../data/multi-sector/sectors/canadian-natural-gas/scenario-adapter";
 
 import {
   getScenarioShareholderValue,
+  calculateExpectedFutureValue,
+calculateCycleOpportunityPrice,
+calculateCycleImpliedAnnualReturn,
 } from "../data/multi-sector/cross-asset";
 
 const tolerance = 1e-7;
@@ -2581,4 +2585,237 @@ if (!invalidGasScenarioTimingRejected) {
 
 console.log(
   "PASS: Canadian gas scenario realization timing of zero rejected"
+);
+
+// -----------------------------------------------------------------------------
+// Canadian Gas ScenarioDistribution tests
+// -----------------------------------------------------------------------------
+
+// Four illustrative outcomes using the existing economic valuation.
+// Different values are used here solely to test the distribution contract.
+// They are NOT investment forecasts.
+
+const gasScenarioDistribution =
+  createCanadianGasScenarioDistribution({
+    failure: {
+      ...adaptedGasScenario,
+      scenario: "failure",
+      probability: 0.10,
+      realizationYears: 5,
+      valuePerShare: { low: 2, mid: 2, high: 2 },
+      shareholderValuePerShare: {
+        low: 2,
+        mid: 2,
+        high: 2,
+      },
+      cashDistributionsPerShare: 0,
+    },
+
+    bear: {
+      ...adaptedGasScenario,
+      scenario: "bear",
+      probability: 0.25,
+      realizationYears: 5,
+      valuePerShare: { low: 10, mid: 10, high: 10 },
+      shareholderValuePerShare: {
+        low: 10,
+        mid: 10,
+        high: 10,
+      },
+      cashDistributionsPerShare: 0,
+    },
+
+    base: {
+      ...adaptedGasScenario,
+      scenario: "base",
+      probability: 0.45,
+      realizationYears: 5,
+    },
+
+    bull: {
+      ...adaptedGasScenario,
+      scenario: "bull",
+      probability: 0.20,
+      realizationYears: 3,
+      valuePerShare: { low: 90, mid: 90, high: 90 },
+      shareholderValuePerShare: {
+        low: 90,
+        mid: 90,
+        high: 90,
+      },
+      cashDistributionsPerShare: 0,
+    },
+  });
+
+const distributionProbabilitySum =
+  gasScenarioDistribution.failure.probability +
+  gasScenarioDistribution.bear.probability +
+  gasScenarioDistribution.base.probability +
+  gasScenarioDistribution.bull.probability;
+
+if (
+  Math.abs(distributionProbabilitySum - 1) > tolerance
+) {
+  throw new Error(
+    "Canadian gas distribution probabilities do not sum to 1."
+  );
+}
+
+console.log(
+  "PASS: Canadian gas scenario probabilities sum to 100%"
+);
+
+// Bull may realize earlier than Base.
+
+if (
+  gasScenarioDistribution.bull.realizationYears === undefined ||
+  gasScenarioDistribution.base.realizationYears === undefined ||
+  gasScenarioDistribution.bull.realizationYears >=
+    gasScenarioDistribution.base.realizationYears
+) {
+  throw new Error(
+    "Bull scenario should realize earlier than Base in this test."
+  );
+}
+
+console.log(
+  "PASS: Bull scenario may realize before Base"
+);
+
+// Test invalid probability distribution.
+
+let invalidDistributionRejected = false;
+
+try {
+  createCanadianGasScenarioDistribution({
+    ...gasScenarioDistribution,
+    bull: {
+      ...gasScenarioDistribution.bull,
+      probability: 0.30,
+    },
+  });
+} catch {
+  invalidDistributionRejected = true;
+}
+
+if (!invalidDistributionRejected) {
+  throw new Error(
+    "Invalid scenario probability sum should be rejected."
+  );
+}
+
+console.log(
+  "PASS: Invalid scenario probability sum rejected"
+);
+
+// Test mismatched scenario identity.
+
+let mismatchedScenarioRejected = false;
+
+try {
+  createCanadianGasScenarioDistribution({
+    ...gasScenarioDistribution,
+    bear: {
+      ...gasScenarioDistribution.bear,
+      scenario: "bull",
+    },
+  });
+} catch {
+  mismatchedScenarioRejected = true;
+}
+
+if (!mismatchedScenarioRejected) {
+  throw new Error(
+    "Mismatched scenario identity should be rejected."
+  );
+}
+
+console.log(
+  "PASS: Mismatched scenario identity rejected"
+);
+
+// -----------------------------------------------------------------------------
+// Canadian Gas -> Cross-Asset integration
+// -----------------------------------------------------------------------------
+
+const gasExpectedFutureValue =
+  calculateExpectedFutureValue(gasScenarioDistribution);
+
+const gasRequiredReturn = 0.12;
+
+const gasCycleOpportunityPrice =
+  calculateCycleOpportunityPrice(
+    gasScenarioDistribution,
+    gasRequiredReturn
+  );
+
+// Independent calculations using the four test scenarios.
+// Failure: CAD 2.00, probability 10%, year 5
+// Bear: CAD 10.00, probability 25%, year 5
+// Base: actual integrated test valuation, probability 45%, year 5
+// Bull: CAD 90.00, probability 20%, year 3
+
+const expectedGasFutureValue =
+  0.10 * 2 +
+  0.25 * 10 +
+  0.45 * fullScenarioValuation.totalShareholderValuePerShareCad +
+  0.20 * 90;
+
+const expectedGasCycleOpportunityPrice =
+  (0.10 * 2) / Math.pow(1.12, 5) +
+  (0.25 * 10) / Math.pow(1.12, 5) +
+  (0.45 * fullScenarioValuation.totalShareholderValuePerShareCad) /
+    Math.pow(1.12, 5) +
+  (0.20 * 90) / Math.pow(1.12, 3);
+
+if (
+  Math.abs(
+    gasExpectedFutureValue - expectedGasFutureValue
+  ) > tolerance
+) {
+  throw new Error(
+    "Canadian gas expected future value failed."
+  );
+}
+
+console.log(
+  `PASS: Canadian gas expected future value = CAD ${gasExpectedFutureValue.toFixed(4)}`
+);
+
+if (
+  Math.abs(
+    gasCycleOpportunityPrice -
+      expectedGasCycleOpportunityPrice
+  ) > tolerance
+) {
+  throw new Error(
+    "Canadian gas cycle opportunity price failed."
+  );
+}
+
+console.log(
+  `PASS: Canadian gas cycle opportunity price = CAD ${gasCycleOpportunityPrice.toFixed(4)}`
+);
+
+// At the cycle opportunity price, the implied annual return
+// should equal the 12% required return.
+
+const gasImpliedReturnAtHurdle =
+  calculateCycleImpliedAnnualReturn({
+    scenarios: gasScenarioDistribution,
+    currentPrice: gasCycleOpportunityPrice,
+  });
+
+if (
+  Math.abs(
+    gasImpliedReturnAtHurdle - gasRequiredReturn
+  ) > 1e-7
+) {
+  throw new Error(
+    "Canadian gas cycle implied return at hurdle failed."
+  );
+}
+
+console.log(
+  "PASS: Canadian gas implied annual return at opportunity price = 12.00%"
 );

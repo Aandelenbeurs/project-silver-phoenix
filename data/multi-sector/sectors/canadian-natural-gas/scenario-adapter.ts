@@ -4,6 +4,7 @@
 // -----------------------------------------------------------------------------
 
 import type {
+  ScenarioDistribution,
   ScenarioName,
   ScenarioOutcome,
 } from "../../types";
@@ -113,5 +114,82 @@ export function adaptCanadianGasScenarioOutcome(
 
     criticalAssumptions:
       input.criticalAssumptions ?? [],
+  };
+}
+
+// -----------------------------------------------------------------------------
+// Canadian Gas Scenario Distribution
+// -----------------------------------------------------------------------------
+
+export interface CanadianGasScenarioDistributionInput {
+  failure: ScenarioOutcome;
+  bear: ScenarioOutcome;
+  base: ScenarioOutcome;
+  bull: ScenarioOutcome;
+}
+
+/**
+ * Combines four Canadian gas outcomes into the common
+ * Phoenix ScenarioDistribution contract.
+ *
+ * Probabilities are validated, never normalized.
+ * Discounting and opportunity calculations belong
+ * to the Cross-Asset Engine.
+ */
+export function createCanadianGasScenarioDistribution(
+  input: CanadianGasScenarioDistributionInput
+): ScenarioDistribution {
+  const scenarios = [
+    input.failure,
+    input.bear,
+    input.base,
+    input.bull,
+  ];
+
+  const expectedNames: ScenarioName[] = [
+    "failure",
+    "bear",
+    "base",
+    "bull",
+  ];
+
+  for (let index = 0; index < scenarios.length; index += 1) {
+    const scenario = scenarios[index];
+    const expectedName = expectedNames[index];
+
+    if (scenario.scenario !== expectedName) {
+      throw new Error(
+        `Expected ${expectedName} scenario, received ${scenario.scenario}.`
+      );
+    }
+
+    if (
+      !Number.isFinite(scenario.probability) ||
+      scenario.probability < 0 ||
+      scenario.probability > 1
+    ) {
+      throw new Error(
+        `${expectedName} scenario probability must be between 0 and 1.`
+      );
+    }
+  }
+
+  const probabilitySum =
+    input.failure.probability +
+    input.bear.probability +
+    input.base.probability +
+    input.bull.probability;
+
+  if (Math.abs(probabilitySum - 1) > 1e-9) {
+    throw new Error(
+      `Canadian gas scenario probabilities must sum to 1. Received ${probabilitySum}.`
+    );
+  }
+
+  return {
+    failure: input.failure,
+    bear: input.bear,
+    base: input.base,
+    bull: input.bull,
   };
 }
