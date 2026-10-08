@@ -22,6 +22,13 @@ export interface CanadianGasReserveScenarioValuationInput {
   beginningReservesBcf: number;
   remainingAssetDiscountRate: number;
   remainingAssetYears: CanadianGasReserveCashFlowYear[];
+
+    // Optional shutdown assumptions for negative reserve DCF.
+  // No shutdown option is assumed unless explicitly provided.
+  producingAssetOptions?: {
+    canShutDown: boolean;
+    shutdownObligationsCad: number;
+  };
 }
 
 export interface CanadianGasReserveScenarioValuationResult {
