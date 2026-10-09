@@ -1,58 +1,116 @@
 import React from "react";
 import type { Metadata } from "next";
-import { runAdvantageEnergyScenarios, AAV_ILLUSTRATIVE_SCENARIOS } from "../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-scenario-engine";
+import {
+  runAdvantageEnergyScenarios,
+  AAV_ILLUSTRATIVE_SCENARIOS,
+} from "../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-scenario-engine";
 import { evaluateClaimBackedAdvantageReadiness } from "../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-claim-readiness";
+import {
+  AAV_RESEARCH_INPUTS,
+  calculateAavResearchValuation,
+} from "../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-research-valuation";
 
 export const metadata: Metadata = {
   title: "Advantage Energy | Phoenix Portfolio",
-  description: "AAV scenarioanalyse met gecontroleerde bron- en claimvalidatie.",
+  description: "Researchscenario's en gecontroleerde AAV-waardering.",
 };
 
-const names: Record<string, string> = {
+const labels: Record<string, string> = {
   bear: "Bear", base: "Base", bull: "Bull", moonshot: "Moonshot",
 };
-const money = (value: number) => new Intl.NumberFormat("nl-NL", {
-  style: "currency", currency: "CAD", maximumFractionDigits: 2,
-}).format(value);
-const container = { maxWidth: 1120, margin: "0 auto", padding: "32px 20px" };
-const panel = { border: "1px solid #64748b55", borderRadius: 12, padding: 20 };
-const grid = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 16 };
+const cad = (n: number, digits = 2) => new Intl.NumberFormat("nl-NL", {
+  style: "currency", currency: "CAD", maximumFractionDigits: digits,
+  minimumFractionDigits: digits,
+}).format(n);
+const number = (n: number) => new Intl.NumberFormat("nl-NL").format(n);
+const panel: React.CSSProperties = {
+  border: "1px solid #64748b55", borderRadius: 12, padding: 20,
+};
+const grid: React.CSSProperties = {
+  display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 16,
+};
 
 export default function AdvantageEnergyValuationPage() {
-  // Server-rendered: never bypass the guarded scenario runner.
-  const run = runAdvantageEnergyScenarios();
+  const verified = runAdvantageEnergyScenarios();
   const readiness = evaluateClaimBackedAdvantageReadiness();
+  const research = calculateAavResearchValuation();
   const passed = Object.values(readiness.checks).filter(Boolean).length;
   const total = Object.keys(readiness.checks).length;
+
   return (
-    <main style={container}>
+    <div style={{ maxWidth: 1120, margin: "0 auto", padding: "24px 8px" }}>
       <p style={{ opacity: 0.75 }}>Phoenix Portfolio / Canadian Natural Gas</p>
       <h1>Advantage Energy Ltd. (TSX: AAV)</h1>
-      <p>Waarderingsscenario’s met bron- en claimcontroles. Alle bedragen in CAD.</p>
+      <p>Onderzoekswaarderingen en afzonderlijke verificatiecontroles. Bedragen in CAD.</p>
 
-      <section aria-label="Waarderingsstatus" style={{ ...panel, marginBottom: 24 }}>
-        <h2>Status: {run.status === "blocked" ? "Geblokkeerd" : "Illustratief"}</h2>
-        <p>{passed} van {total} controles geslaagd.</p>
-        {run.status === "blocked" ? (
-          <p>Geen koerswaardering beschikbaar: vereiste actuele cijfers of bewijsstukken ontbreken.</p>
-        ) : (
-          <p>De berekeningen zijn uitsluitend illustratief en vormen geen reële waarde of koersdoel.</p>
-        )}
+      <section aria-label="Research Valuation" style={{ marginTop: 28 }}>
+        <h2>Research Valuation — voorlopig</h2>
+        <p>
+          Vereenvoudigde vijfjaars-DCF met managementverwachtingen en onderzoeksaanames.
+          Dit zijn <strong>geen koersdoelen of geverifieerde fair values</strong>.
+        </p>
+        <div style={grid}>
+          {research.map((result) => {
+            const scenario = AAV_ILLUSTRATIVE_SCENARIOS.find(s => s.name === result.name);
+            return (
+              <article key={result.name} style={panel}>
+                <h3>{labels[result.name]}</h3>
+                <p style={{ fontSize: 28, fontWeight: 700, margin: "12px 0" }}>
+                  {cad(result.perShareCad)}
+                </p>
+                <p style={{ opacity: 0.8, fontSize: 13 }}>
+                  {result.equityValueCad < 0
+                    ? "Negatieve model-equity; geen negatieve beurskoers"
+                    : "Illustratieve modelwaarde per proxy-aandeel"}
+                </p>
+                <small>
+                  Gas {scenario ? cad(scenario.gasPriceCadPerMcf) : "—"}/Mcf ·
+                  {scenario?.forecastYears ?? 5} jaar · EV {cad(result.enterpriseValueCad / 1_000_000, 1)} mln
+                </small>
+              </article>
+            );
+          })}
+        </div>
       </section>
 
-      <section aria-label="Vier scenario's">
-        <h2>Scenariovergelijking</h2>
+      <section aria-label="Research aannames" style={{ ...panel, marginTop: 24 }}>
+        <h2>Gebruikte researchaannames</h2>
         <div style={grid}>
-          {AAV_ILLUSTRATIVE_SCENARIOS.map((scenario) => {
-            const result = run.results.find((item) => item.name === scenario.name);
+          <p><strong>Productie</strong><br />{number(AAV_RESEARCH_INPUTS.productionBoePerDay)} boe/d (Q4-guidance-midden)</p>
+          <p><strong>Gas-aandeel</strong><br />{Math.round(AAV_RESEARCH_INPUTS.gasEnergyShare * 100)}% (proxy)</p>
+          <p><strong>Nettoschuld</strong><br />{cad(AAV_RESEARCH_INPUTS.netDebtCad / 1_000_000, 0)} mln (verwachting)</p>
+          <p><strong>Aandelen</strong><br />{number(AAV_RESEARCH_INPUTS.shareCountProxy)} (Q2-proxy)</p>
+          <p><strong>Royalties</strong><br />{Math.round(AAV_RESEARCH_INPUTS.royaltyRate * 100)}% (aanname)</p>
+          <p><strong>G&amp;A</strong><br />{cad(AAV_RESEARCH_INPUTS.gaCadPerBoe)}/boe (guidance)</p>
+        </div>
+        <p style={{ fontSize: 13, opacity: 0.8 }}>
+          Peildatum {AAV_RESEARCH_INPUTS.asOf}. Het model bevat geen belastingen, hedges,
+          financieringskosten, ontmantelingsverplichtingen, terminale waarde of expliciete reservebeperking.
+          De vijfjaars-DCF is daarom geen volledige bedrijfswaardering.
+        </p>
+        <p style={{ fontSize: 13 }}>
+          Bronnen: <a href={AAV_RESEARCH_INPUTS.sources.disposition} target="_blank" rel="noreferrer">Wembley-afronding</a>
+          {" · "}<a href={AAV_RESEARCH_INPUTS.sources.guidance} target="_blank" rel="noreferrer">Bedrijfsverwachtingen</a>
+          {" · "}<a href={AAV_RESEARCH_INPUTS.sources.q2} target="_blank" rel="noreferrer">Q2 2026</a>
+        </p>
+      </section>
+
+      <section aria-label="Verified Valuation" style={{ ...panel, marginTop: 28 }}>
+        <h2>Verified Valuation — {verified.status === "blocked" ? "Geblokkeerd" : "Illustratief"}</h2>
+        <p>{passed} van {total} controles geslaagd.</p>
+        <p>{verified.status === "blocked"
+          ? "Geen geverifieerde koerswaardering: actuele gegevens of bewijsstukken ontbreken."
+          : "Geverifieerde invoer beschikbaar; uitkomsten blijven illustratief."}</p>
+        <div style={grid}>
+          {AAV_ILLUSTRATIVE_SCENARIOS.map(s => {
+            const result = verified.results.find(r => r.name === s.name);
             return (
-              <article key={scenario.name} style={panel}>
-                <h3>{names[scenario.name]}</h3>
-                <p style={{ fontSize: 26, fontWeight: 700 }}>
-                  {result ? money(result.illustrativePerShareCad) : "—"}
+              <article key={s.name} style={panel}>
+                <h3>{labels[s.name]}</h3>
+                <p style={{ fontSize: 24, fontWeight: 700 }}>
+                  {result ? cad(result.illustrativePerShareCad) : "—"}
                 </p>
-                <p>{result ? "Illustratieve waarde per aandeel" : "Wacht op geverifieerde invoer"}</p>
-                <small>Gasprijs: {money(scenario.gasPriceCadPerMcf)}/Mcf · Horizon: {scenario.forecastYears} jaar</small>
+                <small>{result ? "Illustratieve berekening" : "Wacht op geverifieerde invoer"}</small>
               </article>
             );
           })}
@@ -61,34 +119,17 @@ export default function AdvantageEnergyValuationPage() {
 
       <section aria-label="Validatiecontroles" style={{ marginTop: 28 }}>
         <h2>Controleoverzicht</h2>
-        <div style={grid}>
-          {Object.entries(readiness.checks).map(([key, valid]) => (
-            <div key={key} style={panel}>
-              <strong>{valid ? "✓" : "○"} {key}</strong>
-              <p>{valid ? "Geslaagd" : "Nog niet gevalideerd"}</p>
-            </div>
-          ))}
-        </div>
+        <details>
+          <summary>Toon {total} controles ({total - passed} openstaand)</summary>
+          <ul>{Object.entries(readiness.checks).map(([key, valid]) => (
+            <li key={key}>{valid ? "✓" : "○"} {key}: {valid ? "geslaagd" : "niet gevalideerd"}</li>
+          ))}</ul>
+        </details>
+        <details style={{ marginTop: 16 }}>
+          <summary>Toon ontbrekende bewijsstukken en fouten</summary>
+          <ul>{readiness.errors.map((error, i) => <li key={i}>{error}</li>)}</ul>
+        </details>
       </section>
-
-      <section aria-label="Ontbrekende gegevens" style={{ marginTop: 28 }}>
-        <h2>Openstaande vereisten</h2>
-        {readiness.errors.length === 0 ? (
-          <p>Alle vereisten zijn ingevuld.</p>
-        ) : (
-          <ul>{readiness.errors.map((error, index) => <li key={index}>{error}</li>)}</ul>
-        )}
-      </section>
-
-      <section aria-label="Methodologie" style={{ ...panel, marginTop: 28 }}>
-        <h2>Methodologie en beperkingen</h2>
-        <p>De Bear-, Base-, Bull- en Moonshot-aannames zijn hypothetische stresstests, geen bedrijfsprognoses.</p>
-        <p>Het vereenvoudigde model laat onder andere royalties, belastingen, hedges, financieringskosten,
-          ontmantelingsverplichtingen, reserve-uitputting en terminale waarde buiten beschouwing.
-          De resultaten mogen niet als beleggingsadvies of onderbouwde koersdoelen worden geïnterpreteerd.</p>
-        <p>De financiële claims worden gecontroleerd via het AAV-claimregister. Een geslaagde technische
-          validatie vervangt geen onafhankelijke controle van de oorspronkelijke bedrijfsdocumenten.</p>
-      </section>
-    </main>
+    </div>
   );
 }
