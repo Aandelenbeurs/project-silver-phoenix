@@ -1,0 +1,24 @@
+import assert from "node:assert/strict";
+import {advantageClaims} from "../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-claims";
+import {validateAdvantageClaim} from "../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-claim-validation";
+import {evaluateClaimBackedAdvantageReadiness} from "../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-claim-readiness";
+
+const claim = advantageClaims[0];
+const evidence = {value:claim.value,kind:claim.kind,asOf:claim.asOf,sourceId:claim.sourceId,claimId:claim.claimId};
+const check = (overrides: Record<string, unknown> = {}, metric=claim.metric, unit=claim.unit) => validateAdvantageClaim({metric,unit,evidence:{...evidence,...overrides}});
+assert.equal(check().valid,true);
+assert.equal(check({value:claim.value+1}).valid,false);
+assert.equal(check({claimId:"unknown"}).valid,false);
+assert.equal(check({asOf:"2026-09-30"}).valid,false);
+assert.equal(check({sourceId:"aav-wembley-closing-2026"}).valid,false);
+assert.equal(check({kind:"guidance"}).valid,false);
+assert.equal(check({},"postSaleGasProduction").valid,false);
+assert.equal(check({},claim.metric,"Bcf").valid,false);
+assert.equal(validateAdvantageClaim({metric:claim.metric,unit:claim.unit,evidence},[{...claim,status:"pending"}]).valid,false);
+assert.equal(validateAdvantageClaim({metric:claim.metric,unit:claim.unit,evidence},[claim,claim]).valid,false);
+const readiness=evaluateClaimBackedAdvantageReadiness();
+assert.equal(readiness.status,"blocked");
+assert.equal(readiness.checks["claim:postSaleNetDebt"],false);
+assert.equal(readiness.checks["claim:currentFullyDilutedShares"],false);
+console.log("PASS: 13 claim and readiness assertions");
+console.log(`PASS: valuation blocked; ${readiness.errors.length} outstanding checks`);
