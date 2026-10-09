@@ -24,6 +24,18 @@ import {
   calculateCanadianGasReserveScenarioValuation,
 } from "./reserve-scenario-valuation";
 
+import {
+  calculateMultiYearEconomicProjection,
+} from "./scenario-engine";
+
+import {
+  calculateCanadianGasRemainingReserves,
+} from "./remaining-reserves";
+
+import {
+  calculateCanadianGasRemainingProductionPlan,
+} from "./remaining-production-plan";
+
 import type {
   CanadianGasReserveCashFlowYear,
 } from "./reserve-cashflow-valuation";
@@ -37,7 +49,11 @@ export interface CanadianGasEconomicScenarioInput {
     reserveValuation?: {
     beginningReservesBcf: number;
     remainingAssetDiscountRate: number;
-    remainingAssetYears: CanadianGasReserveCashFlowYear[];
+        remainingAssetYears: CanadianGasReserveCashFlowYear[];
+
+    automaticProduction?: {
+      annualDeclineRate: number;
+    };
 
     producingAssetOptions?: {
       canShutDown: boolean;
@@ -89,6 +105,53 @@ export function buildCanadianGasEconomicDistribution(
     );
   }
 
+    const reserveValuation = assumptions.reserveValuation;
+
+  let remainingAssetYears =
+    reserveValuation?.remainingAssetYears;
+
+  if (reserveValuation?.automaticProduction) {
+    const economicProjection =
+      calculateMultiYearEconomicProjection(
+        assumptions.valuation.economicProjection
+      );
+
+    const remainingReservesBcf =
+      calculateCanadianGasRemainingReserves({
+        beginningReservesBcf:
+          reserveValuation.beginningReservesBcf,
+
+        projectedAnnualProductionBcf:
+          economicProjection.years.map(
+            (year) =>
+              year.annualGasProductionMcf / 1_000_000
+          ),
+      });
+
+    const productionPlan =
+      calculateCanadianGasRemainingProductionPlan({
+        endingGasProductionMmcfPerDay:
+          economicProjection.endingGasProductionMmcfPerDay,
+
+        remainingReservesBcf,
+
+        annualDeclineRate:
+          reserveValuation.automaticProduction.annualDeclineRate,
+
+        projectionYears:
+          reserveValuation.remainingAssetYears.length,
+      });
+
+    remainingAssetYears =
+      reserveValuation.remainingAssetYears.map(
+        (year, index) => ({
+          ...year,
+          requestedProductionBcf:
+            productionPlan[index].requestedProductionBcf,
+        })
+      );
+  }
+
       const reserveInput = assumptions.reserveValuation
     ? {
         valuation: assumptions.valuation,
@@ -96,8 +159,8 @@ export function buildCanadianGasEconomicDistribution(
           assumptions.reserveValuation.beginningReservesBcf,
         remainingAssetDiscountRate:
           assumptions.reserveValuation.remainingAssetDiscountRate,
-        remainingAssetYears:
-          assumptions.reserveValuation.remainingAssetYears,
+                remainingAssetYears:
+          remainingAssetYears!,
         producingAssetOptions:
           assumptions.reserveValuation.producingAssetOptions,
       }
