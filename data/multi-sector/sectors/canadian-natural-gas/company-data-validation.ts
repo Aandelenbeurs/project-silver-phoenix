@@ -71,6 +71,19 @@ export function validateCanadianGasCompanyData(
     "balanceSheet.sharesOutstanding"
   );
 
+    checkNonNegative(
+    snapshot.balanceSheet.dilutedSharesOutstanding,
+    "balanceSheet.dilutedSharesOutstanding"
+  );
+
+  if (
+    snapshot.balanceSheet.dilutedSharesOutstanding === 0
+  ) {
+    errors.push(
+      "Diluted shares outstanding must be greater than zero"
+    );
+  }
+
   if (
     snapshot.balanceSheet.sharesOutstanding === 0
   ) {

@@ -113,6 +113,8 @@ export interface CanadianGasBalanceSheet {
   leverageRatio?: number;
 
   sharesOutstanding?: number;
+
+    dilutedSharesOutstanding?: number;
 }
 
 // -----------------------------------------------------------------------------
