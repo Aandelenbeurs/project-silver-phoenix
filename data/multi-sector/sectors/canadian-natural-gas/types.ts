@@ -255,14 +255,83 @@ export interface CanadianGasCapitalAllocation {
 }
 
 // -----------------------------------------------------------------------------
+// Reported Gas Reserves
+// -----------------------------------------------------------------------------
+
+export interface CanadianGasReportedReserves {
+  /**
+   * Proved natural gas reserves (1P), in Bcf.
+   */
+  provedGasReservesBcf?: number;
+
+  /**
+   * Proved plus probable natural gas reserves (2P), in Bcf.
+   * This is the combined total, not an additional volume.
+   */
+  provedPlusProbableGasReservesBcf?: number;
+
+  /**
+   * Date of the reserve estimate.
+   * ISO date: YYYY-MM-DD.
+   */
+  reservesAsOf?: string;
+
+  /**
+   * Optional explanation of reserve classification,
+   * reporting standard or source-specific definitions.
+   */
+  notes?: string;
+}
+
+// -----------------------------------------------------------------------------
+// Company Data Sources
+// -----------------------------------------------------------------------------
+
+export type CanadianGasSourceType =
+  | "annual-report"
+  | "quarterly-report"
+  | "reserves-report"
+  | "investor-presentation"
+  | "company-guidance"
+  | "regulatory-filing"
+  | "other";
+
+export interface CanadianGasDataSource {
+  sourceId: string;
+
+  sourceType: CanadianGasSourceType;
+
+  title: string;
+
+  // Original document or publication URL.
+  url?: string;
+
+  // Publication date: YYYY-MM-DD.
+  publishedAt?: string;
+
+  // Reporting period or effective date: YYYY-MM-DD.
+  dataAsOf?: string;
+
+  // Which snapshot fields this source supports.
+  // Example: ["production.gasProductionMmcfPerDay"]
+  fields?: string[];
+
+  notes?: string;
+}
+
+// -----------------------------------------------------------------------------
 // Company Economic Snapshot
 // -----------------------------------------------------------------------------
 
 export interface CanadianGasEconomicSnapshot {
   identity: CanadianGasIdentity;
 
-  production: CanadianGasProduction;
+    production: CanadianGasProduction;
   inventory: CanadianGasInventory;
+
+  // Reported reserves are optional until verified source data exists.
+  reportedReserves?: CanadianGasReportedReserves;
+
   marketAccess: CanadianGasMarketAccess;
   balanceSheet: CanadianGasBalanceSheet;
 
@@ -276,7 +345,12 @@ export interface CanadianGasEconomicSnapshot {
    * Date to which the company fundamentals relate.
    * ISO date: YYYY-MM-DD.
    */
-  dataAsOf: string;
+    dataAsOf: string;
+
+  /**
+   * Documents supporting the reported company data.
+   */
+  sources?: CanadianGasDataSource[];
 
   /**
    * Optional notes for source-specific definitions or assumptions.
