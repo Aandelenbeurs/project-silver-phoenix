@@ -10,6 +10,22 @@ import type {
   Evidence,
 } from "../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-valuation-input";
 
+import type {
+  AdvantageSource,
+} from "../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-sources";
+
+const testRegistry: AdvantageSource[] = [
+  {
+    sourceId: "test-fixture",
+    title: "Synthetic AAV test report",
+    url: "https://example.com/test",
+    publishedAt: "2026-10-01",
+    kind: "financial-report",
+    coversActualsThrough: "2026-09-30",
+    guidanceAllowed: true,
+  },
+];
+
 function evidence(
   value: number,
   kind: Evidence<number>["kind"] = "reported"
@@ -28,7 +44,8 @@ const base: AdvantageValuationInput = {
 
 const empty = evaluateAdvantageEnergyReadiness(
   undefined,
-  base
+  base,
+  testRegistry
 );
 
 assert.equal(empty.status, "blocked");
@@ -44,7 +61,8 @@ const guidance = evaluateAdvantageEnergyReadiness(
       245_000_000,
       "guidance"
     ),
-  }
+  },
+  testRegistry
 );
 
 assert.equal(guidance.checks.currentDebt, false);
@@ -55,7 +73,8 @@ const validDebt = evaluateAdvantageEnergyReadiness(
   {
     ...base,
     postSaleNetDebtCad: evidence(245_000_000),
-  }
+  },
+  testRegistry
 );
 
 assert.equal(validDebt.checks.currentDebt, true);
@@ -66,7 +85,8 @@ const invalidShares = evaluateAdvantageEnergyReadiness(
   {
     ...base,
     currentFullyDilutedShares: evidence(0),
-  }
+  },
+  testRegistry
 );
 
 assert.equal(
@@ -81,7 +101,8 @@ const validProduction = evaluateAdvantageEnergyReadiness(
     ...base,
     postSaleGasProductionMmcfPerDay: evidence(400),
     postSaleLiquidsProductionBblPerDay: evidence(10000),
-  }
+  },
+  testRegistry
 );
 
 assert.equal(
@@ -102,7 +123,8 @@ const invalidEconomics = evaluateAdvantageEnergyReadiness(
       gasPriceCadPerMcf: evidence(3),
       liquidsPriceCadPerBbl: evidence(70),
     },
-  }
+  },
+  testRegistry
 );
 
 assert.equal(
@@ -118,7 +140,8 @@ const invalidReserves = evaluateAdvantageEnergyReadiness(
     adjustedProvedGasReservesBcf: evidence(3000),
     adjustedProvedPlusProbableGasReservesBcf:
       evidence(2000),
-  }
+  },
+  testRegistry
 );
 
 assert.equal(

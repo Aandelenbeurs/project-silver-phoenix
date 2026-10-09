@@ -9,6 +9,15 @@ import {
   type Evidence,
 } from "./advantage-energy-valuation-input";
 
+import {
+  validateAdvantageEvidence,
+} from "./advantage-energy-evidence";
+
+import {
+  advantageSources,
+  type AdvantageSource,
+} from "./advantage-energy-sources";
+
 export type AdvantageReadinessStatus = "ready" | "blocked";
 
 export interface AdvantageReadinessReport {
@@ -22,38 +31,27 @@ export interface AdvantageReadinessReport {
 const finite = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value);
 
+
 function validEvidence(
   evidence: Evidence<number> | undefined,
   options: {
     positive?: boolean;
     nonnegative?: boolean;
     actualOnly?: boolean;
-  } = {}
+  } = {},
+  registry: readonly AdvantageSource[] = advantageSources
 ): boolean {
-  if (!evidence) return false;
-
-  if (!finite(evidence.value)) return false;
-  if (!evidence.asOf || !evidence.sourceId) return false;
-
-  if (options.positive && evidence.value <= 0) return false;
-
-  if (options.nonnegative && evidence.value < 0) {
-    return false;
-  }
-
-  if (
-    options.actualOnly &&
-    evidence.kind !== "reported"
-  ) {
-    return false;
-  }
-
-  return true;
+  return validateAdvantageEvidence(evidence, {
+    ...options,
+    registry,
+  }).valid;
 }
+
 
 export function evaluateAdvantageEnergyReadiness(
   input: typeof data = data,
-  valuation: AdvantageValuationInput = advantageValuationInput
+  valuation: AdvantageValuationInput = advantageValuationInput,
+  registry: readonly AdvantageSource[] = advantageSources
 ): AdvantageReadinessReport {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -67,16 +65,19 @@ export function evaluateAdvantageEnergyReadiness(
 
   const postSaleDate = "2026-09-11";
 
-  const postSaleActual = (
-    evidence: Evidence<number> | undefined,
-    positive = false
-  ): boolean =>
-    validEvidence(evidence, {
-      positive,
-      nonnegative: !positive,
-      actualOnly: true,
-    }) &&
-    Boolean(evidence && evidence.asOf >= postSaleDate);
+  
+const postSaleActual = (
+  evidence: Evidence<number> | undefined,
+  positive = false
+): boolean =>
+  validateAdvantageEvidence(evidence, {
+    positive,
+    nonnegative: !positive,
+    actualOnly: true,
+    afterDate: postSaleDate,
+    registry,
+  }).valid;
+
 
   const reservesValid =
     postSaleActual(
@@ -92,31 +93,42 @@ export function evaluateAdvantageEnergyReadiness(
 
   const economics = valuation.forwardEconomics;
 
-  const forwardEconomicsValid = Boolean(
-    economics &&
-    validEvidence(economics.declineRate, {
-      nonnegative: true,
-    }) &&
-    economics.declineRate.value <= 1 &&
-    validEvidence(
-      economics.annualCapitalExpenditureCad,
-      { nonnegative: true }
-    ) &&
-    validEvidence(
-      economics.operatingCostCadPerMcfe,
-      { nonnegative: true }
-    ) &&
-    validEvidence(
-      economics.transportationCostCadPerMcfe,
-      { nonnegative: true }
-    ) &&
-    validEvidence(economics.gasPriceCadPerMcf, {
-      nonnegative: true,
-    }) &&
-    validEvidence(economics.liquidsPriceCadPerBbl, {
-      nonnegative: true,
-    })
-  );
+  
+const forwardEconomicsValid = Boolean(
+  economics &&
+  validEvidence(
+    economics.declineRate,
+    { nonnegative: true },
+    registry
+  ) &&
+  economics.declineRate.value <= 1 &&
+  validEvidence(
+    economics.annualCapitalExpenditureCad,
+    { nonnegative: true },
+    registry
+  ) &&
+  validEvidence(
+    economics.operatingCostCadPerMcfe,
+    { nonnegative: true },
+    registry
+  ) &&
+  validEvidence(
+    economics.transportationCostCadPerMcfe,
+    { nonnegative: true },
+    registry
+  ) &&
+  validEvidence(
+    economics.gasPriceCadPerMcf,
+    { nonnegative: true },
+    registry
+  ) &&
+  validEvidence(
+    economics.liquidsPriceCadPerBbl,
+    { nonnegative: true },
+    registry
+  )
+);
+
 
   const checks: Record<string, boolean> = {
     identity:
