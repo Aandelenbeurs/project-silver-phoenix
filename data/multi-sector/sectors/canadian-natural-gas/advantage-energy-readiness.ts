@@ -1,9 +1,15 @@
 
-import { advantageEnergyReportedData as data } from "./advantage-energy-reported-data";
+import {
+  advantageEnergyReportedData as data,
+} from "./advantage-energy-reported-data";
 
-export type AdvantageReadinessStatus =
-  | "ready"
-  | "blocked";
+import {
+  advantageValuationInput,
+  type AdvantageValuationInput,
+  type Evidence,
+} from "./advantage-energy-valuation-input";
+
+export type AdvantageReadinessStatus = "ready" | "blocked";
 
 export interface AdvantageReadinessReport {
   companyId: string;
@@ -13,8 +19,41 @@ export interface AdvantageReadinessReport {
   checks: Record<string, boolean>;
 }
 
+const finite = (value: unknown): value is number =>
+  typeof value === "number" && Number.isFinite(value);
+
+function validEvidence(
+  evidence: Evidence<number> | undefined,
+  options: {
+    positive?: boolean;
+    nonnegative?: boolean;
+    actualOnly?: boolean;
+  } = {}
+): boolean {
+  if (!evidence) return false;
+
+  if (!finite(evidence.value)) return false;
+  if (!evidence.asOf || !evidence.sourceId) return false;
+
+  if (options.positive && evidence.value <= 0) return false;
+
+  if (options.nonnegative && evidence.value < 0) {
+    return false;
+  }
+
+  if (
+    options.actualOnly &&
+    evidence.kind !== "reported"
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 export function evaluateAdvantageEnergyReadiness(
-  input: typeof data = data
+  input: typeof data = data,
+  valuation: AdvantageValuationInput = advantageValuationInput
 ): AdvantageReadinessReport {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -23,12 +62,66 @@ export function evaluateAdvantageEnergyReadiness(
     (item) => item.eventId === "wembley-divestiture-2026"
   );
 
-  const finite = (value: unknown): value is number =>
-    typeof value === "number" && Number.isFinite(value);
+  const reserveAdjustment =
+    input.reserves.divestitureAdjustment;
+
+  const postSaleDate = "2026-09-11";
+
+  const postSaleActual = (
+    evidence: Evidence<number> | undefined,
+    positive = false
+  ): boolean =>
+    validEvidence(evidence, {
+      positive,
+      nonnegative: !positive,
+      actualOnly: true,
+    }) &&
+    Boolean(evidence && evidence.asOf >= postSaleDate);
+
+  const reservesValid =
+    postSaleActual(
+      valuation.adjustedProvedGasReservesBcf,
+      true
+    ) &&
+    postSaleActual(
+      valuation.adjustedProvedPlusProbableGasReservesBcf,
+      true
+    ) &&
+    valuation.adjustedProvedGasReservesBcf!.value <=
+      valuation.adjustedProvedPlusProbableGasReservesBcf!.value;
+
+  const economics = valuation.forwardEconomics;
+
+  const forwardEconomicsValid = Boolean(
+    economics &&
+    validEvidence(economics.declineRate, {
+      nonnegative: true,
+    }) &&
+    economics.declineRate.value <= 1 &&
+    validEvidence(
+      economics.annualCapitalExpenditureCad,
+      { nonnegative: true }
+    ) &&
+    validEvidence(
+      economics.operatingCostCadPerMcfe,
+      { nonnegative: true }
+    ) &&
+    validEvidence(
+      economics.transportationCostCadPerMcfe,
+      { nonnegative: true }
+    ) &&
+    validEvidence(economics.gasPriceCadPerMcf, {
+      nonnegative: true,
+    }) &&
+    validEvidence(economics.liquidsPriceCadPerBbl, {
+      nonnegative: true,
+    })
+  );
 
   const checks: Record<string, boolean> = {
     identity:
       input.identity.companyId === "advantage-energy" &&
+      valuation.companyId === "advantage-energy" &&
       input.identity.ticker === "AAV" &&
       input.identity.currency === "CAD",
 
@@ -62,72 +155,77 @@ export function evaluateAdvantageEnergyReadiness(
         input.reserves.provedGasReservesBcf,
 
     reserveAdjustment:
-            Boolean(input.reserves.divestitureAdjustment.sourceVerified) &&
-      finite(input.reserves.divestitureAdjustment.provedGasReservesBcf) &&
+      Boolean(reserveAdjustment.sourceVerified) &&
+      finite(reserveAdjustment.provedGasReservesBcf) &&
       finite(
-        input.reserves.divestitureAdjustment
-          .provedPlusProbableGasReservesBcf
+        reserveAdjustment.provedPlusProbableGasReservesBcf
       ),
 
-    currentDebt:
-      // The published Q2 debt predates the Wembley sale.
-      // An actual post-sale debt figure is still required.
-      false,
+    currentDebt: postSaleActual(
+      valuation.postSaleNetDebtCad
+    ),
 
-    currentDilutedShares:
-      // Q2 weighted-average shares cannot automatically be
-      // used as current fully diluted shares.
-      false,
+    currentDilutedShares: postSaleActual(
+      valuation.currentFullyDilutedShares,
+      true
+    ),
 
     currentProduction:
-      // The Q2 average includes the Glacier turnaround.
-      // A verified post-sale starting production mix is needed.
-      false,
+      postSaleActual(
+        valuation.postSaleGasProductionMmcfPerDay,
+        true
+      ) &&
+      postSaleActual(
+        valuation.postSaleLiquidsProductionBblPerDay
+      ),
 
-    forwardEconomicAssumptions:
-      // A complete, sourced multi-year forecast has
-      // not yet been constructed.
-      false,
+    forwardEconomicAssumptions: forwardEconomicsValid,
   };
+
+  // The reserve gate needs both a verified divestiture
+  // adjustment and verified post-sale gas-only reserves.
+  checks.reserveAdjustment =
+    checks.reserveAdjustment && reservesValid;
 
   for (const [name, passed] of Object.entries(checks)) {
     if (!passed) {
-      errors.push(`Valuation requirement not satisfied: ${name}`);
+      errors.push(
+        `Valuation requirement not satisfied: ${name}`
+      );
     }
   }
 
-  if (
-    input.production.measurement === "quarterly-average"
-  ) {
+  if (input.production.measurement === "quarterly-average") {
     warnings.push(
-      "Q2 production is a historical quarterly average, not a " +
-      "verified post-Wembley forecast starting rate."
+      "Q2 production is historical, not post-sale production."
     );
   }
 
   if (event?.netDebtImpactCad === null) {
     warnings.push(
-      "Wembley net debt impact has not been independently verified."
+      "Wembley net debt impact is not verified."
     );
   }
 
   warnings.push(
-    "Reserve volumes in Mboe cannot be subtracted directly " +
-    "from gas-only reserves in Bcf."
+    "Mboe reserves cannot be subtracted from gas-only Bcf."
   );
 
   warnings.push(
-    "Reported CAD/boe costs require a documented conversion " +
-    "before use in a CAD/Mcfe economic model."
+    "CAD/boe costs require documented CAD/Mcfe conversion."
   );
 
   warnings.push(
-    "Entropy must be valued separately without double counting " +
-    "its debt, assets or cash flows."
+    "Entropy assets, debt and cash flows require separate treatment."
+  );
+
+  warnings.push(
+    "Readiness checks input completeness and provenance, " +
+    "not the economic reliability of forecasts."
   );
 
   return {
-    companyId: input.identity.companyId,
+    companyId: valuation.companyId,
     status: errors.length === 0 ? "ready" : "blocked",
     errors,
     warnings,
