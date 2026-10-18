@@ -10,6 +10,7 @@ const nav = [
   { href: '/', label: 'Dashboard', icon: '◫' },
   { href: '/holdings', label: 'Holdings', icon: '▤' },
   { href: '/ranking', label: 'Master Ranking', icon: '★' },
+  { href: '/sectors', label: 'Sectoren', icon: '◈' },
   { href: '/optimizer', label: 'Optimizer', icon: '⇄' },
   { href: '/reviews', label: 'Reviews', icon: '✓' },
   { href: "/watchlist", label: "Watchlist", icon: "◎",},
