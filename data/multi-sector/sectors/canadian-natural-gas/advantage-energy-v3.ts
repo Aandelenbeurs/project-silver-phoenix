@@ -1,5 +1,5 @@
 import { AAV_RESEARCH_INPUTS } from './advantage-energy-research-valuation';
-import { AAV_ILLUSTRATIVE_SCENARIOS, type ScenarioName } from './advantage-energy-scenario-engine';
+import { AAV_ILLUSTRATIVE_SCENARIOS, type ScenarioName, type ScenarioAssumptions } from './advantage-energy-scenario-engine';
 import { AAV_V2_HYPOTHETICAL, type V2Assumptions } from './advantage-energy-v2';
 
 /** V3 is a hypothetical terminal-year capex sensitivity, NOT a sourced AAV valuation. */
@@ -40,9 +40,16 @@ function validate(a: V2Assumptions): void {
  * Volume is integrated over that operating fraction, not extrapolated after depletion.
  * This is a transparent sensitivity assumption, not a realistic well-level schedule.
  */
-export function calculateAavV3(a: V2Assumptions = AAV_V2_HYPOTHETICAL): V3Result[] {
+export function calculateAavV3(
+  a: V2Assumptions = AAV_V2_HYPOTHETICAL,
+  scenarios: readonly ScenarioAssumptions[] = AAV_ILLUSTRATIVE_SCENARIOS
+): V3Result[] {
   validate(a);
-  return AAV_ILLUSTRATIVE_SCENARIOS.map(s => {
+  if (scenarios.length !== 4 || new Set(scenarios.map(s => s.name)).size !== 4 ||
+      !(["bear", "base", "bull", "moonshot"] as const).every(name => scenarios.some(s => s.name === name))) {
+    throw new Error("AAV V3 requires four distinct scenarios");
+  }
+  return scenarios.map(s => {
     let rate: number = AAV_RESEARCH_INPUTS.productionBoePerDay;
     let remaining = a.recoverableBudgetBoe;
     let ev = 0;

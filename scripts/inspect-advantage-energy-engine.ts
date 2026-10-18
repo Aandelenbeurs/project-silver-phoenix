@@ -1,3 +1,4 @@
+import { AAV_REQUIREMENTS, validateAavRequirements, explainAavBlocker } from '../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-evidence-explainer';
 import { AAV_EVIDENCE_LEDGER, validateAavEvidenceLedger } from '../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-evidence-ledger';
 import { calculateAavV3 } from '../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-v3';
 import { runAdvantageEnergyScenarios } from '../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-scenario-engine';
@@ -14,3 +15,8 @@ for(const scenario of result) {
 }
 assert(runAdvantageEnergyScenarios().status==='blocked','Strict gate unexpectedly opened');
 console.log('PASS: evidence, four scenarios, reserve fractions, strict verified gate');
+
+assert(validateAavRequirements().length===0,'Invalid requirement links');
+assert(AAV_REQUIREMENTS.length===5,'Expected five evidence areas');
+assert(!explainAavBlocker('claim:postSaleNetDebt: Missing evidence').includes('Missing evidence'),'Raw error leaked');
+console.log('PASS: Dutch evidence explanations and linked sources');

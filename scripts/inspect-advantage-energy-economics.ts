@@ -1,0 +1,16 @@
+import { strict as assert } from 'node:assert';
+import { diagnoseAavBaseEconomics } from '../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-economics-diagnostic';
+import { calculateAavV3 } from '../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-v3';
+import { runAdvantageEnergyScenarios } from '../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-scenario-engine';
+const d = diagnoseAavBaseEconomics();
+const base = calculateAavV3().find(x=>x.name==='base')!;
+assert.ok(Math.abs(d.enterpriseCad-base.enterpriseValueCad)<0.02);
+assert.ok(Math.abs(d.equityCad-base.equityValueCad)<0.02);
+assert.ok(Math.abs(d.perShareCad-base.modelValuePerShareCad)<1e-8);
+assert.ok(d.annual.length===base.years.length);
+for (const [i,y] of d.annual.entries()) assert.ok(Math.abs(y.cashCad-base.years[i].preTaxCashFlowCad)<0.02);
+assert.ok(d.firstYearMaintenanceProxyCad>0);
+assert.ok(d.modelBreakEvenGasPriceCadPerMcf!==null && d.modelBreakEvenGasPriceCadPerMcf>d.baseGasPriceCadPerMcf);
+assert.equal(runAdvantageEnergyScenarios().status,'blocked');
+console.log('PASS: exact V3 cash-flow bridge, annual cost reconciliation, maintenance proxy, model break-even and strict gate');
+console.log(`Base: ${d.perShareCad.toFixed(2)} CAD/share; model gas break-even: ${d.modelBreakEvenGasPriceCadPerMcf?.toFixed(3)} CAD/Mcf`);
