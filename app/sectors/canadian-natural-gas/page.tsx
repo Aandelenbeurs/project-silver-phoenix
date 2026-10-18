@@ -10,7 +10,7 @@ export default function NaturalGasSectorPage() {
     <section style={{border:'1px solid #64748b55',borderRadius:12,padding:20,maxWidth:580}}>
       <h2>Advantage Energy Ltd. (TSX: AAV)</h2>
       <p>Vier voorlopige researchscenario's, met afzonderlijke geverifieerde waarderingscontroles.</p>
-      <Link href="/valuation/advantage-energy">Open AAV-bedrijfsanalyse →</Link>
+      <Link href="/valuation/advantage-energy/engine">Open Phoenix Valuation Engine →</Link>
     </section>
   </div>;
 }
