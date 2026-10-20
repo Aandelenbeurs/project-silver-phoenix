@@ -1,3 +1,4 @@
+import { getAavPolicyComparison, POLICY_LABELS } from '../../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-policy-comparison';
 import { compareAavInvestmentPolicies } from '../../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-investment-policy';
 import Link from 'next/link';
 import { diagnoseAavBaseEconomics } from '../../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-economics-diagnostic';
@@ -18,6 +19,7 @@ const th={padding:'10px 8px',textAlign:'right' as const,borderBottom:'1px solid 
 const td={padding:'10px 8px',textAlign:'right' as const,borderBottom:'1px solid #64748b33'};
 
 export default function AavEnginePage(){
+ const policyComparison=getAavPolicyComparison();
  const diagnostic=diagnoseAavBaseEconomics();
  const strict=runAdvantageEnergyScenarios();
  const readiness=evaluateClaimBackedAdvantageReadiness();
@@ -103,7 +105,7 @@ export default function AavEnginePage(){
    </article>)}</div>
    <p style={sub}>Voorlopig twee herberekende gevoeligheden: gasprijs ±0,50 CAD/Mcf en jaarlijkse capex ±50 mln CAD. De laatste verandert ook de ontwikkelde productiecapaciteit. Andere risico's zijn nog niet kwantitatief geanalyseerd.</p>
   </section>
-  <section style={{marginTop:30}}><h2>4. Investeringsbeleid — ontwikkelen, onderhouden of afbouwen</h2>
+  <section style={{marginTop:30}}><h2>5. Investeringsbeleid — ontwikkelen, onderhouden of afbouwen</h2>
    <p>Dezelfde fictieve Base-inputs, maar vier kapitaalstrategieën. Dit zijn <strong>beleidsexperimenten</strong>, geen bedrijfsprognoses. De economische toets kijkt vijf jaar vooruit en is een heuristiek, geen bewezen optimaal beleid.</p>
    <div style={{...panel,overflowX:'auto'}}><table style={{width:'100%',minWidth:680,borderCollapse:'collapse'}}><thead><tr><th style={{...th,textAlign:'left'}}>Strategie</th><th style={th}>Modelwaarde/aandeel</th><th style={th}>PV kasstromen (mln CAD)</th><th style={th}>Capex jaar 1 (mln CAD)</th><th style={th}>Productie (mln boe)</th></tr></thead><tbody>
     {compareAavInvestmentPolicies('base').map(x=><tr key={x.policy}><td style={{...td,textAlign:'left'}}>{({'fixed':'Vast investeringsbudget','runoff':'Gecontroleerd afbouwen','maintenance':'Onderhoud binnen budget','economic-gate':'Economische investeringspoort'} as const)[x.policy]}</td><td style={td}>{cad(x.valuePerShareCad)}</td><td style={td}>{n(x.enterpriseValueCad/1e6,1)}</td><td style={td}>{n((x.years[0]?.capexCad??0)/1e6,1)}</td><td style={td}>{n(x.producedBoe/1e6,1)}</td></tr>)}
@@ -111,14 +113,31 @@ export default function AavEnginePage(){
    <details style={{...panel,marginTop:12}}><summary style={{cursor:'pointer'}}>Bekijk jaarlijkse beslissingen van de economische investeringspoort</summary><div style={{overflowX:'auto'}}><table style={{width:'100%',minWidth:680,borderCollapse:'collapse'}}><thead><tr><th style={th}>Jaar</th><th style={th}>Capex mln CAD</th><th style={th}>Productie mln boe</th><th style={th}>Kasstroom mln CAD</th><th style={{...th,textAlign:'left'}}>Beslissing</th></tr></thead><tbody>{compareAavInvestmentPolicies('base').find(x=>x.policy==='economic-gate')!.years.map(y=><tr key={y.year}><td style={td}>{y.year}</td><td style={td}>{n(y.capexCad/1e6,1)}</td><td style={td}>{n(y.producedBoe/1e6,2)}</td><td style={td}>{n(y.preTaxCashFlowCad/1e6,1)}</td><td style={{...td,textAlign:'left'}}>{y.decision}</td></tr>)}</tbody></table></div></details>
    <p style={sub}>Het vaste beleid sluit exact aan op V3. Een hogere uitkomst van een alternatieve strategie betekent niet dat de echte onderneming dit beleid kan uitvoeren. Het model mist o.a. minimumverplichtingen, puttenplanning, hedges, belastingen en ontmantelingskosten.</p>
   </section>
-  <section style={{marginTop:30}}><h2>6. Bewijskwaliteit — vijf unieke aandachtspunten</h2>
+  <section style={{marginTop:30}}><h2>6. Strategieën vergelijken — alle vier scenario's</h2>
+   <p>Welke kapitaalstrategie levert onder dezelfde <strong>hypothetische</strong> scenario-inputs de hoogste modelwaarde op, en tegen welke investering en productieontwikkeling? De hoogste uitkomst is geen aanbeveling of bewezen optimum.</p>
+   {policyComparison.map(group=><details key={group.scenario} open={group.scenario==='base'} style={{...panel,marginTop:12}}>
+    <summary style={{cursor:'pointer',fontWeight:700}}>{SCENARIO_LABELS[group.scenario]} — hoogste modelwaarde: {POLICY_LABELS[group.highestModeledEquityPolicy]}</summary>
+    <div style={{overflowX:'auto',marginTop:12}}><table style={{width:'100%',minWidth:1050,borderCollapse:'collapse'}}><thead><tr>
+     {['Strategie','Equity/aandeel','Δ t.o.v. vast','PV operationele kasstromen¹','Cumulatieve kasstroom¹','Totale capex','Productie','Eindproductie','Jaren positieve CF'].map((h,i)=><th key={h} style={{...th,...(i===0?{textAlign:'left' as const}:{})}}>{h}</th>)}
+    </tr></thead><tbody>{group.rows.map(r=><tr key={r.policy}>
+     <td style={{...td,textAlign:'left',fontWeight:r.policy===group.highestModeledEquityPolicy?700:400}}>{POLICY_LABELS[r.policy]}{r.policy===group.highestModeledEquityPolicy?' *':''}</td>
+     <td style={td}>{cad(r.equityPerShareCad)}</td><td style={td}>{cad(r.incrementalEquityPerShareVsFixedCad)}</td>
+     <td style={td}>{n(r.enterpriseValueCad/1e6,1)} mln</td><td style={td}>{n(r.cumulativePreTaxCashFlowCad/1e6,1)} mln</td>
+     <td style={td}>{n(r.totalCapexCad/1e6,1)} mln</td><td style={td}>{n(r.producedBoe/1e6,1)} mln boe</td>
+     <td style={td}>{n(r.endingProductionBoeDay,0)} boe/d</td><td style={td}>{r.positiveCashFlowYears}/{AAV_V2_HYPOTHETICAL.forecastYears}</td>
+    </tr>)}</tbody></table></div>
+    <p style={sub}>* Hoogste hypothetische equitywaarde binnen vier geteste strategieën; geen economisch bewezen optimale strategie. ¹ Vóór belastingen; kasstroom na capex, exclusief financiering. PV = contante waarde; cumulatief = niet-verdisconteerde som. Eindproductie is de modelproductiesnelheid aan het einde van de laatste gesimuleerde periode, niet een voorspelde AAV-productie.</p>
+   </details>)}
+   <p style={sub}>De economische investeringspoort is een 5-jaars heuristiek en kan worden verslagen door andere regels. De vergelijking houdt geen rekening met financieringsbeperkingen, contractverplichtingen, toekomstige boorkansen, belastingen, hedges, ontmanteling of terminal value. De vaste strategie blijft exact gelijk aan V3.</p>
+  </section>
+  <section style={{marginTop:30}}><h2>7. Bewijskwaliteit — vijf unieke aandachtspunten</h2>
    <p>Wat al bekend is, wordt niet opnieuw onderzocht. Managementverwachtingen en historische cijfers worden niet als bevestigde post-sale realisaties gepresenteerd.</p>
    <div style={{display:'grid',gap:12}}>{AAV_REQUIREMENTS.map(req=><details key={req.id} style={panel}><summary style={{cursor:'pointer',fontWeight:700}}>{req.title} — nog te onderbouwen</summary>
     <p>{req.description}</p><p><strong>Bekend:</strong> {req.known}</p><p><strong>Nog nodig:</strong> {req.needed}</p><p><strong>Gevolg:</strong> {req.consequence}</p>
     <ul>{evidenceForRequirement(req).map(item=><li key={item.id}>{item.label}: {item.value===null?'ontbreekt':`${n(item.value,3)} ${item.unit}`} ({item.status}, {item.asOf}) {item.sourceUrl?<a href={item.sourceUrl} target='_blank' rel='noopener noreferrer'>Bron ↗</a>:null}</li>)}</ul>
    </details>)}</div>
   </section>
-  <section style={{marginTop:30}}><h2>7. Technische controles en bronnen</h2>
+  <section style={{marginTop:30}}><h2>8. Technische controles en bronnen</h2>
    <details style={panel}><summary style={{cursor:'pointer'}}>Open volledige technische validatie en bewijsregister</summary>
     <p>{strict.errors.length} oorspronkelijke controles; {ledgerErrors.length} ledger-validatiefouten.</p>
     <ul>{strict.errors.map((error,i)=><li key={i}><code>{error}</code></li>)}</ul>
