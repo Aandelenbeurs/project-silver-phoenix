@@ -1,0 +1,23 @@
+.financial-intelligence {display:grid;gap:22px;min-width:0;}
+.financial-intelligence h1 {font-size:clamp(1.7rem,4vw,2.7rem);}
+.financial-intelligence p,.financial-intelligence li {line-height:1.65;}
+.financial-intelligence nav,.fi-actions {display:flex;gap:16px;flex-wrap:wrap;}
+.financial-intelligence details {margin:16px 0;padding:14px;border:1px solid #2b455a;border-radius:10px;}
+.financial-intelligence summary {cursor:pointer;font-weight:700;line-height:1.5;}
+.fi-fields,.fi-stats,.fi-demo {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px;}
+.financial-intelligence label {display:flex;flex-direction:column;gap:7px;margin:12px 0;color:#cbdbe7;}
+.financial-intelligence input,.financial-intelligence select,.financial-intelligence textarea {width:100%;background:#0c2032;border:1px solid #4b687f;color:#e9f1f8;border-radius:7px;padding:10px;font:inherit;min-width:0;}
+.financial-intelligence textarea {resize:vertical;}
+.financial-intelligence button {padding:10px 14px;border:1px solid #5885a7;border-radius:8px;background:#153a56;color:#ebf4fb;font:inherit;cursor:pointer;}
+.financial-intelligence button:disabled {opacity:.5;cursor:not-allowed;}
+.financial-intelligence button:focus-visible,.financial-intelligence a:focus-visible,.financial-intelligence input:focus-visible,.financial-intelligence select:focus-visible,.financial-intelligence textarea:focus-visible {outline:2px solid #89d9ff;outline-offset:3px;}
+.fi-candidate {padding:20px 0;border-top:1px solid #365269;}
+.financial-intelligence dl {display:grid;grid-template-columns:minmax(110px,1fr) minmax(0,3fr);gap:10px;}
+.financial-intelligence dt {color:#9eb7ca;}
+.financial-intelligence dd {margin:0;overflow-wrap:anywhere;}
+.financial-intelligence blockquote {white-space:pre-wrap;overflow-wrap:anywhere;max-height:260px;overflow:auto;margin:16px 0;padding:16px;border-left:3px solid #658da9;background:#0b1d2d;}
+.fi-hash {overflow-wrap:anywhere;font-size:.75rem;color:#9eb7ca;}
+.financial-intelligence .fi-checkbox {display:flex;flex-direction:row;align-items:flex-start;}
+.financial-intelligence .fi-checkbox input {width:auto;flex:0 0 auto;margin-top:6px;}
+.fi-status {color:#ffd49b;}
+@media(max-width:550px){.financial-intelligence dl{grid-template-columns:1fr;gap:5px;}.financial-intelligence dd{margin-bottom:12px;}}

@@ -15,7 +15,7 @@ export default function ResearchPage(){
   <header><p className="eyebrow">PHOENIX · MULTI-SECTOR RESEARCH</p><h1>Een gedeelde taal. Een passend model per sector.</h1>
    <p>Vergelijk eerst de bewijskwaliteit en de methode. Een metalscore en een gas-DCF zijn geen onderling uitwisselbare koerswaarderingen.</p>
    <p className="research-note">Financieel onderzoek bijgewerkt tot {demo.asOf}. Bestaande score-adapters behouden hun momentopname uit commit 3b4ba71; officiële financiële gegevens staan hieronder apart met bronstatus. Geen live koersen.</p>
-   <nav><a href="#financieel">Financiële analyse</a><a href="#bedrijven">Twee bedrijven</a><a href="#scoring">Scores begrijpen</a><a href="#methoden">Sectorlogica</a><Link href="/ranking">Bestaande ranking</Link></nav>
+   <nav><Link href="/research/intelligence">Financial Intelligence</Link><a href="#financieel">Financiële analyse</a><a href="#bedrijven">Twee bedrijven</a><a href="#scoring">Scores begrijpen</a><a href="#methoden">Sectorlogica</a><Link href="/ranking">Bestaande ranking</Link></nav>
   </header>
   <FinancialResearch />
   <section id="bedrijven"><h2>Bestaande Phoenix-scores en modellen</h2><p>Beide voorbeelden blijven geblokkeerd voor een onderbouwde koerswaarde. Dat is een onderzoeksuitkomst, geen oordeel dat de ondernemingen onaantrekkelijk zijn.</p>
