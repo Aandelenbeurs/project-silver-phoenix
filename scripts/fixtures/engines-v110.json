@@ -1,0 +1,5464 @@
+{
+  "notice": "Synthetic fixtures; metal prices are test constants, not market quotes.",
+  "scores": [
+    {
+      "companyId": "discovery-mining",
+      "scores": {
+        "quality": 96,
+        "growth": 94,
+        "leverage": {
+          "silver": 92,
+          "gold": 82
+        },
+        "valuation": 80,
+        "catalysts": 88,
+        "riskPenalty": 3,
+        "confidence": "high",
+        "dataStatus": "valuation-stale",
+        "opportunity": 87.89999999999999
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 6,
+        "idealMax": 9,
+        "hardMax": 10
+      }
+    },
+    {
+      "companyId": "silver-x",
+      "scores": {
+        "quality": 89,
+        "growth": 98,
+        "leverage": {
+          "silver": 99,
+          "gold": 55
+        },
+        "valuation": 82,
+        "catalysts": 92,
+        "riskPenalty": 7,
+        "confidence": "high",
+        "dataStatus": "valuation-stale",
+        "opportunity": 84.65
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 4,
+        "idealMax": 7,
+        "hardMax": 8
+      }
+    },
+    {
+      "companyId": "abrasilver",
+      "scores": {
+        "quality": 92,
+        "growth": 91,
+        "leverage": {
+          "silver": 94,
+          "gold": 70
+        },
+        "valuation": 68,
+        "catalysts": 90,
+        "riskPenalty": 5,
+        "confidence": "high",
+        "dataStatus": "valuation-stale",
+        "opportunity": 82.04999999999998
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 5,
+        "idealMax": 8,
+        "hardMax": 9
+      }
+    },
+    {
+      "companyId": "kootenay-silver",
+      "scores": {
+        "quality": 89,
+        "growth": 95,
+        "leverage": {
+          "silver": 98,
+          "gold": 30
+        },
+        "valuation": 94,
+        "catalysts": 91,
+        "riskPenalty": 5,
+        "confidence": "high",
+        "dataStatus": "valuation-stale",
+        "opportunity": 88.05
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 5,
+        "idealMax": 8,
+        "hardMax": 9
+      }
+    },
+    {
+      "companyId": "vista-gold",
+      "scores": {
+        "quality": 96,
+        "growth": 83,
+        "leverage": {
+          "gold": 94
+        },
+        "valuation": 90,
+        "catalysts": 85,
+        "riskPenalty": 4,
+        "confidence": "high",
+        "dataStatus": "valuation-stale",
+        "opportunity": 86.15
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 4,
+        "idealMax": 6,
+        "hardMax": 6
+      }
+    },
+    {
+      "companyId": "first-andes",
+      "scores": {
+        "quality": 73,
+        "growth": 88,
+        "leverage": {
+          "silver": 99,
+          "gold": 30
+        },
+        "valuation": 94,
+        "catalysts": 90,
+        "riskPenalty": 8,
+        "confidence": "medium",
+        "dataStatus": "valuation-stale",
+        "opportunity": 78.55
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 0.5,
+        "idealMax": 1.5,
+        "hardMax": 1.5
+      }
+    },
+    {
+      "companyId": "impact-silver",
+      "scores": {
+        "quality": 91,
+        "growth": 91,
+        "leverage": {
+          "silver": 97,
+          "gold": 45
+        },
+        "valuation": 78,
+        "catalysts": 90,
+        "riskPenalty": 5,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 84.19999999999999
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 4,
+        "idealMax": 7,
+        "hardMax": 9
+      }
+    },
+    {
+      "companyId": "kuya-silver",
+      "scores": {
+        "quality": 87,
+        "growth": 97,
+        "leverage": {
+          "silver": 99,
+          "gold": 45
+        },
+        "valuation": 76,
+        "catalysts": 96,
+        "riskPenalty": 7,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 83
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 4,
+        "idealMax": 7,
+        "hardMax": 9
+      }
+    },
+    {
+      "companyId": "southern-silver",
+      "scores": {
+        "quality": 91,
+        "growth": 92,
+        "leverage": {
+          "silver": 94,
+          "gold": 55
+        },
+        "valuation": 86,
+        "catalysts": 90,
+        "riskPenalty": 6,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 84.6
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 4,
+        "idealMax": 7,
+        "hardMax": 9
+      }
+    },
+    {
+      "companyId": "first-mining-gold",
+      "scores": {
+        "quality": 94,
+        "growth": 94,
+        "leverage": {
+          "gold": 98
+        },
+        "valuation": 84,
+        "catalysts": 97,
+        "riskPenalty": 5,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 87.9
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 5,
+        "idealMax": 8,
+        "hardMax": 10
+      }
+    },
+    {
+      "companyId": "zacatecas-silver",
+      "scores": {
+        "quality": 82,
+        "growth": 91,
+        "leverage": {
+          "silver": 85,
+          "gold": 92
+        },
+        "valuation": 88,
+        "catalysts": 91,
+        "riskPenalty": 8,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 78.79999999999998
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 2,
+        "idealMax": 4,
+        "hardMax": 6
+      }
+    },
+    {
+      "companyId": "silver47",
+      "scores": {
+        "quality": 84,
+        "growth": 96,
+        "leverage": {
+          "silver": 98,
+          "gold": 55
+        },
+        "valuation": 79,
+        "catalysts": 95,
+        "riskPenalty": 8,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 81.2
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 3,
+        "idealMax": 6,
+        "hardMax": 8
+      }
+    },
+    {
+      "companyId": "gr-silver",
+      "scores": {
+        "quality": 86,
+        "growth": 95,
+        "leverage": {
+          "silver": 98,
+          "gold": 45
+        },
+        "valuation": 86,
+        "catalysts": 96,
+        "riskPenalty": 7,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 84.05000000000001
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 3,
+        "idealMax": 6,
+        "hardMax": 8
+      }
+    },
+    {
+      "companyId": "alaska-silver",
+      "scores": {
+        "quality": 88,
+        "growth": 94,
+        "leverage": {
+          "silver": 94,
+          "gold": 89
+        },
+        "valuation": 84,
+        "catalysts": 94,
+        "riskPenalty": 6,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 84.2
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 3,
+        "idealMax": 6,
+        "hardMax": 8
+      }
+    },
+    {
+      "companyId": "freeman-gold",
+      "scores": {
+        "quality": 93,
+        "growth": 92,
+        "leverage": {
+          "gold": 96
+        },
+        "valuation": 89,
+        "catalysts": 94,
+        "riskPenalty": 4,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 88.5
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 4,
+        "idealMax": 7,
+        "hardMax": 8
+      }
+    },
+    {
+      "companyId": "tier-one-silver",
+      "scores": {
+        "quality": 80,
+        "growth": 98,
+        "leverage": {
+          "silver": 99,
+          "gold": 72,
+          "copper": 55
+        },
+        "valuation": 82,
+        "catalysts": 98,
+        "riskPenalty": 9,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 80.55
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 1,
+        "idealMax": 3,
+        "hardMax": 4
+      }
+    },
+    {
+      "companyId": "americore",
+      "scores": {
+        "quality": 74,
+        "growth": 95,
+        "leverage": {
+          "silver": 98,
+          "gold": 25
+        },
+        "valuation": 88,
+        "catalysts": 94,
+        "riskPenalty": 11,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 76.65
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 0.5,
+        "idealMax": 2,
+        "hardMax": 3
+      }
+    },
+    {
+      "companyId": "cassiar-gold",
+      "scores": {
+        "quality": 90,
+        "growth": 94,
+        "leverage": {
+          "gold": 95
+        },
+        "valuation": 88,
+        "catalysts": 95,
+        "riskPenalty": 5,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 86.85
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 3,
+        "idealMax": 6,
+        "hardMax": 7
+      }
+    },
+    {
+      "companyId": "outcrop-silver",
+      "scores": {
+        "quality": 88,
+        "growth": 96,
+        "leverage": {
+          "silver": 99,
+          "gold": 58
+        },
+        "valuation": 83,
+        "catalysts": 96,
+        "riskPenalty": 6,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 85.44999999999999
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 3,
+        "idealMax": 6,
+        "hardMax": 8
+      }
+    },
+    {
+      "companyId": "defiance-silver",
+      "scores": {
+        "quality": 86,
+        "growth": 95,
+        "leverage": {
+          "silver": 99,
+          "gold": 40
+        },
+        "valuation": 88,
+        "catalysts": 97,
+        "riskPenalty": 7,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 84.7
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 2,
+        "idealMax": 5,
+        "hardMax": 7
+      }
+    },
+    {
+      "companyId": "trx-gold",
+      "scores": {
+        "quality": 92,
+        "growth": 97,
+        "leverage": {
+          "gold": 96
+        },
+        "valuation": 80,
+        "catalysts": 95,
+        "riskPenalty": 4,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 87.75
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 3,
+        "idealMax": 6,
+        "hardMax": 8
+      }
+    },
+    {
+      "companyId": "great-pacific-gold",
+      "scores": {
+        "quality": 82,
+        "growth": 98,
+        "leverage": {
+          "gold": 95,
+          "silver": 35,
+          "copper": 55
+        },
+        "valuation": 80,
+        "catalysts": 98,
+        "riskPenalty": 9,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 71.14999999999999
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 1,
+        "idealMax": 3,
+        "hardMax": 4
+      }
+    },
+    {
+      "companyId": "spanish-mountain",
+      "scores": {
+        "quality": 93,
+        "growth": 94,
+        "leverage": {
+          "gold": 95
+        },
+        "valuation": 86,
+        "catalysts": 96,
+        "riskPenalty": 5,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 87.45000000000002
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 3,
+        "idealMax": 6,
+        "hardMax": 8
+      }
+    },
+    {
+      "companyId": "americas-gold-silver",
+      "scores": {
+        "quality": 91,
+        "growth": 95,
+        "leverage": {
+          "silver": 98,
+          "gold": 35
+        },
+        "valuation": 77,
+        "catalysts": 94,
+        "riskPenalty": 6,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 84.55000000000001
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 3,
+        "idealMax": 6,
+        "hardMax": 8
+      }
+    },
+    {
+      "companyId": "excellon",
+      "scores": {
+        "quality": 87,
+        "growth": 94,
+        "leverage": {
+          "silver": 94,
+          "gold": 75
+        },
+        "valuation": 85,
+        "catalysts": 92,
+        "riskPenalty": 7,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 82.89999999999999
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 3,
+        "idealMax": 6,
+        "hardMax": 8
+      }
+    },
+    {
+      "companyId": "silver-one",
+      "scores": {
+        "quality": 92,
+        "growth": 94,
+        "leverage": {
+          "silver": 98,
+          "gold": 65
+        },
+        "valuation": 84,
+        "catalysts": 97,
+        "riskPenalty": 5,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 87.3
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 4,
+        "idealMax": 7,
+        "hardMax": 9
+      }
+    },
+    {
+      "companyId": "golden-goliath",
+      "scores": {
+        "quality": 68,
+        "growth": 92,
+        "leverage": {
+          "gold": 96
+        },
+        "valuation": 90,
+        "catalysts": 90,
+        "riskPenalty": 14,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 70.8
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 0.5,
+        "idealMax": 1.5,
+        "hardMax": 2.5
+      }
+    },
+    {
+      "companyId": "silver-dollar",
+      "scores": {
+        "quality": 80,
+        "growth": 95,
+        "leverage": {
+          "silver": 98,
+          "gold": 55,
+          "copper": 60
+        },
+        "valuation": 86,
+        "catalysts": 94,
+        "riskPenalty": 9,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 80.05000000000001
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 1,
+        "idealMax": 3,
+        "hardMax": 4
+      }
+    },
+    {
+      "companyId": "argentum-silver",
+      "scores": {
+        "quality": 65,
+        "growth": 86,
+        "leverage": {
+          "silver": 96
+        },
+        "valuation": 88,
+        "catalysts": 80,
+        "riskPenalty": 14,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 67
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 0.5,
+        "idealMax": 1.5,
+        "hardMax": 2.5
+      }
+    },
+    {
+      "companyId": "minnova",
+      "scores": {
+        "quality": 73,
+        "growth": 88,
+        "leverage": {
+          "gold": 94
+        },
+        "valuation": 91,
+        "catalysts": 83,
+        "riskPenalty": 12,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 72.5
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 0.5,
+        "idealMax": 1.5,
+        "hardMax": 2.5
+      }
+    },
+    {
+      "companyId": "onyx-gold",
+      "scores": {
+        "quality": 82,
+        "growth": 98,
+        "leverage": {
+          "gold": 96
+        },
+        "valuation": 82,
+        "catalysts": 96,
+        "riskPenalty": 8,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 81.5
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 1.5,
+        "idealMax": 4,
+        "hardMax": 5
+      }
+    },
+    {
+      "companyId": "advanced-gold",
+      "scores": {
+        "quality": 67,
+        "growth": 94,
+        "leverage": {
+          "silver": 94,
+          "gold": 80,
+          "copper": 80
+        },
+        "valuation": 88,
+        "catalysts": 94,
+        "riskPenalty": 12,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 72.7
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 0.25,
+        "idealMax": 1,
+        "hardMax": 1.5
+      }
+    },
+    {
+      "companyId": "solstice-gold",
+      "scores": {
+        "quality": 77,
+        "growth": 96,
+        "leverage": {
+          "gold": 97
+        },
+        "valuation": 86,
+        "catalysts": 96,
+        "riskPenalty": 9,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 79.44999999999999
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 0.5,
+        "idealMax": 2,
+        "hardMax": 3
+      }
+    },
+    {
+      "companyId": "walhalla-gold",
+      "scores": {
+        "quality": 75,
+        "growth": 96,
+        "leverage": {
+          "gold": 99
+        },
+        "valuation": 85,
+        "catalysts": 90,
+        "riskPenalty": 11,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 76.35
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 0.5,
+        "idealMax": 2,
+        "hardMax": 3
+      }
+    },
+    {
+      "companyId": "new-murchison",
+      "scores": {
+        "quality": 88,
+        "growth": 94,
+        "leverage": {
+          "gold": 94
+        },
+        "valuation": 82,
+        "catalysts": 90,
+        "riskPenalty": 5,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 84.4
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 2,
+        "idealMax": 5,
+        "hardMax": 7
+      }
+    },
+    {
+      "companyId": "silver-hammer",
+      "scores": {
+        "quality": 75,
+        "growth": 97,
+        "leverage": {
+          "silver": 99,
+          "gold": 35,
+          "copper": 45
+        },
+        "valuation": 83,
+        "catalysts": 98,
+        "riskPenalty": 10,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 78
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 0.5,
+        "idealMax": 2,
+        "hardMax": 3
+      }
+    },
+    {
+      "companyId": "silver-elephant",
+      "scores": {
+        "quality": 74,
+        "growth": 91,
+        "leverage": {
+          "silver": 94,
+          "gold": 30
+        },
+        "valuation": 85,
+        "catalysts": 92,
+        "riskPenalty": 13,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 72.25000000000001
+      },
+      "portfolio": {
+        "bucket": "special",
+        "idealMin": 0.5,
+        "idealMax": 1.5,
+        "hardMax": 2.5
+      }
+    },
+    {
+      "companyId": "blackrock-silver",
+      "scores": {
+        "quality": 94,
+        "growth": 93,
+        "leverage": {
+          "silver": 97,
+          "gold": 60
+        },
+        "valuation": 84,
+        "catalysts": 96,
+        "riskPenalty": 4,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 88.4
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 4,
+        "idealMax": 7,
+        "hardMax": 9
+      }
+    },
+    {
+      "companyId": "china-silver",
+      "scores": {
+        "quality": 78,
+        "growth": 72,
+        "leverage": {
+          "silver": 60
+        },
+        "valuation": 75,
+        "catalysts": 60,
+        "riskPenalty": 8,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 63.400000000000006
+      },
+      "portfolio": {
+        "bucket": "special",
+        "idealMin": 0,
+        "idealMax": 1,
+        "hardMax": 1.5
+      }
+    },
+    {
+      "companyId": "captain-silver",
+      "scores": {
+        "quality": 87,
+        "growth": 98,
+        "leverage": {
+          "silver": 99,
+          "gold": 55
+        },
+        "valuation": 80,
+        "catalysts": 98,
+        "riskPenalty": 7,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 84.24999999999999
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 2,
+        "idealMax": 5,
+        "hardMax": 7
+      }
+    },
+    {
+      "companyId": "silver-storm",
+      "scores": {
+        "quality": 88,
+        "growth": 98,
+        "leverage": {
+          "silver": 97,
+          "gold": 40
+        },
+        "valuation": 80,
+        "catalysts": 98,
+        "riskPenalty": 7,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 84.25
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 3,
+        "idealMax": 6,
+        "hardMax": 8
+      }
+    },
+    {
+      "companyId": "nord-precious-metals",
+      "scores": {
+        "quality": 80,
+        "growth": 96,
+        "leverage": {
+          "silver": 97,
+          "gold": 45,
+          "copper": 35
+        },
+        "valuation": 84,
+        "catalysts": 96,
+        "riskPenalty": 9,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 79.94999999999999
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 1,
+        "idealMax": 3.5,
+        "hardMax": 5
+      }
+    },
+    {
+      "companyId": "canasil",
+      "scores": {
+        "quality": 72,
+        "growth": 91,
+        "leverage": {
+          "silver": 96,
+          "gold": 55,
+          "copper": 45
+        },
+        "valuation": 89,
+        "catalysts": 88,
+        "riskPenalty": 10,
+        "confidence": "medium",
+        "dataStatus": "complete",
+        "opportunity": 75.35
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 0.5,
+        "idealMax": 1.5,
+        "hardMax": 2.5
+      }
+    },
+    {
+      "companyId": "monarca-minerals",
+      "scores": {
+        "quality": 45,
+        "growth": 40,
+        "leverage": {
+          "silver": 90,
+          "gold": 45
+        },
+        "valuation": 70,
+        "catalysts": 20,
+        "riskPenalty": 25,
+        "confidence": "low",
+        "dataStatus": "review",
+        "opportunity": 28
+      },
+      "portfolio": {
+        "bucket": "special",
+        "idealMin": 0,
+        "idealMax": 0,
+        "hardMax": 0.5
+      }
+    },
+    {
+      "companyId": "contango",
+      "scores": {
+        "quality": 93,
+        "growth": 96,
+        "leverage": {
+          "silver": 25,
+          "gold": 97
+        },
+        "valuation": 83,
+        "catalysts": 94,
+        "riskPenalty": 4,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 77.65
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 4,
+        "idealMax": 7,
+        "hardMax": 9
+      }
+    },
+    {
+      "companyId": "vizsla-silver",
+      "scores": {
+        "quality": 94,
+        "growth": 91,
+        "leverage": {
+          "silver": 88,
+          "gold": 78
+        },
+        "valuation": 75,
+        "catalysts": 95,
+        "riskPenalty": 4,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 84.65
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 3,
+        "idealMax": 5,
+        "hardMax": 7
+      }
+    },
+    {
+      "companyId": "g-mining-ventures",
+      "scores": {
+        "quality": 97,
+        "growth": 96,
+        "leverage": {
+          "silver": 0,
+          "gold": 82
+        },
+        "valuation": 68,
+        "catalysts": 96,
+        "riskPenalty": 3,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 73.29999999999998
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 3,
+        "idealMax": 5,
+        "hardMax": 7
+      }
+    },
+    {
+      "companyId": "aya-gold-silver",
+      "scores": {
+        "quality": 94,
+        "growth": 96,
+        "leverage": {
+          "silver": 91,
+          "gold": 55
+        },
+        "valuation": 74,
+        "catalysts": 97,
+        "riskPenalty": 5,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 85.35000000000001
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 3,
+        "idealMax": 5,
+        "hardMax": 7
+      }
+    },
+    {
+      "companyId": "artemis-gold",
+      "scores": {
+        "quality": 98,
+        "growth": 97,
+        "leverage": {
+          "silver": 0,
+          "gold": 88
+        },
+        "valuation": 78,
+        "catalysts": 97,
+        "riskPenalty": 3,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 75.95
+      },
+      "portfolio": {
+        "bucket": "core",
+        "idealMin": 4,
+        "idealMax": 7,
+        "hardMax": 9
+      }
+    },
+    {
+      "companyId": "sitka-gold",
+      "scores": {
+        "quality": 89,
+        "growth": 98,
+        "leverage": {
+          "silver": 0,
+          "gold": 96
+        },
+        "valuation": 86,
+        "catalysts": 98,
+        "riskPenalty": 7,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 71.2
+      },
+      "portfolio": {
+        "bucket": "growth",
+        "idealMin": 2,
+        "idealMax": 5,
+        "hardMax": 7
+      }
+    },
+    {
+      "companyId": "snowline-gold",
+      "scores": {
+        "quality": 96,
+        "growth": 95,
+        "leverage": {
+          "silver": 0,
+          "gold": 92
+        },
+        "valuation": 72,
+        "catalysts": 96,
+        "riskPenalty": 4,
+        "confidence": "high",
+        "dataStatus": "complete",
+        "opportunity": 72.55000000000001
+      },
+      "portfolio": {
+        "bucket": "optionality",
+        "idealMin": 3,
+        "idealMax": 5,
+        "hardMax": 7
+      }
+    }
+  ],
+  "rankings": [
+    [
+      {
+        "companyId": "blackrock-silver",
+        "opportunity": 88.4,
+        "scenarioUpside": 99.35262516817106,
+        "investmentScore": 93.36763125840857,
+        "silverContribution": 15.120000000000001,
+        "goldContribution": 0,
+        "rawScenarioPower": 15.120000000000001
+      },
+      {
+        "companyId": "kootenay-silver",
+        "opportunity": 88.05,
+        "scenarioUpside": 99.60537913640124,
+        "investmentScore": 93.03026895682007,
+        "silverContribution": 16.604999999999997,
+        "goldContribution": 0,
+        "rawScenarioPower": 16.604999999999997
+      },
+      {
+        "companyId": "discovery-mining",
+        "opportunity": 87.89999999999999,
+        "scenarioUpside": 94.67362877233896,
+        "investmentScore": 92.63368143861695,
+        "silverContribution": 7.4925,
+        "goldContribution": 1.305,
+        "rawScenarioPower": 8.7975
+      },
+      {
+        "companyId": "silver-one",
+        "opportunity": 87.3,
+        "scenarioUpside": 99.54834190573874,
+        "investmentScore": 92.27741709528694,
+        "silverContribution": 16.2,
+        "goldContribution": 0,
+        "rawScenarioPower": 16.2
+      },
+      {
+        "companyId": "freeman-gold",
+        "opportunity": 88.5,
+        "scenarioUpside": 68.01809781836961,
+        "investmentScore": 91.90090489091848,
+        "silverContribution": 0,
+        "goldContribution": 3.4199999999999995,
+        "rawScenarioPower": 3.4199999999999995
+      },
+      {
+        "companyId": "first-mining-gold",
+        "opportunity": 87.9,
+        "scenarioUpside": 66.14217342791646,
+        "investmentScore": 91.20710867139583,
+        "silverContribution": 0,
+        "goldContribution": 3.248999999999999,
+        "rawScenarioPower": 3.248999999999999
+      },
+      {
+        "companyId": "spanish-mountain",
+        "opportunity": 87.45000000000002,
+        "scenarioUpside": 65.16334329488409,
+        "investmentScore": 90.70816716474422,
+        "silverContribution": 0,
+        "goldContribution": 3.1634999999999995,
+        "rawScenarioPower": 3.1634999999999995
+      },
+      {
+        "companyId": "trx-gold",
+        "opportunity": 87.75,
+        "scenarioUpside": 58.1048450752361,
+        "investmentScore": 90.6552422537618,
+        "silverContribution": 0,
+        "goldContribution": 2.61,
+        "rawScenarioPower": 2.61
+      },
+      {
+        "companyId": "cassiar-gold",
+        "opportunity": 86.85,
+        "scenarioUpside": 73.04496288066284,
+        "investmentScore": 90.50224814403313,
+        "silverContribution": 0,
+        "goldContribution": 3.932999999999999,
+        "rawScenarioPower": 3.932999999999999
+      },
+      {
+        "companyId": "outcrop-silver",
+        "opportunity": 85.44999999999999,
+        "scenarioUpside": 99.85003147106701,
+        "investmentScore": 90.44250157355334,
+        "silverContribution": 19.507499999999997,
+        "goldContribution": 0,
+        "rawScenarioPower": 19.507499999999997
+      },
+      {
+        "companyId": "aya-gold-silver",
+        "opportunity": 85.35000000000001,
+        "scenarioUpside": 98.3218866003799,
+        "investmentScore": 90.266094330019,
+        "silverContribution": 11.8125,
+        "goldContribution": 0.44999999999999996,
+        "rawScenarioPower": 12.2625
+      },
+      {
+        "companyId": "defiance-silver",
+        "opportunity": 84.7,
+        "scenarioUpside": 99.41715256359925,
+        "investmentScore": 89.67085762817996,
+        "silverContribution": 15.435,
+        "goldContribution": 0,
+        "rawScenarioPower": 15.435
+      },
+      {
+        "companyId": "vizsla-silver",
+        "opportunity": 84.65,
+        "scenarioUpside": 97.292108775635,
+        "investmentScore": 89.51460543878176,
+        "silverContribution": 9.945,
+        "goldContribution": 0.8819999999999998,
+        "rawScenarioPower": 10.827
+      },
+      {
+        "companyId": "americas-gold-silver",
+        "opportunity": 84.55000000000001,
+        "scenarioUpside": 97.6622938145072,
+        "investmentScore": 89.43311469072538,
+        "silverContribution": 11.16,
+        "goldContribution": 0.108,
+        "rawScenarioPower": 11.268
+      },
+      {
+        "companyId": "vista-gold",
+        "opportunity": 86.15,
+        "scenarioUpside": 65.16334329488409,
+        "investmentScore": 89.40816716474421,
+        "silverContribution": 0,
+        "goldContribution": 3.1634999999999995,
+        "rawScenarioPower": 3.1634999999999995
+      },
+      {
+        "companyId": "southern-silver",
+        "opportunity": 84.6,
+        "scenarioUpside": 95.65002461706973,
+        "investmentScore": 89.38250123085348,
+        "silverContribution": 9.405,
+        "goldContribution": 0,
+        "rawScenarioPower": 9.405
+      },
+      {
+        "companyId": "silver-x",
+        "opportunity": 84.65,
+        "scenarioUpside": 94.63353080872699,
+        "investmentScore": 89.38167654043636,
+        "silverContribution": 8.775,
+        "goldContribution": 0,
+        "rawScenarioPower": 8.775
+      },
+      {
+        "companyId": "captain-silver",
+        "opportunity": 84.24999999999999,
+        "scenarioUpside": 99.8050144477155,
+        "investmentScore": 89.24025072238577,
+        "silverContribution": 18.720000000000002,
+        "goldContribution": 0,
+        "rawScenarioPower": 18.720000000000002
+      },
+      {
+        "companyId": "alaska-silver",
+        "opportunity": 84.2,
+        "scenarioUpside": 99.6777184749477,
+        "investmentScore": 89.18388592374738,
+        "silverContribution": 17.2125,
+        "goldContribution": 0,
+        "rawScenarioPower": 17.2125
+      },
+      {
+        "companyId": "silver-storm",
+        "opportunity": 84.25,
+        "scenarioUpside": 97.558359410797,
+        "investmentScore": 89.12791797053985,
+        "silverContribution": 11.1375,
+        "goldContribution": 0,
+        "rawScenarioPower": 11.1375
+      },
+      {
+        "companyId": "impact-silver",
+        "opportunity": 84.19999999999999,
+        "scenarioUpside": 97.5766032154309,
+        "investmentScore": 89.07883016077153,
+        "silverContribution": 11.16,
+        "goldContribution": 0,
+        "rawScenarioPower": 11.16
+      },
+      {
+        "companyId": "gr-silver",
+        "opportunity": 84.05000000000001,
+        "scenarioUpside": 99.59639952516804,
+        "investmentScore": 89.02981997625841,
+        "silverContribution": 16.5375,
+        "goldContribution": 0,
+        "rawScenarioPower": 16.5375
+      },
+      {
+        "companyId": "kuya-silver",
+        "opportunity": 83,
+        "scenarioUpside": 99.21323825450135,
+        "investmentScore": 87.96066191272507,
+        "silverContribution": 14.534999999999998,
+        "goldContribution": 0,
+        "rawScenarioPower": 14.534999999999998
+      },
+      {
+        "companyId": "excellon",
+        "opportunity": 82.89999999999999,
+        "scenarioUpside": 98.4431412241818,
+        "investmentScore": 87.82215706120908,
+        "silverContribution": 12.4875,
+        "goldContribution": 0,
+        "rawScenarioPower": 12.4875
+      },
+      {
+        "companyId": "new-murchison",
+        "opportunity": 84.4,
+        "scenarioUpside": 54.97714786972108,
+        "investmentScore": 87.14885739348605,
+        "silverContribution": 0,
+        "goldContribution": 2.3939999999999997,
+        "rawScenarioPower": 2.3939999999999997
+      },
+      {
+        "companyId": "abrasilver",
+        "opportunity": 82.04999999999998,
+        "scenarioUpside": 98.33442537170913,
+        "investmentScore": 86.96672126858545,
+        "silverContribution": 12.285000000000002,
+        "goldContribution": 0,
+        "rawScenarioPower": 12.285000000000002
+      },
+      {
+        "companyId": "silver47",
+        "opportunity": 81.2,
+        "scenarioUpside": 99.63934368639843,
+        "investmentScore": 86.18196718431993,
+        "silverContribution": 16.875,
+        "goldContribution": 0,
+        "rawScenarioPower": 16.875
+      },
+      {
+        "companyId": "tier-one-silver",
+        "opportunity": 80.55,
+        "scenarioUpside": 99.86396319624521,
+        "investmentScore": 85.54319815981226,
+        "silverContribution": 19.8,
+        "goldContribution": 0,
+        "rawScenarioPower": 19.8
+      },
+      {
+        "companyId": "onyx-gold",
+        "opportunity": 81.5,
+        "scenarioUpside": 77.68698398515703,
+        "investmentScore": 85.38434919925785,
+        "silverContribution": 0,
+        "goldContribution": 4.5,
+        "rawScenarioPower": 4.5
+      },
+      {
+        "companyId": "silver-dollar",
+        "opportunity": 80.05000000000001,
+        "scenarioUpside": 99.52755305024944,
+        "investmentScore": 85.02637765251248,
+        "silverContribution": 16.064999999999998,
+        "goldContribution": 0,
+        "rawScenarioPower": 16.064999999999998
+      },
+      {
+        "companyId": "nord-precious-metals",
+        "opportunity": 79.94999999999999,
+        "scenarioUpside": 99.27008691532114,
+        "investmentScore": 84.91350434576604,
+        "silverContribution": 14.76,
+        "goldContribution": 0,
+        "rawScenarioPower": 14.76
+      },
+      {
+        "companyId": "zacatecas-silver",
+        "opportunity": 78.79999999999998,
+        "scenarioUpside": 98.50044231795223,
+        "investmentScore": 83.72502211589759,
+        "silverContribution": 12.6,
+        "goldContribution": 0,
+        "rawScenarioPower": 12.6
+      },
+      {
+        "companyId": "first-andes",
+        "opportunity": 78.55,
+        "scenarioUpside": 99.84661893206756,
+        "investmentScore": 83.54233094660337,
+        "silverContribution": 19.44,
+        "goldContribution": 0,
+        "rawScenarioPower": 19.44
+      },
+      {
+        "companyId": "solstice-gold",
+        "opportunity": 79.44999999999999,
+        "scenarioUpside": 75.94915367916578,
+        "investmentScore": 83.24745768395827,
+        "silverContribution": 0,
+        "goldContribution": 4.2749999999999995,
+        "rawScenarioPower": 4.2749999999999995
+      },
+      {
+        "companyId": "silver-hammer",
+        "opportunity": 78,
+        "scenarioUpside": 99.89769838446435,
+        "investmentScore": 82.99488491922321,
+        "silverContribution": 20.655,
+        "goldContribution": 0,
+        "rawScenarioPower": 20.655
+      },
+      {
+        "companyId": "americore",
+        "opportunity": 76.65,
+        "scenarioUpside": 99.96053455555017,
+        "investmentScore": 81.64802672777752,
+        "silverContribution": 23.512499999999996,
+        "goldContribution": 0,
+        "rawScenarioPower": 23.512499999999996
+      },
+      {
+        "companyId": "contango",
+        "opportunity": 77.65,
+        "scenarioUpside": 71.80428020829972,
+        "investmentScore": 81.24021401041499,
+        "silverContribution": 1.35,
+        "goldContribution": 2.448,
+        "rawScenarioPower": 3.798
+      },
+      {
+        "companyId": "canasil",
+        "opportunity": 75.35,
+        "scenarioUpside": 99.57464442551849,
+        "investmentScore": 80.32873222127591,
+        "silverContribution": 16.38,
+        "goldContribution": 0,
+        "rawScenarioPower": 16.38
+      },
+      {
+        "companyId": "walhalla-gold",
+        "opportunity": 76.35,
+        "scenarioUpside": 73.80233758492194,
+        "investmentScore": 80.04011687924609,
+        "silverContribution": 0,
+        "goldContribution": 4.0184999999999995,
+        "rawScenarioPower": 4.0184999999999995
+      },
+      {
+        "companyId": "artemis-gold",
+        "opportunity": 75.95,
+        "scenarioUpside": 62.84233089779543,
+        "investmentScore": 79.09211654488978,
+        "silverContribution": 0,
+        "goldContribution": 2.9699999999999998,
+        "rawScenarioPower": 2.9699999999999998
+      },
+      {
+        "companyId": "silver-elephant",
+        "opportunity": 72.25000000000001,
+        "scenarioUpside": 99.58410806080363,
+        "investmentScore": 77.2292054030402,
+        "silverContribution": 16.447499999999998,
+        "goldContribution": 0,
+        "rawScenarioPower": 16.447499999999998
+      },
+      {
+        "companyId": "g-mining-ventures",
+        "opportunity": 73.29999999999998,
+        "scenarioUpside": 58.1048450752361,
+        "investmentScore": 76.20524225376178,
+        "silverContribution": 0,
+        "goldContribution": 2.61,
+        "rawScenarioPower": 2.61
+      },
+      {
+        "companyId": "snowline-gold",
+        "opportunity": 72.55000000000001,
+        "scenarioUpside": 68.01809781836961,
+        "investmentScore": 75.9509048909185,
+        "silverContribution": 0,
+        "goldContribution": 3.4199999999999995,
+        "rawScenarioPower": 3.4199999999999995
+      },
+      {
+        "companyId": "minnova",
+        "opportunity": 72.5,
+        "scenarioUpside": 67.09350067978998,
+        "investmentScore": 75.8546750339895,
+        "silverContribution": 0,
+        "goldContribution": 3.3344999999999994,
+        "rawScenarioPower": 3.3344999999999994
+      },
+      {
+        "companyId": "advanced-gold",
+        "opportunity": 72.7,
+        "scenarioUpside": 56.176500753505074,
+        "investmentScore": 75.50882503767525,
+        "silverContribution": 0,
+        "goldContribution": 2.475,
+        "rawScenarioPower": 2.475
+      },
+      {
+        "companyId": "sitka-gold",
+        "opportunity": 71.2,
+        "scenarioUpside": 75.58567168465629,
+        "investmentScore": 74.97928358423282,
+        "silverContribution": 0,
+        "goldContribution": 4.2299999999999995,
+        "rawScenarioPower": 4.2299999999999995
+      },
+      {
+        "companyId": "great-pacific-gold",
+        "opportunity": 71.14999999999999,
+        "scenarioUpside": 74.53843179751962,
+        "investmentScore": 74.87692158987598,
+        "silverContribution": 0,
+        "goldContribution": 4.103999999999999,
+        "rawScenarioPower": 4.103999999999999
+      },
+      {
+        "companyId": "golden-goliath",
+        "opportunity": 70.8,
+        "scenarioUpside": 69.14896849336353,
+        "investmentScore": 74.25744842466817,
+        "silverContribution": 0,
+        "goldContribution": 3.528,
+        "rawScenarioPower": 3.528
+      },
+      {
+        "companyId": "argentum-silver",
+        "opportunity": 67,
+        "scenarioUpside": 99.84661893206756,
+        "investmentScore": 71.99233094660337,
+        "silverContribution": 19.44,
+        "goldContribution": 0,
+        "rawScenarioPower": 19.44
+      },
+      {
+        "companyId": "china-silver",
+        "opportunity": 63.400000000000006,
+        "scenarioUpside": 66.04044743550608,
+        "investmentScore": 66.70202237177531,
+        "silverContribution": 3.2399999999999998,
+        "goldContribution": 0,
+        "rawScenarioPower": 3.2399999999999998
+      },
+      {
+        "companyId": "monarca-minerals",
+        "opportunity": 28,
+        "scenarioUpside": 99.84661893206756,
+        "investmentScore": 32.992330946603374,
+        "silverContribution": 19.44,
+        "goldContribution": 0,
+        "rawScenarioPower": 19.44
+      }
+    ],
+    [
+      {
+        "companyId": "blackrock-silver",
+        "opportunity": 88.4,
+        "scenarioUpside": 89.35414956207472,
+        "investmentScore": 92.86770747810374,
+        "silverContribution": 6.720000000000001,
+        "goldContribution": 0,
+        "rawScenarioPower": 6.720000000000001
+      },
+      {
+        "companyId": "kootenay-silver",
+        "opportunity": 88.05,
+        "scenarioUpside": 91.45650490326787,
+        "investmentScore": 92.6228252451634,
+        "silverContribution": 7.38,
+        "goldContribution": 0,
+        "rawScenarioPower": 7.38
+      },
+      {
+        "companyId": "silver-one",
+        "opportunity": 87.3,
+        "scenarioUpside": 90.92820467105875,
+        "investmentScore": 91.84641023355293,
+        "silverContribution": 7.2,
+        "goldContribution": 0,
+        "rawScenarioPower": 7.2
+      },
+      {
+        "companyId": "discovery-mining",
+        "opportunity": 87.89999999999999,
+        "scenarioUpside": 72.5073090423389,
+        "investmentScore": 91.52536545211694,
+        "silverContribution": 3.33,
+        "goldContribution": 0.54375,
+        "rawScenarioPower": 3.8737500000000002
+      },
+      {
+        "companyId": "freeman-gold",
+        "opportunity": 88.5,
+        "scenarioUpside": 37.811494353497984,
+        "investmentScore": 90.3905747176749,
+        "silverContribution": 0,
+        "goldContribution": 1.4249999999999998,
+        "rawScenarioPower": 1.4249999999999998
+      },
+      {
+        "companyId": "outcrop-silver",
+        "opportunity": 85.44999999999999,
+        "scenarioUpside": 94.4423787388517,
+        "investmentScore": 90.17211893694258,
+        "silverContribution": 8.67,
+        "goldContribution": 0,
+        "rawScenarioPower": 8.67
+      },
+      {
+        "companyId": "first-mining-gold",
+        "opportunity": 87.9,
+        "scenarioUpside": 36.31683856282568,
+        "investmentScore": 89.71584192814129,
+        "silverContribution": 0,
+        "goldContribution": 1.3537499999999998,
+        "rawScenarioPower": 1.3537499999999998
+      },
+      {
+        "companyId": "aya-gold-silver",
+        "opportunity": 85.35000000000001,
+        "scenarioUpside": 83.67544875460415,
+        "investmentScore": 89.53377243773022,
+        "silverContribution": 5.25,
+        "goldContribution": 0.18750000000000003,
+        "rawScenarioPower": 5.4375
+      },
+      {
+        "companyId": "trx-gold",
+        "opportunity": 87.75,
+        "scenarioUpside": 30.4065686321358,
+        "investmentScore": 89.27032843160679,
+        "silverContribution": 0,
+        "goldContribution": 1.0875,
+        "rawScenarioPower": 1.0875
+      },
+      {
+        "companyId": "spanish-mountain",
+        "opportunity": 87.45000000000002,
+        "scenarioUpside": 35.55609303391082,
+        "investmentScore": 89.22780465169556,
+        "silverContribution": 0,
+        "goldContribution": 1.318125,
+        "rawScenarioPower": 1.318125
+      },
+      {
+        "companyId": "defiance-silver",
+        "opportunity": 84.7,
+        "scenarioUpside": 89.83954200561926,
+        "investmentScore": 89.19197710028097,
+        "silverContribution": 6.86,
+        "goldContribution": 0,
+        "rawScenarioPower": 6.86
+      },
+      {
+        "companyId": "cassiar-gold",
+        "opportunity": 86.85,
+        "scenarioUpside": 42.08825660766268,
+        "investmentScore": 88.95441283038313,
+        "silverContribution": 0,
+        "goldContribution": 1.6387499999999997,
+        "rawScenarioPower": 1.6387499999999997
+      },
+      {
+        "companyId": "captain-silver",
+        "opportunity": 84.24999999999999,
+        "scenarioUpside": 93.75465208712191,
+        "investmentScore": 88.93773260435609,
+        "silverContribution": 8.32,
+        "goldContribution": 0,
+        "rawScenarioPower": 8.32
+      },
+      {
+        "companyId": "alaska-silver",
+        "opportunity": 84.2,
+        "scenarioUpside": 92.19183339988469,
+        "investmentScore": 88.80959166999423,
+        "silverContribution": 7.6499999999999995,
+        "goldContribution": 0,
+        "rawScenarioPower": 7.6499999999999995
+      },
+      {
+        "companyId": "vizsla-silver",
+        "opportunity": 84.65,
+        "scenarioUpside": 79.72604915030911,
+        "investmentScore": 88.63630245751546,
+        "silverContribution": 4.42,
+        "goldContribution": 0.36749999999999994,
+        "rawScenarioPower": 4.7875
+      },
+      {
+        "companyId": "gr-silver",
+        "opportunity": 84.05000000000001,
+        "scenarioUpside": 91.37064135006295,
+        "investmentScore": 88.61853206750315,
+        "silverContribution": 7.3500000000000005,
+        "goldContribution": 0,
+        "rawScenarioPower": 7.3500000000000005
+      },
+      {
+        "companyId": "americas-gold-silver",
+        "opportunity": 84.55000000000001,
+        "scenarioUpside": 81.14389276522846,
+        "investmentScore": 88.60719463826143,
+        "silverContribution": 4.960000000000001,
+        "goldContribution": 0.045000000000000005,
+        "rawScenarioPower": 5.005000000000001
+      },
+      {
+        "companyId": "southern-silver",
+        "opportunity": 84.6,
+        "scenarioUpside": 75.17535641682997,
+        "investmentScore": 88.35876782084149,
+        "silverContribution": 4.18,
+        "goldContribution": 0,
+        "rawScenarioPower": 4.18
+      },
+      {
+        "companyId": "silver-storm",
+        "opportunity": 84.25,
+        "scenarioUpside": 80.7950091379246,
+        "investmentScore": 88.28975045689623,
+        "silverContribution": 4.949999999999999,
+        "goldContribution": 0,
+        "rawScenarioPower": 4.949999999999999
+      },
+      {
+        "companyId": "silver-x",
+        "opportunity": 84.65,
+        "scenarioUpside": 72.74682069659875,
+        "investmentScore": 88.28734103482995,
+        "silverContribution": 3.9000000000000004,
+        "goldContribution": 0,
+        "rawScenarioPower": 3.9000000000000004
+      },
+      {
+        "companyId": "impact-silver",
+        "opportunity": 84.19999999999999,
+        "scenarioUpside": 80.85891919818845,
+        "investmentScore": 88.2429459599094,
+        "silverContribution": 4.960000000000001,
+        "goldContribution": 0,
+        "rawScenarioPower": 4.960000000000001
+      },
+      {
+        "companyId": "vista-gold",
+        "opportunity": 86.15,
+        "scenarioUpside": 35.55609303391082,
+        "investmentScore": 87.92780465169555,
+        "silverContribution": 0,
+        "goldContribution": 1.318125,
+        "rawScenarioPower": 1.318125
+      },
+      {
+        "companyId": "kuya-silver",
+        "opportunity": 83,
+        "scenarioUpside": 88.3903476336644,
+        "investmentScore": 87.41951738168322,
+        "silverContribution": 6.46,
+        "goldContribution": 0,
+        "rawScenarioPower": 6.46
+      },
+      {
+        "companyId": "excellon",
+        "opportunity": 82.89999999999999,
+        "scenarioUpside": 84.27628336863724,
+        "investmentScore": 87.11381416843186,
+        "silverContribution": 5.550000000000001,
+        "goldContribution": 0,
+        "rawScenarioPower": 5.550000000000001
+      },
+      {
+        "companyId": "abrasilver",
+        "opportunity": 82.04999999999998,
+        "scenarioUpside": 83.79742490661192,
+        "investmentScore": 86.23987124533058,
+        "silverContribution": 5.460000000000001,
+        "goldContribution": 0,
+        "rawScenarioPower": 5.460000000000001
+      },
+      {
+        "companyId": "new-murchison",
+        "opportunity": 84.4,
+        "scenarioUpside": 28.287133113601428,
+        "investmentScore": 85.81435665568007,
+        "silverContribution": 0,
+        "goldContribution": 0.9974999999999998,
+        "rawScenarioPower": 0.9974999999999998
+      },
+      {
+        "companyId": "silver47",
+        "opportunity": 81.2,
+        "scenarioUpside": 91.79150013761011,
+        "investmentScore": 85.78957500688051,
+        "silverContribution": 7.5,
+        "goldContribution": 0,
+        "rawScenarioPower": 7.5
+      },
+      {
+        "companyId": "tier-one-silver",
+        "opportunity": 80.55,
+        "scenarioUpside": 94.67806556610785,
+        "investmentScore": 85.28390327830539,
+        "silverContribution": 8.8,
+        "goldContribution": 0,
+        "rawScenarioPower": 8.8
+      },
+      {
+        "companyId": "silver-dollar",
+        "opportunity": 80.05000000000001,
+        "scenarioUpside": 90.74494224896567,
+        "investmentScore": 84.5872471124483,
+        "silverContribution": 7.139999999999999,
+        "goldContribution": 0,
+        "rawScenarioPower": 7.139999999999999
+      },
+      {
+        "companyId": "nord-precious-metals",
+        "opportunity": 79.94999999999999,
+        "scenarioUpside": 88.77095731028119,
+        "investmentScore": 84.38854786551406,
+        "silverContribution": 6.56,
+        "goldContribution": 0,
+        "rawScenarioPower": 6.56
+      },
+      {
+        "companyId": "onyx-gold",
+        "opportunity": 81.5,
+        "scenarioUpside": 46.473857148100976,
+        "investmentScore": 83.82369285740505,
+        "silverContribution": 0,
+        "goldContribution": 1.875,
+        "rawScenarioPower": 1.875
+      },
+      {
+        "companyId": "first-andes",
+        "opportunity": 78.55,
+        "scenarioUpside": 94.38652371658664,
+        "investmentScore": 83.26932618582933,
+        "silverContribution": 8.64,
+        "goldContribution": 0,
+        "rawScenarioPower": 8.64
+      },
+      {
+        "companyId": "zacatecas-silver",
+        "opportunity": 78.79999999999998,
+        "scenarioUpside": 84.53617354507452,
+        "investmentScore": 83.02680867725371,
+        "silverContribution": 5.6,
+        "goldContribution": 0,
+        "rawScenarioPower": 5.6
+      },
+      {
+        "companyId": "silver-hammer",
+        "opportunity": 78,
+        "scenarioUpside": 95.31123047800115,
+        "investmentScore": 82.76556152390006,
+        "silverContribution": 9.18,
+        "goldContribution": 0,
+        "rawScenarioPower": 9.18
+      },
+      {
+        "companyId": "solstice-gold",
+        "opportunity": 79.44999999999999,
+        "scenarioUpside": 44.77475498369796,
+        "investmentScore": 81.68873774918488,
+        "silverContribution": 0,
+        "goldContribution": 1.7812499999999998,
+        "rawScenarioPower": 1.7812499999999998
+      },
+      {
+        "companyId": "americore",
+        "opportunity": 76.65,
+        "scenarioUpside": 96.92951093750854,
+        "investmentScore": 81.49647554687543,
+        "silverContribution": 10.45,
+        "goldContribution": 0,
+        "rawScenarioPower": 10.45
+      },
+      {
+        "companyId": "canasil",
+        "opportunity": 75.35,
+        "scenarioUpside": 91.16692216716147,
+        "investmentScore": 79.90834610835807,
+        "silverContribution": 7.279999999999999,
+        "goldContribution": 0,
+        "rawScenarioPower": 7.279999999999999
+      },
+      {
+        "companyId": "contango",
+        "opportunity": 77.65,
+        "scenarioUpside": 41.725174762601036,
+        "investmentScore": 79.73625873813006,
+        "silverContribution": 0.6000000000000001,
+        "goldContribution": 1.02,
+        "rawScenarioPower": 1.62
+      },
+      {
+        "companyId": "walhalla-gold",
+        "opportunity": 76.35,
+        "scenarioUpside": 42.77189144501927,
+        "investmentScore": 78.48859457225096,
+        "silverContribution": 0,
+        "goldContribution": 1.674375,
+        "rawScenarioPower": 1.674375
+      },
+      {
+        "companyId": "artemis-gold",
+        "opportunity": 75.95,
+        "scenarioUpside": 33.80068033091659,
+        "investmentScore": 77.64003401654583,
+        "silverContribution": 0,
+        "goldContribution": 1.2374999999999998,
+        "rawScenarioPower": 1.2374999999999998
+      },
+      {
+        "companyId": "silver-elephant",
+        "opportunity": 72.25000000000001,
+        "scenarioUpside": 91.25481276010477,
+        "investmentScore": 76.81274063800525,
+        "silverContribution": 7.31,
+        "goldContribution": 0,
+        "rawScenarioPower": 7.31
+      },
+      {
+        "companyId": "g-mining-ventures",
+        "opportunity": 73.29999999999998,
+        "scenarioUpside": 30.4065686321358,
+        "investmentScore": 74.82032843160677,
+        "silverContribution": 0,
+        "goldContribution": 1.0875,
+        "rawScenarioPower": 1.0875
+      },
+      {
+        "companyId": "snowline-gold",
+        "opportunity": 72.55000000000001,
+        "scenarioUpside": 37.811494353497984,
+        "investmentScore": 74.4405747176749,
+        "silverContribution": 0,
+        "goldContribution": 1.4249999999999998,
+        "rawScenarioPower": 1.4249999999999998
+      },
+      {
+        "companyId": "minnova",
+        "opportunity": 72.5,
+        "scenarioUpside": 37.068603665397546,
+        "investmentScore": 74.35343018326988,
+        "silverContribution": 0,
+        "goldContribution": 1.3893749999999998,
+        "rawScenarioPower": 1.3893749999999998
+      },
+      {
+        "companyId": "advanced-gold",
+        "opportunity": 72.7,
+        "scenarioUpside": 29.089381756260156,
+        "investmentScore": 74.15446908781301,
+        "silverContribution": 0,
+        "goldContribution": 1.03125,
+        "rawScenarioPower": 1.03125
+      },
+      {
+        "companyId": "sitka-gold",
+        "opportunity": 71.2,
+        "scenarioUpside": 44.42851633364286,
+        "investmentScore": 73.42142581668215,
+        "silverContribution": 0,
+        "goldContribution": 1.7625000000000002,
+        "rawScenarioPower": 1.7625000000000002
+      },
+      {
+        "companyId": "great-pacific-gold",
+        "opportunity": 71.14999999999999,
+        "scenarioUpside": 43.44745613004629,
+        "investmentScore": 73.3223728065023,
+        "silverContribution": 0,
+        "goldContribution": 1.7099999999999997,
+        "rawScenarioPower": 1.7099999999999997
+      },
+      {
+        "companyId": "golden-goliath",
+        "opportunity": 70.8,
+        "scenarioUpside": 38.7373605815584,
+        "investmentScore": 72.73686802907791,
+        "silverContribution": 0,
+        "goldContribution": 1.4700000000000004,
+        "rawScenarioPower": 1.4700000000000004
+      },
+      {
+        "companyId": "argentum-silver",
+        "opportunity": 67,
+        "scenarioUpside": 94.38652371658664,
+        "investmentScore": 71.71932618582933,
+        "silverContribution": 8.64,
+        "goldContribution": 0,
+        "rawScenarioPower": 8.64
+      },
+      {
+        "companyId": "china-silver",
+        "opportunity": 63.400000000000006,
+        "scenarioUpside": 38.121660819385916,
+        "investmentScore": 65.3060830409693,
+        "silverContribution": 1.44,
+        "goldContribution": 0,
+        "rawScenarioPower": 1.44
+      },
+      {
+        "companyId": "monarca-minerals",
+        "opportunity": 28,
+        "scenarioUpside": 94.38652371658664,
+        "investmentScore": 32.71932618582933,
+        "silverContribution": 8.64,
+        "goldContribution": 0,
+        "rawScenarioPower": 8.64
+      }
+    ],
+    [
+      {
+        "companyId": "freeman-gold",
+        "opportunity": 88.5,
+        "scenarioUpside": 0,
+        "investmentScore": 88.5,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "blackrock-silver",
+        "opportunity": 88.4,
+        "scenarioUpside": 0,
+        "investmentScore": 88.4,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "kootenay-silver",
+        "opportunity": 88.05,
+        "scenarioUpside": 0,
+        "investmentScore": 88.05,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "first-mining-gold",
+        "opportunity": 87.9,
+        "scenarioUpside": 0,
+        "investmentScore": 87.9,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "discovery-mining",
+        "opportunity": 87.89999999999999,
+        "scenarioUpside": 0,
+        "investmentScore": 87.89999999999999,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "trx-gold",
+        "opportunity": 87.75,
+        "scenarioUpside": 0,
+        "investmentScore": 87.75,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "spanish-mountain",
+        "opportunity": 87.45000000000002,
+        "scenarioUpside": 0,
+        "investmentScore": 87.45000000000002,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "silver-one",
+        "opportunity": 87.3,
+        "scenarioUpside": 0,
+        "investmentScore": 87.3,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "cassiar-gold",
+        "opportunity": 86.85,
+        "scenarioUpside": 0,
+        "investmentScore": 86.85,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "vista-gold",
+        "opportunity": 86.15,
+        "scenarioUpside": 0,
+        "investmentScore": 86.15,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "outcrop-silver",
+        "opportunity": 85.44999999999999,
+        "scenarioUpside": 0,
+        "investmentScore": 85.44999999999999,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "aya-gold-silver",
+        "opportunity": 85.35000000000001,
+        "scenarioUpside": 0,
+        "investmentScore": 85.35000000000001,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "defiance-silver",
+        "opportunity": 84.7,
+        "scenarioUpside": 0,
+        "investmentScore": 84.7,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "silver-x",
+        "opportunity": 84.65,
+        "scenarioUpside": 0,
+        "investmentScore": 84.65,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "vizsla-silver",
+        "opportunity": 84.65,
+        "scenarioUpside": 0,
+        "investmentScore": 84.65,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "southern-silver",
+        "opportunity": 84.6,
+        "scenarioUpside": 0,
+        "investmentScore": 84.6,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "americas-gold-silver",
+        "opportunity": 84.55000000000001,
+        "scenarioUpside": 0,
+        "investmentScore": 84.55000000000001,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "new-murchison",
+        "opportunity": 84.4,
+        "scenarioUpside": 0,
+        "investmentScore": 84.4,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "silver-storm",
+        "opportunity": 84.25,
+        "scenarioUpside": 0,
+        "investmentScore": 84.25,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "captain-silver",
+        "opportunity": 84.24999999999999,
+        "scenarioUpside": 0,
+        "investmentScore": 84.24999999999999,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "alaska-silver",
+        "opportunity": 84.2,
+        "scenarioUpside": 0,
+        "investmentScore": 84.2,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "impact-silver",
+        "opportunity": 84.19999999999999,
+        "scenarioUpside": 0,
+        "investmentScore": 84.19999999999999,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "gr-silver",
+        "opportunity": 84.05000000000001,
+        "scenarioUpside": 0,
+        "investmentScore": 84.05000000000001,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "kuya-silver",
+        "opportunity": 83,
+        "scenarioUpside": 0,
+        "investmentScore": 83,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "excellon",
+        "opportunity": 82.89999999999999,
+        "scenarioUpside": 0,
+        "investmentScore": 82.89999999999999,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "abrasilver",
+        "opportunity": 82.04999999999998,
+        "scenarioUpside": 0,
+        "investmentScore": 82.04999999999998,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "onyx-gold",
+        "opportunity": 81.5,
+        "scenarioUpside": 0,
+        "investmentScore": 81.5,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "silver47",
+        "opportunity": 81.2,
+        "scenarioUpside": 0,
+        "investmentScore": 81.2,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "tier-one-silver",
+        "opportunity": 80.55,
+        "scenarioUpside": 0,
+        "investmentScore": 80.55,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "silver-dollar",
+        "opportunity": 80.05000000000001,
+        "scenarioUpside": 0,
+        "investmentScore": 80.05000000000001,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "nord-precious-metals",
+        "opportunity": 79.94999999999999,
+        "scenarioUpside": 0,
+        "investmentScore": 79.94999999999999,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "solstice-gold",
+        "opportunity": 79.44999999999999,
+        "scenarioUpside": 0,
+        "investmentScore": 79.44999999999999,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "zacatecas-silver",
+        "opportunity": 78.79999999999998,
+        "scenarioUpside": 0,
+        "investmentScore": 78.79999999999998,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "first-andes",
+        "opportunity": 78.55,
+        "scenarioUpside": 0,
+        "investmentScore": 78.55,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "silver-hammer",
+        "opportunity": 78,
+        "scenarioUpside": 0,
+        "investmentScore": 78,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "contango",
+        "opportunity": 77.65,
+        "scenarioUpside": 0,
+        "investmentScore": 77.65,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "americore",
+        "opportunity": 76.65,
+        "scenarioUpside": 0,
+        "investmentScore": 76.65,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "walhalla-gold",
+        "opportunity": 76.35,
+        "scenarioUpside": 0,
+        "investmentScore": 76.35,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "artemis-gold",
+        "opportunity": 75.95,
+        "scenarioUpside": 0,
+        "investmentScore": 75.95,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "canasil",
+        "opportunity": 75.35,
+        "scenarioUpside": 0,
+        "investmentScore": 75.35,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "g-mining-ventures",
+        "opportunity": 73.29999999999998,
+        "scenarioUpside": 0,
+        "investmentScore": 73.29999999999998,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "advanced-gold",
+        "opportunity": 72.7,
+        "scenarioUpside": 0,
+        "investmentScore": 72.7,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "snowline-gold",
+        "opportunity": 72.55000000000001,
+        "scenarioUpside": 0,
+        "investmentScore": 72.55000000000001,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "minnova",
+        "opportunity": 72.5,
+        "scenarioUpside": 0,
+        "investmentScore": 72.5,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "silver-elephant",
+        "opportunity": 72.25000000000001,
+        "scenarioUpside": 0,
+        "investmentScore": 72.25000000000001,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "sitka-gold",
+        "opportunity": 71.2,
+        "scenarioUpside": 0,
+        "investmentScore": 71.2,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "great-pacific-gold",
+        "opportunity": 71.14999999999999,
+        "scenarioUpside": 0,
+        "investmentScore": 71.14999999999999,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "golden-goliath",
+        "opportunity": 70.8,
+        "scenarioUpside": 0,
+        "investmentScore": 70.8,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "argentum-silver",
+        "opportunity": 67,
+        "scenarioUpside": 0,
+        "investmentScore": 67,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "china-silver",
+        "opportunity": 63.400000000000006,
+        "scenarioUpside": 0,
+        "investmentScore": 63.400000000000006,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      },
+      {
+        "companyId": "monarca-minerals",
+        "opportunity": 28,
+        "scenarioUpside": 0,
+        "investmentScore": 28,
+        "silverContribution": 0,
+        "goldContribution": 0,
+        "rawScenarioPower": 0
+      }
+    ]
+  ],
+  "portfolio": {
+    "totalMarketValueEur": 15000,
+    "scoredMarketValueEur": 7000,
+    "dataCoveragePercent": 46.666666666666664,
+    "scoredPositions": 3,
+    "totalPositions": 5,
+    "positions": [
+      {
+        "companyId": "abrasilver",
+        "marketValueEur": 1000,
+        "allocationPercent": 6.666666666666667,
+        "opportunity": 82.04999999999998,
+        "bucket": "core",
+        "idealMin": 5,
+        "idealMax": 8,
+        "hardMax": 9,
+        "allocationFitScore": 100,
+        "isBelowIdeal": false,
+        "isInsideIdeal": true,
+        "isAboveIdeal": false,
+        "isAboveHardMax": false
+      },
+      {
+        "companyId": "vista-gold",
+        "marketValueEur": 2000,
+        "allocationPercent": 13.333333333333334,
+        "opportunity": 86.15,
+        "bucket": "core",
+        "idealMin": 4,
+        "idealMax": 6,
+        "hardMax": 6,
+        "allocationFitScore": 20,
+        "isBelowIdeal": false,
+        "isInsideIdeal": false,
+        "isAboveIdeal": true,
+        "isAboveHardMax": true
+      },
+      {
+        "companyId": "discovery-silver",
+        "marketValueEur": 3000,
+        "allocationPercent": 20,
+        "opportunity": null,
+        "bucket": null,
+        "idealMin": null,
+        "idealMax": null,
+        "hardMax": null,
+        "allocationFitScore": null,
+        "isBelowIdeal": false,
+        "isInsideIdeal": false,
+        "isAboveIdeal": false,
+        "isAboveHardMax": false
+      },
+      {
+        "companyId": "contango",
+        "marketValueEur": 4000,
+        "allocationPercent": 26.666666666666668,
+        "opportunity": 77.65,
+        "bucket": "core",
+        "idealMin": 4,
+        "idealMax": 7,
+        "hardMax": 9,
+        "allocationFitScore": 20,
+        "isBelowIdeal": false,
+        "isInsideIdeal": false,
+        "isAboveIdeal": true,
+        "isAboveHardMax": true
+      },
+      {
+        "companyId": "first-majestic",
+        "marketValueEur": 5000,
+        "allocationPercent": 33.33333333333333,
+        "opportunity": null,
+        "bucket": null,
+        "idealMin": null,
+        "idealMax": null,
+        "hardMax": null,
+        "allocationFitScore": null,
+        "isBelowIdeal": false,
+        "isInsideIdeal": false,
+        "isAboveIdeal": false,
+        "isAboveHardMax": false
+      }
+    ],
+    "components": {
+      "opportunityQuality": 80.70714285714286,
+      "allocationEfficiency": 31.428571428571427,
+      "capitalEfficiency": null,
+      "positionSizingDiscipline": 0,
+      "riskAndConcentration": null,
+      "portfolioBalance": null,
+      "cyclePositioning": 70
+    },
+    "partialPortfolioScore": 63.61785714285714,
+    "portfolioScoreIsReliable": false
+  },
+  "optimizers": [
+    {
+      "newMoneyEur": 0,
+      "scoreBefore": 63.61785714285714,
+      "scoreAfter": 63.61785714285714,
+      "scoreImprovement": 0,
+      "allocations": [],
+      "portfolioBefore": {
+        "totalMarketValueEur": 15000,
+        "scoredMarketValueEur": 7000,
+        "dataCoveragePercent": 46.666666666666664,
+        "scoredPositions": 3,
+        "totalPositions": 5,
+        "positions": [
+          {
+            "companyId": "abrasilver",
+            "marketValueEur": 1000,
+            "allocationPercent": 6.666666666666667,
+            "opportunity": 82.04999999999998,
+            "bucket": "core",
+            "idealMin": 5,
+            "idealMax": 8,
+            "hardMax": 9,
+            "allocationFitScore": 100,
+            "isBelowIdeal": false,
+            "isInsideIdeal": true,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "vista-gold",
+            "marketValueEur": 2000,
+            "allocationPercent": 13.333333333333334,
+            "opportunity": 86.15,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 6,
+            "hardMax": 6,
+            "allocationFitScore": 20,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "discovery-silver",
+            "marketValueEur": 3000,
+            "allocationPercent": 20,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "contango",
+            "marketValueEur": 4000,
+            "allocationPercent": 26.666666666666668,
+            "opportunity": 77.65,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 7,
+            "hardMax": 9,
+            "allocationFitScore": 20,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "first-majestic",
+            "marketValueEur": 5000,
+            "allocationPercent": 33.33333333333333,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          }
+        ],
+        "components": {
+          "opportunityQuality": 80.70714285714286,
+          "allocationEfficiency": 31.428571428571427,
+          "capitalEfficiency": null,
+          "positionSizingDiscipline": 0,
+          "riskAndConcentration": null,
+          "portfolioBalance": null,
+          "cyclePositioning": 70
+        },
+        "partialPortfolioScore": 63.61785714285714,
+        "portfolioScoreIsReliable": false
+      },
+      "portfolioAfter": {
+        "totalMarketValueEur": 15000,
+        "scoredMarketValueEur": 7000,
+        "dataCoveragePercent": 46.666666666666664,
+        "scoredPositions": 3,
+        "totalPositions": 5,
+        "positions": [
+          {
+            "companyId": "abrasilver",
+            "marketValueEur": 1000,
+            "allocationPercent": 6.666666666666667,
+            "opportunity": 82.04999999999998,
+            "bucket": "core",
+            "idealMin": 5,
+            "idealMax": 8,
+            "hardMax": 9,
+            "allocationFitScore": 100,
+            "isBelowIdeal": false,
+            "isInsideIdeal": true,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "vista-gold",
+            "marketValueEur": 2000,
+            "allocationPercent": 13.333333333333334,
+            "opportunity": 86.15,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 6,
+            "hardMax": 6,
+            "allocationFitScore": 20,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "discovery-silver",
+            "marketValueEur": 3000,
+            "allocationPercent": 20,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "contango",
+            "marketValueEur": 4000,
+            "allocationPercent": 26.666666666666668,
+            "opportunity": 77.65,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 7,
+            "hardMax": 9,
+            "allocationFitScore": 20,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "first-majestic",
+            "marketValueEur": 5000,
+            "allocationPercent": 33.33333333333333,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          }
+        ],
+        "components": {
+          "opportunityQuality": 80.70714285714286,
+          "allocationEfficiency": 31.428571428571427,
+          "capitalEfficiency": null,
+          "positionSizingDiscipline": 0,
+          "riskAndConcentration": null,
+          "portfolioBalance": null,
+          "cyclePositioning": 70
+        },
+        "partialPortfolioScore": 63.61785714285714,
+        "portfolioScoreIsReliable": false
+      },
+      "moneyInvestedEur": 0,
+      "moneyUnallocatedEur": 0,
+      "isMeaningfulImprovement": false,
+      "explanation": [
+        "Geen bruikbaar nieuw investeringsbedrag beschikbaar."
+      ]
+    },
+    {
+      "newMoneyEur": 1000,
+      "scoreBefore": 63.61785714285714,
+      "scoreAfter": 65.87924107142857,
+      "scoreImprovement": 2.2613839285714263,
+      "allocations": [
+        {
+          "companyId": "spanish-mountain",
+          "amountEur": 1000,
+          "allocationBeforePercent": 0,
+          "allocationAfterPercent": 6.25,
+          "opportunity": 87.45000000000002,
+          "investmentScore": 90.70816716474422,
+          "idealMin": 3,
+          "idealMax": 6,
+          "hardMax": 8,
+          "wasExistingHolding": false
+        }
+      ],
+      "portfolioBefore": {
+        "totalMarketValueEur": 15000,
+        "scoredMarketValueEur": 7000,
+        "dataCoveragePercent": 46.666666666666664,
+        "scoredPositions": 3,
+        "totalPositions": 5,
+        "positions": [
+          {
+            "companyId": "abrasilver",
+            "marketValueEur": 1000,
+            "allocationPercent": 6.666666666666667,
+            "opportunity": 82.04999999999998,
+            "bucket": "core",
+            "idealMin": 5,
+            "idealMax": 8,
+            "hardMax": 9,
+            "allocationFitScore": 100,
+            "isBelowIdeal": false,
+            "isInsideIdeal": true,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "vista-gold",
+            "marketValueEur": 2000,
+            "allocationPercent": 13.333333333333334,
+            "opportunity": 86.15,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 6,
+            "hardMax": 6,
+            "allocationFitScore": 20,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "discovery-silver",
+            "marketValueEur": 3000,
+            "allocationPercent": 20,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "contango",
+            "marketValueEur": 4000,
+            "allocationPercent": 26.666666666666668,
+            "opportunity": 77.65,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 7,
+            "hardMax": 9,
+            "allocationFitScore": 20,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "first-majestic",
+            "marketValueEur": 5000,
+            "allocationPercent": 33.33333333333333,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          }
+        ],
+        "components": {
+          "opportunityQuality": 80.70714285714286,
+          "allocationEfficiency": 31.428571428571427,
+          "capitalEfficiency": null,
+          "positionSizingDiscipline": 0,
+          "riskAndConcentration": null,
+          "portfolioBalance": null,
+          "cyclePositioning": 70
+        },
+        "partialPortfolioScore": 63.61785714285714,
+        "portfolioScoreIsReliable": false
+      },
+      "portfolioAfter": {
+        "totalMarketValueEur": 16000,
+        "scoredMarketValueEur": 8000,
+        "dataCoveragePercent": 50,
+        "scoredPositions": 4,
+        "totalPositions": 6,
+        "positions": [
+          {
+            "companyId": "abrasilver",
+            "marketValueEur": 1000,
+            "allocationPercent": 6.25,
+            "opportunity": 82.04999999999998,
+            "bucket": "core",
+            "idealMin": 5,
+            "idealMax": 8,
+            "hardMax": 9,
+            "allocationFitScore": 100,
+            "isBelowIdeal": false,
+            "isInsideIdeal": true,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "vista-gold",
+            "marketValueEur": 2000,
+            "allocationPercent": 12.5,
+            "opportunity": 86.15,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 6,
+            "hardMax": 6,
+            "allocationFitScore": 20,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "discovery-silver",
+            "marketValueEur": 3000,
+            "allocationPercent": 18.75,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "contango",
+            "marketValueEur": 4000,
+            "allocationPercent": 25,
+            "opportunity": 77.65,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 7,
+            "hardMax": 9,
+            "allocationFitScore": 20,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "first-majestic",
+            "marketValueEur": 5000,
+            "allocationPercent": 31.25,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "spanish-mountain",
+            "marketValueEur": 1000,
+            "allocationPercent": 6.25,
+            "opportunity": 87.45000000000002,
+            "bucket": "core",
+            "idealMin": 3,
+            "idealMax": 6,
+            "hardMax": 8,
+            "allocationFitScore": 95.625,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": false
+          }
+        ],
+        "components": {
+          "opportunityQuality": 81.55,
+          "allocationEfficiency": 39.453125,
+          "capitalEfficiency": null,
+          "positionSizingDiscipline": 0,
+          "riskAndConcentration": null,
+          "portfolioBalance": null,
+          "cyclePositioning": 70
+        },
+        "partialPortfolioScore": 65.87924107142857,
+        "portfolioScoreIsReliable": false
+      },
+      "moneyInvestedEur": 1000,
+      "moneyUnallocatedEur": 0,
+      "isMeaningfulImprovement": true,
+      "explanation": [
+        "1 positie(s) geselecteerd voor nieuw kapitaal.",
+        "De voorgestelde allocatie levert een betekenisvolle verbetering van de Portfolio Score op."
+      ]
+    },
+    {
+      "newMoneyEur": 5000,
+      "scoreBefore": 63.61785714285714,
+      "scoreAfter": 67.88746498599441,
+      "scoreImprovement": 4.269607843137273,
+      "allocations": [
+        {
+          "companyId": "spanish-mountain",
+          "amountEur": 1000,
+          "allocationBeforePercent": 0,
+          "allocationAfterPercent": 5.88235294117647,
+          "opportunity": 87.45000000000002,
+          "investmentScore": 90.70816716474422,
+          "idealMin": 3,
+          "idealMax": 6,
+          "hardMax": 8,
+          "wasExistingHolding": false
+        },
+        {
+          "companyId": "trx-gold",
+          "amountEur": 1000,
+          "allocationBeforePercent": 0,
+          "allocationAfterPercent": 5.88235294117647,
+          "opportunity": 87.75,
+          "investmentScore": 90.6552422537618,
+          "idealMin": 3,
+          "idealMax": 6,
+          "hardMax": 8,
+          "wasExistingHolding": false
+        }
+      ],
+      "portfolioBefore": {
+        "totalMarketValueEur": 15000,
+        "scoredMarketValueEur": 7000,
+        "dataCoveragePercent": 46.666666666666664,
+        "scoredPositions": 3,
+        "totalPositions": 5,
+        "positions": [
+          {
+            "companyId": "abrasilver",
+            "marketValueEur": 1000,
+            "allocationPercent": 6.666666666666667,
+            "opportunity": 82.04999999999998,
+            "bucket": "core",
+            "idealMin": 5,
+            "idealMax": 8,
+            "hardMax": 9,
+            "allocationFitScore": 100,
+            "isBelowIdeal": false,
+            "isInsideIdeal": true,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "vista-gold",
+            "marketValueEur": 2000,
+            "allocationPercent": 13.333333333333334,
+            "opportunity": 86.15,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 6,
+            "hardMax": 6,
+            "allocationFitScore": 20,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "discovery-silver",
+            "marketValueEur": 3000,
+            "allocationPercent": 20,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "contango",
+            "marketValueEur": 4000,
+            "allocationPercent": 26.666666666666668,
+            "opportunity": 77.65,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 7,
+            "hardMax": 9,
+            "allocationFitScore": 20,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "first-majestic",
+            "marketValueEur": 5000,
+            "allocationPercent": 33.33333333333333,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          }
+        ],
+        "components": {
+          "opportunityQuality": 80.70714285714286,
+          "allocationEfficiency": 31.428571428571427,
+          "capitalEfficiency": null,
+          "positionSizingDiscipline": 0,
+          "riskAndConcentration": null,
+          "portfolioBalance": null,
+          "cyclePositioning": 70
+        },
+        "partialPortfolioScore": 63.61785714285714,
+        "portfolioScoreIsReliable": false
+      },
+      "portfolioAfter": {
+        "totalMarketValueEur": 17000,
+        "scoredMarketValueEur": 9000,
+        "dataCoveragePercent": 52.94117647058824,
+        "scoredPositions": 5,
+        "totalPositions": 7,
+        "positions": [
+          {
+            "companyId": "abrasilver",
+            "marketValueEur": 1000,
+            "allocationPercent": 5.88235294117647,
+            "opportunity": 82.04999999999998,
+            "bucket": "core",
+            "idealMin": 5,
+            "idealMax": 8,
+            "hardMax": 9,
+            "allocationFitScore": 100,
+            "isBelowIdeal": false,
+            "isInsideIdeal": true,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "vista-gold",
+            "marketValueEur": 2000,
+            "allocationPercent": 11.76470588235294,
+            "opportunity": 86.15,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 6,
+            "hardMax": 6,
+            "allocationFitScore": 20.411764705882362,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "discovery-silver",
+            "marketValueEur": 3000,
+            "allocationPercent": 17.647058823529413,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "contango",
+            "marketValueEur": 4000,
+            "allocationPercent": 23.52941176470588,
+            "opportunity": 77.65,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 7,
+            "hardMax": 9,
+            "allocationFitScore": 20,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "first-majestic",
+            "marketValueEur": 5000,
+            "allocationPercent": 29.411764705882355,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "spanish-mountain",
+            "marketValueEur": 1000,
+            "allocationPercent": 5.88235294117647,
+            "opportunity": 87.45000000000002,
+            "bucket": "core",
+            "idealMin": 3,
+            "idealMax": 6,
+            "hardMax": 8,
+            "allocationFitScore": 100,
+            "isBelowIdeal": false,
+            "isInsideIdeal": true,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "trx-gold",
+            "marketValueEur": 1000,
+            "allocationPercent": 5.88235294117647,
+            "opportunity": 87.75,
+            "bucket": "core",
+            "idealMin": 3,
+            "idealMax": 6,
+            "hardMax": 8,
+            "allocationFitScore": 100,
+            "isBelowIdeal": false,
+            "isInsideIdeal": true,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          }
+        ],
+        "components": {
+          "opportunityQuality": 82.2388888888889,
+          "allocationEfficiency": 46.75816993464052,
+          "capitalEfficiency": null,
+          "positionSizingDiscipline": 0,
+          "riskAndConcentration": null,
+          "portfolioBalance": null,
+          "cyclePositioning": 70
+        },
+        "partialPortfolioScore": 67.88746498599441,
+        "portfolioScoreIsReliable": false
+      },
+      "moneyInvestedEur": 2000,
+      "moneyUnallocatedEur": 3000,
+      "isMeaningfulImprovement": true,
+      "explanation": [
+        "2 positie(s) geselecteerd voor nieuw kapitaal.",
+        "€3000 blijft voorlopig ongealloceerd omdat Phoenix geen voldoende aantrekkelijke praktische bestemming vond.",
+        "De voorgestelde allocatie levert een betekenisvolle verbetering van de Portfolio Score op."
+      ]
+    }
+  ],
+  "rotation": {
+    "sellPlan": [
+      {
+        "companyId": "contango",
+        "name": "Contango Silver & Gold Inc",
+        "marketValueEur": 4000,
+        "currentAllocation": 26.666666666666668,
+        "idealMin": 4,
+        "idealMax": 7,
+        "hardMax": 9,
+        "investmentScore": 81.24021401041499,
+        "excessAboveIdealMaxEur": 2950,
+        "excessAboveHardMaxEur": 2650,
+        "sellPriority": 34525.9785989585,
+        "sellReason": "ABOVE_HARD_MAX",
+        "proposedSellAmountEur": 2650
+      },
+      {
+        "companyId": "vista-gold",
+        "name": "Vista Gold Corp",
+        "marketValueEur": 2000,
+        "currentAllocation": 13.333333333333334,
+        "idealMin": 4,
+        "idealMax": 6,
+        "hardMax": 6,
+        "investmentScore": 89.40816716474421,
+        "excessAboveIdealMaxEur": 1100,
+        "excessAboveHardMaxEur": 1100,
+        "sellPriority": 32159.183283525577,
+        "sellReason": "ABOVE_HARD_MAX",
+        "proposedSellAmountEur": 1100
+      }
+    ],
+    "freedCapitalEur": 3750,
+    "portfolioAfterSales": [
+      {
+        "companyId": "abrasilver",
+        "marketValueEur": 1000
+      },
+      {
+        "companyId": "vista-gold",
+        "marketValueEur": 900
+      },
+      {
+        "companyId": "discovery-silver",
+        "marketValueEur": 3000
+      },
+      {
+        "companyId": "contango",
+        "marketValueEur": 1350
+      },
+      {
+        "companyId": "first-majestic",
+        "marketValueEur": 5000
+      }
+    ],
+    "buyResult": {
+      "newMoneyEur": 3750,
+      "scoreBefore": 72.58141025641025,
+      "scoreAfter": 72.58141025641025,
+      "scoreImprovement": 0,
+      "allocations": [],
+      "portfolioBefore": {
+        "totalMarketValueEur": 11250,
+        "scoredMarketValueEur": 3250,
+        "dataCoveragePercent": 28.888888888888886,
+        "scoredPositions": 3,
+        "totalPositions": 5,
+        "positions": [
+          {
+            "companyId": "abrasilver",
+            "marketValueEur": 1000,
+            "allocationPercent": 8.88888888888889,
+            "opportunity": 82.04999999999998,
+            "bucket": "core",
+            "idealMin": 5,
+            "idealMax": 8,
+            "hardMax": 9,
+            "allocationFitScore": 68.88888888888887,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "vista-gold",
+            "marketValueEur": 900,
+            "allocationPercent": 8,
+            "opportunity": 86.15,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 6,
+            "hardMax": 6,
+            "allocationFitScore": 43,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "discovery-silver",
+            "marketValueEur": 3000,
+            "allocationPercent": 26.666666666666668,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "contango",
+            "marketValueEur": 1350,
+            "allocationPercent": 12,
+            "opportunity": 77.65,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 7,
+            "hardMax": 9,
+            "allocationFitScore": 37,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "first-majestic",
+            "marketValueEur": 5000,
+            "allocationPercent": 44.44444444444444,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          }
+        ],
+        "components": {
+          "opportunityQuality": 81.3576923076923,
+          "allocationEfficiency": 48.47350427350427,
+          "capitalEfficiency": null,
+          "positionSizingDiscipline": 68.5,
+          "riskAndConcentration": null,
+          "portfolioBalance": null,
+          "cyclePositioning": 70
+        },
+        "partialPortfolioScore": 72.58141025641025,
+        "portfolioScoreIsReliable": false
+      },
+      "portfolioAfter": {
+        "totalMarketValueEur": 11250,
+        "scoredMarketValueEur": 3250,
+        "dataCoveragePercent": 28.888888888888886,
+        "scoredPositions": 3,
+        "totalPositions": 5,
+        "positions": [
+          {
+            "companyId": "abrasilver",
+            "marketValueEur": 1000,
+            "allocationPercent": 8.88888888888889,
+            "opportunity": 82.04999999999998,
+            "bucket": "core",
+            "idealMin": 5,
+            "idealMax": 8,
+            "hardMax": 9,
+            "allocationFitScore": 68.88888888888887,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "vista-gold",
+            "marketValueEur": 900,
+            "allocationPercent": 8,
+            "opportunity": 86.15,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 6,
+            "hardMax": 6,
+            "allocationFitScore": 43,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "discovery-silver",
+            "marketValueEur": 3000,
+            "allocationPercent": 26.666666666666668,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          },
+          {
+            "companyId": "contango",
+            "marketValueEur": 1350,
+            "allocationPercent": 12,
+            "opportunity": 77.65,
+            "bucket": "core",
+            "idealMin": 4,
+            "idealMax": 7,
+            "hardMax": 9,
+            "allocationFitScore": 37,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": true,
+            "isAboveHardMax": true
+          },
+          {
+            "companyId": "first-majestic",
+            "marketValueEur": 5000,
+            "allocationPercent": 44.44444444444444,
+            "opportunity": null,
+            "bucket": null,
+            "idealMin": null,
+            "idealMax": null,
+            "hardMax": null,
+            "allocationFitScore": null,
+            "isBelowIdeal": false,
+            "isInsideIdeal": false,
+            "isAboveIdeal": false,
+            "isAboveHardMax": false
+          }
+        ],
+        "components": {
+          "opportunityQuality": 81.3576923076923,
+          "allocationEfficiency": 48.47350427350427,
+          "capitalEfficiency": null,
+          "positionSizingDiscipline": 68.5,
+          "riskAndConcentration": null,
+          "portfolioBalance": null,
+          "cyclePositioning": 70
+        },
+        "partialPortfolioScore": 72.58141025641025,
+        "portfolioScoreIsReliable": false
+      },
+      "moneyInvestedEur": 0,
+      "moneyUnallocatedEur": 3750,
+      "isMeaningfulImprovement": false,
+      "explanation": [
+        "Phoenix vond geen praktische investering die de Portfolio Score voldoende verbetert."
+      ]
+    },
+    "scoreBeforeRotation": 63.61785714285714,
+    "scoreAfterRotation": 72.58141025641025,
+    "totalScoreImprovement": 8.963553113553111,
+    "recommendation": "AANBEVOLEN",
+    "improvementPer1000Eur": 2.3902808302808296
+  },
+  "aav": {
+    "v2": [
+      {
+        "name": "bear",
+        "enterpriseValueCad": -1553029724.5012898,
+        "equityValueCad": -1798029724.5012898,
+        "modelValuePerShareCad": -10.009072169345858,
+        "producedBoe": 250000000,
+        "remainingBudgetBoe": 0,
+        "years": [
+          {
+            "year": 1,
+            "beginningProductionBoeDay": 83500,
+            "endProductionBoeDay": 78228.57142857143,
+            "averageProductionBoeDay": 80864.28571428571,
+            "producedBoe": 29515464.285714284,
+            "remainingBudgetBoe": 220484535.71428573,
+            "addedCapacityBoeDay": 11428.57142857143,
+            "preTaxCashFlowCad": -276684390.2142857,
+            "discountedCashFlowCad": -240595121.92546582
+          },
+          {
+            "year": 2,
+            "beginningProductionBoeDay": 78228.57142857143,
+            "endProductionBoeDay": 74011.42857142858,
+            "averageProductionBoeDay": 76120,
+            "producedBoe": 27783800,
+            "remainingBudgetBoe": 192700735.71428573,
+            "addedCapacityBoeDay": 11428.57142857143,
+            "preTaxCashFlowCad": -283919283.6,
+            "discountedCashFlowCad": -214683768.3175804
+          },
+          {
+            "year": 3,
+            "beginningProductionBoeDay": 74011.42857142858,
+            "endProductionBoeDay": 70637.7142857143,
+            "averageProductionBoeDay": 72324.57142857145,
+            "producedBoe": 26398468.57142858,
+            "remainingBudgetBoe": 166302267.14285716,
+            "addedCapacityBoeDay": 11428.57142857143,
+            "preTaxCashFlowCad": -289707198.3085714,
+            "discountedCashFlowCad": -190487185.54027876
+          },
+          {
+            "year": 4,
+            "beginningProductionBoeDay": 70637.7142857143,
+            "endProductionBoeDay": 67938.74285714288,
+            "averageProductionBoeDay": 69288.2285714286,
+            "producedBoe": 25290203.428571437,
+            "remainingBudgetBoe": 141012063.71428573,
+            "addedCapacityBoeDay": 11428.57142857143,
+            "preTaxCashFlowCad": -294337530.0754285,
+            "discountedCashFlowCad": -168288438.1204633
+          },
+          {
+            "year": 5,
+            "beginningProductionBoeDay": 67938.74285714288,
+            "endProductionBoeDay": 65779.56571428574,
+            "averageProductionBoeDay": 66859.1542857143,
+            "producedBoe": 24403591.31428572,
+            "remainingBudgetBoe": 116608472.4,
+            "addedCapacityBoeDay": 11428.57142857143,
+            "preTaxCashFlowCad": -298041795.4889142,
+            "discountedCashFlowCad": -148179446.86361894
+          },
+          {
+            "year": 6,
+            "beginningProductionBoeDay": 65779.56571428574,
+            "endProductionBoeDay": 64052.224000000024,
+            "averageProductionBoeDay": 64915.89485714288,
+            "producedBoe": 23694301.62285715,
+            "remainingBudgetBoe": 92914170.77714285,
+            "addedCapacityBoeDay": 11428.57142857143,
+            "preTaxCashFlowCad": -301005207.81970286,
+            "discountedCashFlowCad": -130132857.85355057
+          },
+          {
+            "year": 7,
+            "beginningProductionBoeDay": 64052.224000000024,
+            "endProductionBoeDay": 62670.35062857145,
+            "averageProductionBoeDay": 63361.287314285735,
+            "producedBoe": 23126869.869714294,
+            "remainingBudgetBoe": 69787300.90742856,
+            "addedCapacityBoeDay": 11428.57142857143,
+            "preTaxCashFlowCad": -303375937.6843337,
+            "discountedCashFlowCad": -114050251.996941
+          },
+          {
+            "year": 8,
+            "beginningProductionBoeDay": 62670.35062857145,
+            "endProductionBoeDay": 61564.85193142859,
+            "averageProductionBoeDay": 62117.60128000002,
+            "producedBoe": 22672924.467200007,
+            "remainingBudgetBoe": 47114376.44022855,
+            "addedCapacityBoeDay": 11428.57142857143,
+            "preTaxCashFlowCad": -305272521.57603836,
+            "discountedCashFlowCad": -99794128.80969939
+          },
+          {
+            "year": 9,
+            "beginningProductionBoeDay": 61564.85193142859,
+            "endProductionBoeDay": 60680.4529737143,
+            "averageProductionBoeDay": 61122.65245257145,
+            "producedBoe": 22309768.145188577,
+            "remainingBudgetBoe": 24804608.295039974,
+            "addedCapacityBoeDay": 11428.57142857143,
+            "preTaxCashFlowCad": -306789788.6894022,
+            "discountedCashFlowCad": -87208805.32213607
+          },
+          {
+            "year": 10,
+            "beginningProductionBoeDay": 60680.4529737143,
+            "endProductionBoeDay": 59972.933807542875,
+            "averageProductionBoeDay": 60326.693390628585,
+            "producedBoe": 22019243.087579433,
+            "remainingBudgetBoe": 2785365.2074605413,
+            "addedCapacityBoeDay": 11428.57142857143,
+            "preTaxCashFlowCad": -308003602.3800931,
+            "discountedCashFlowCad": -76133779.93879934
+          },
+          {
+            "year": 11,
+            "beginningProductionBoeDay": 59972.933807542875,
+            "endProductionBoeDay": 59406.91847460573,
+            "averageProductionBoeDay": 7631.137554686415,
+            "producedBoe": 2785365.2074605413,
+            "remainingBudgetBoe": 0,
+            "addedCapacityBoeDay": 11428.57142857143,
+            "preTaxCashFlowCad": -388362744.1632299,
+            "discountedCashFlowCad": -83475939.81275597
+          }
+        ]
+      },
+      {
+        "name": "base",
+        "enterpriseValueCad": -348944091.56817526,
+        "equityValueCad": -593944091.5681753,
+        "modelValuePerShareCad": -3.306302001604182,
+        "producedBoe": 250000000,
+        "remainingBudgetBoe": 0,
+        "years": [
+          {
+            "year": 1,
+            "beginningProductionBoeDay": 83500,
+            "endProductionBoeDay": 76800,
+            "averageProductionBoeDay": 80150,
+            "producedBoe": 29254750,
+            "remainingBudgetBoe": 220745250,
+            "addedCapacityBoeDay": 10000,
+            "preTaxCashFlowCad": 7259007,
+            "discountedCashFlowCad": 6481256.249999999
+          },
+          {
+            "year": 2,
+            "beginningProductionBoeDay": 76800,
+            "endProductionBoeDay": 71440,
+            "averageProductionBoeDay": 74120,
+            "producedBoe": 27053800,
+            "remainingBudgetBoe": 193691450,
+            "addedCapacityBoeDay": 10000,
+            "preTaxCashFlowCad": -19618994.399999976,
+            "discountedCashFlowCad": -15640142.219387734
+          },
+          {
+            "year": 3,
+            "beginningProductionBoeDay": 71440,
+            "endProductionBoeDay": 67152,
+            "averageProductionBoeDay": 69296,
+            "producedBoe": 25293040,
+            "remainingBudgetBoe": 168398410,
+            "addedCapacityBoeDay": 10000,
+            "preTaxCashFlowCad": -41121395.51999998,
+            "discountedCashFlowCad": -29269397.093658872
+          },
+          {
+            "year": 4,
+            "beginningProductionBoeDay": 67152,
+            "endProductionBoeDay": 63721.600000000006,
+            "averageProductionBoeDay": 65436.8,
+            "producedBoe": 23884432,
+            "remainingBudgetBoe": 144513978,
+            "addedCapacityBoeDay": 10000,
+            "preTaxCashFlowCad": -58323316.41600001,
+            "discountedCashFlowCad": -37065521.974893264
+          },
+          {
+            "year": 5,
+            "beginningProductionBoeDay": 63721.600000000006,
+            "endProductionBoeDay": 60977.280000000006,
+            "averageProductionBoeDay": 62349.44,
+            "producedBoe": 22757545.6,
+            "remainingBudgetBoe": 121756432.4,
+            "addedCapacityBoeDay": 10000,
+            "preTaxCashFlowCad": -72084853.13280004,
+            "discountedCashFlowCad": -40902881.55808174
+          },
+          {
+            "year": 6,
+            "beginningProductionBoeDay": 60977.280000000006,
+            "endProductionBoeDay": 58781.82400000001,
+            "averageProductionBoeDay": 59879.55200000001,
+            "producedBoe": 21856036.480000004,
+            "remainingBudgetBoe": 99900395.92,
+            "addedCapacityBoeDay": 10000,
+            "preTaxCashFlowCad": -83094082.50624001,
+            "discountedCashFlowCad": -42098048.18333716
+          },
+          {
+            "year": 7,
+            "beginningProductionBoeDay": 58781.82400000001,
+            "endProductionBoeDay": 57025.45920000001,
+            "averageProductionBoeDay": 57903.64160000001,
+            "producedBoe": 21134829.184000004,
+            "remainingBudgetBoe": 78765566.736,
+            "addedCapacityBoeDay": 10000,
+            "preTaxCashFlowCad": -91901466.00499201,
+            "discountedCashFlowCad": -41571556.03566831
+          },
+          {
+            "year": 8,
+            "beginningProductionBoeDay": 57025.45920000001,
+            "endProductionBoeDay": 55620.36736000001,
+            "averageProductionBoeDay": 56322.91328000001,
+            "producedBoe": 20557863.347200003,
+            "remainingBudgetBoe": 58207703.388799995,
+            "addedCapacityBoeDay": 10000,
+            "preTaxCashFlowCad": -98947372.80399355,
+            "discountedCashFlowCad": -39963184.32815495
+          },
+          {
+            "year": 9,
+            "beginningProductionBoeDay": 55620.36736000001,
+            "endProductionBoeDay": 54496.293888000015,
+            "averageProductionBoeDay": 55058.33062400002,
+            "producedBoe": 20096290.677760005,
+            "remainingBudgetBoe": 38111412.71103999,
+            "addedCapacityBoeDay": 10000,
+            "preTaxCashFlowCad": -104584098.24319476,
+            "discountedCashFlowCad": -37714074.28015442
+          },
+          {
+            "year": 10,
+            "beginningProductionBoeDay": 54496.293888000015,
+            "endProductionBoeDay": 53597.035110400015,
+            "averageProductionBoeDay": 54046.664499200015,
+            "producedBoe": 19727032.542208005,
+            "remainingBudgetBoe": 18384380.168831985,
+            "addedCapacityBoeDay": 10000,
+            "preTaxCashFlowCad": -109093478.59455582,
+            "discountedCashFlowCad": -35125180.39402694
+          },
+          {
+            "year": 11,
+            "beginningProductionBoeDay": 53597.035110400015,
+            "endProductionBoeDay": 52877.628088320016,
+            "averageProductionBoeDay": 50368.164846115025,
+            "producedBoe": 18384380.168831985,
+            "remainingBudgetBoe": 0,
+            "addedCapacityBoeDay": 10000,
+            "preTaxCashFlowCad": -125489949.37822378,
+            "discountedCashFlowCad": -36075361.75081187
+          }
+        ]
+      },
+      {
+        "name": "bull",
+        "enterpriseValueCad": 1097834967.2284296,
+        "equityValueCad": 852834967.2284296,
+        "modelValuePerShareCad": 4.747466974106154,
+        "producedBoe": 250000000,
+        "remainingBudgetBoe": 0,
+        "years": [
+          {
+            "year": 1,
+            "beginningProductionBoeDay": 83500,
+            "endProductionBoeDay": 76228.57142857143,
+            "averageProductionBoeDay": 79864.28571428571,
+            "producedBoe": 29150464.285714284,
+            "remainingBudgetBoe": 220849535.71428573,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": 310377399.42857146,
+            "discountedCashFlowCad": 282161272.2077922
+          },
+          {
+            "year": 2,
+            "beginningProductionBoeDay": 76228.57142857143,
+            "endProductionBoeDay": 70411.42857142858,
+            "averageProductionBoeDay": 73320,
+            "producedBoe": 26761800,
+            "remainingBudgetBoe": 194087735.71428573,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": 257903222.39999998,
+            "discountedCashFlowCad": 213143159.00826442
+          },
+          {
+            "year": 3,
+            "beginningProductionBoeDay": 70411.42857142858,
+            "endProductionBoeDay": 65757.7142857143,
+            "averageProductionBoeDay": 68084.57142857145,
+            "producedBoe": 24850868.57142858,
+            "remainingBudgetBoe": 169236867.14285716,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": 215923880.77714312,
+            "discountedCashFlowCad": 162226807.49597526
+          },
+          {
+            "year": 4,
+            "beginningProductionBoeDay": 65757.7142857143,
+            "endProductionBoeDay": 62034.742857142875,
+            "averageProductionBoeDay": 63896.22857142859,
+            "producedBoe": 23322123.428571437,
+            "remainingBudgetBoe": 145914743.71428573,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": 182340407.4788574,
+            "discountedCashFlowCad": 124540951.76480934
+          },
+          {
+            "year": 5,
+            "beginningProductionBoeDay": 62034.742857142875,
+            "endProductionBoeDay": 59056.365714285734,
+            "averageProductionBoeDay": 60545.55428571431,
+            "producedBoe": 22099127.31428572,
+            "remainingBudgetBoe": 123815616.4,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": 155473628.84022868,
+            "discountedCashFlowCad": 96536891.32028279
+          },
+          {
+            "year": 6,
+            "beginningProductionBoeDay": 59056.365714285734,
+            "endProductionBoeDay": 56673.66400000002,
+            "averageProductionBoeDay": 57865.014857142865,
+            "producedBoe": 21120730.422857147,
+            "remainingBudgetBoe": 102694885.97714286,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": 133980205.92932594,
+            "discountedCashFlowCad": 75628333.39034098
+          },
+          {
+            "year": 7,
+            "beginningProductionBoeDay": 56673.66400000002,
+            "endProductionBoeDay": 54767.50262857145,
+            "averageProductionBoeDay": 55720.58331428573,
+            "producedBoe": 20338012.909714293,
+            "remainingBudgetBoe": 82356873.06742856,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": 116785467.6006037,
+            "discountedCashFlowCad": 59929410.79061893
+          },
+          {
+            "year": 8,
+            "beginningProductionBoeDay": 54767.50262857145,
+            "endProductionBoeDay": 53242.57353142859,
+            "averageProductionBoeDay": 54005.03808000002,
+            "producedBoe": 19711838.899200007,
+            "remainingBudgetBoe": 62645034.16822855,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": 103029676.93762577,
+            "discountedCashFlowCad": 48064104.67202695
+          },
+          {
+            "year": 9,
+            "beginningProductionBoeDay": 53242.57353142859,
+            "endProductionBoeDay": 52022.630253714306,
+            "averageProductionBoeDay": 52632.601892571445,
+            "producedBoe": 19210899.69078858,
+            "remainingBudgetBoe": 43434134.47743997,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": 92025044.40724343,
+            "discountedCashFlowCad": 39027602.16373407
+          },
+          {
+            "year": 10,
+            "beginningProductionBoeDay": 52022.630253714306,
+            "endProductionBoeDay": 51046.67563154287,
+            "averageProductionBoeDay": 51534.652942628585,
+            "producedBoe": 18810148.324059434,
+            "remainingBudgetBoe": 24623986.153380536,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": 83221338.38293767,
+            "discountedCashFlowCad": 32085428.55088591
+          },
+          {
+            "year": 11,
+            "beginningProductionBoeDay": 51046.67563154287,
+            "endProductionBoeDay": 50265.91193380573,
+            "averageProductionBoeDay": 50656.2937826743,
+            "producedBoe": 18489547.23067612,
+            "remainingBudgetBoe": 6134438.922704417,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": 76178373.56349283,
+            "discountedCashFlowCad": 26700055.2064188
+          },
+          {
+            "year": 12,
+            "beginningProductionBoeDay": 50265.91193380573,
+            "endProductionBoeDay": 49641.30097561601,
+            "averageProductionBoeDay": 16806.6819800121,
+            "producedBoe": 6134438.922704417,
+            "remainingBudgetBoe": 0,
+            "addedCapacityBoeDay": 9428.57142857143,
+            "preTaxCashFlowCad": -195238645.74602935,
+            "discountedCashFlowCad": -62209049.34271995
+          }
+        ]
+      },
+      {
+        "name": "moonshot",
+        "enterpriseValueCad": 2928960216.912092,
+        "equityValueCad": 2683960216.912092,
+        "modelValuePerShareCad": 14.94077163723053,
+        "producedBoe": 250000000,
+        "remainingBudgetBoe": 0,
+        "years": [
+          {
+            "year": 1,
+            "beginningProductionBoeDay": 83500,
+            "endProductionBoeDay": 75657.14285714286,
+            "averageProductionBoeDay": 79578.57142857142,
+            "producedBoe": 29046178.571428567,
+            "remainingBudgetBoe": 220953821.42857143,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 638473915.0714283,
+            "discountedCashFlowCad": 585755885.3866314
+          },
+          {
+            "year": 2,
+            "beginningProductionBoeDay": 75657.14285714286,
+            "endProductionBoeDay": 69382.85714285714,
+            "averageProductionBoeDay": 72520,
+            "producedBoe": 26469800,
+            "remainingBudgetBoe": 194484021.42857143,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 554344849.2,
+            "discountedCashFlowCad": 466580968.94200826
+          },
+          {
+            "year": 3,
+            "beginningProductionBoeDay": 69382.85714285714,
+            "endProductionBoeDay": 64363.42857142857,
+            "averageProductionBoeDay": 66873.14285714286,
+            "producedBoe": 24408697.14285714,
+            "remainingBudgetBoe": 170075324.2857143,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 487041596.5028572,
+            "discountedCashFlowCad": 376085474.9220729
+          },
+          {
+            "year": 4,
+            "beginningProductionBoeDay": 64363.42857142857,
+            "endProductionBoeDay": 60347.885714285716,
+            "averageProductionBoeDay": 62355.65714285715,
+            "producedBoe": 22759814.85714286,
+            "remainingBudgetBoe": 147315509.42857143,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 433198994.34514284,
+            "discountedCashFlowCad": 306889089.0021886
+          },
+          {
+            "year": 5,
+            "beginningProductionBoeDay": 60347.885714285716,
+            "endProductionBoeDay": 57135.45142857143,
+            "averageProductionBoeDay": 58741.66857142856,
+            "producedBoe": 21440709.028571427,
+            "remainingBudgetBoe": 125874800.4,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 390124912.61897147,
+            "discountedCashFlowCad": 253554425.28796893
+          },
+          {
+            "year": 6,
+            "beginningProductionBoeDay": 57135.45142857143,
+            "endProductionBoeDay": 54565.504,
+            "averageProductionBoeDay": 55850.47771428573,
+            "producedBoe": 20385424.36571429,
+            "remainingBudgetBoe": 105489376.03428572,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 355665647.2380345,
+            "discountedCashFlowCad": 212071804.74138898
+          },
+          {
+            "year": 7,
+            "beginningProductionBoeDay": 54565.504,
+            "endProductionBoeDay": 52509.546057142856,
+            "averageProductionBoeDay": 53537.52502857143,
+            "producedBoe": 19541196.63542857,
+            "remainingBudgetBoe": 85948179.39885715,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 328098234.93328464,
+            "discountedCashFlowCad": 179480970.18115464
+          },
+          {
+            "year": 8,
+            "beginningProductionBoeDay": 52509.546057142856,
+            "endProductionBoeDay": 50864.779702857144,
+            "averageProductionBoeDay": 51687.16288,
+            "producedBoe": 18865814.4512,
+            "remainingBudgetBoe": 67082364.947657146,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 306044305.08948493,
+            "discountedCashFlowCad": 153593316.81029737
+          },
+          {
+            "year": 9,
+            "beginningProductionBoeDay": 50864.779702857144,
+            "endProductionBoeDay": 49548.966619428575,
+            "averageProductionBoeDay": 50206.87316114286,
+            "producedBoe": 18325508.703817144,
+            "remainingBudgetBoe": 48756856.24384,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 288401161.2144451,
+            "discountedCashFlowCad": 132787906.26788968
+          },
+          {
+            "year": 10,
+            "beginningProductionBoeDay": 49548.966619428575,
+            "endProductionBoeDay": 48496.316152685715,
+            "averageProductionBoeDay": 49022.64138605715,
+            "producedBoe": 17893264.10591086,
+            "remainingBudgetBoe": 30863592.13792914,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 274286646.11441326,
+            "discountedCashFlowCad": 115861643.50590156
+          },
+          {
+            "year": 11,
+            "beginningProductionBoeDay": 48496.316152685715,
+            "endProductionBoeDay": 47654.195779291425,
+            "averageProductionBoeDay": 48075.255965988574,
+            "producedBoe": 17547468.42758583,
+            "remainingBudgetBoe": 13316123.710343312,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 262995034.0343876,
+            "discountedCashFlowCad": 101919215.17066497
+          },
+          {
+            "year": 12,
+            "beginningProductionBoeDay": 47654.195779291425,
+            "endProductionBoeDay": 46980.499480576,
+            "averageProductionBoeDay": 36482.53071326935,
+            "producedBoe": 13316123.710343312,
+            "remainingBudgetBoe": 0,
+            "addedCapacityBoeDay": 8857.142857142857,
+            "preTaxCashFlowCad": 124824703.63755059,
+            "discountedCashFlowCad": 44379516.69392557
+          }
+        ]
+      }
+    ],
+    "v3": [
+      {
+        "name": "bear",
+        "enterpriseValueCad": -1477999022.646164,
+        "equityValueCad": -1722999022.646164,
+        "modelValuePerShareCad": -9.591399591662013,
+        "producedBoe": 250000000,
+        "remainingBudgetBoe": 0,
+        "years": [
+          {
+            "year": 1,
+            "operatingYearFraction": 1,
+            "producedBoe": 29515464.285714284,
+            "remainingBudgetBoe": 220484535.71428573,
+            "beginningProductionBoeDay": 83500,
+            "endingProductionBoeDay": 78228.57142857143,
+            "capexCad": 400000000,
+            "preTaxCashFlowCad": -276684390.2142857,
+            "discountedCashFlowCad": -240595121.92546582
+          },
+          {
+            "year": 2,
+            "operatingYearFraction": 1,
+            "producedBoe": 27783800,
+            "remainingBudgetBoe": 192700735.71428573,
+            "beginningProductionBoeDay": 78228.57142857143,
+            "endingProductionBoeDay": 74011.42857142858,
+            "capexCad": 400000000,
+            "preTaxCashFlowCad": -283919283.6,
+            "discountedCashFlowCad": -214683768.3175804
+          },
+          {
+            "year": 3,
+            "operatingYearFraction": 1,
+            "producedBoe": 26398468.571428575,
+            "remainingBudgetBoe": 166302267.14285716,
+            "beginningProductionBoeDay": 74011.42857142858,
+            "endingProductionBoeDay": 70637.71428571429,
+            "capexCad": 400000000,
+            "preTaxCashFlowCad": -289707198.3085714,
+            "discountedCashFlowCad": -190487185.54027876
+          },
+          {
+            "year": 4,
+            "operatingYearFraction": 1,
+            "producedBoe": 25290203.42857143,
+            "remainingBudgetBoe": 141012063.71428573,
+            "beginningProductionBoeDay": 70637.71428571429,
+            "endingProductionBoeDay": 67938.74285714286,
+            "capexCad": 400000000,
+            "preTaxCashFlowCad": -294337530.0754286,
+            "discountedCashFlowCad": -168288438.12046337
+          },
+          {
+            "year": 5,
+            "operatingYearFraction": 1,
+            "producedBoe": 24403591.314285718,
+            "remainingBudgetBoe": 116608472.4,
+            "beginningProductionBoeDay": 67938.74285714286,
+            "endingProductionBoeDay": 65779.56571428572,
+            "capexCad": 400000000,
+            "preTaxCashFlowCad": -298041795.48891425,
+            "discountedCashFlowCad": -148179446.86361897
+          },
+          {
+            "year": 6,
+            "operatingYearFraction": 1,
+            "producedBoe": 23694301.622857146,
+            "remainingBudgetBoe": 92914170.77714285,
+            "beginningProductionBoeDay": 65779.56571428572,
+            "endingProductionBoeDay": 64052.22400000001,
+            "capexCad": 400000000,
+            "preTaxCashFlowCad": -301005207.81970286,
+            "discountedCashFlowCad": -130132857.85355057
+          },
+          {
+            "year": 7,
+            "operatingYearFraction": 1,
+            "producedBoe": 23126869.869714286,
+            "remainingBudgetBoe": 69787300.90742856,
+            "beginningProductionBoeDay": 64052.22400000001,
+            "endingProductionBoeDay": 62670.35062857144,
+            "capexCad": 400000000,
+            "preTaxCashFlowCad": -303375937.6843337,
+            "discountedCashFlowCad": -114050251.996941
+          },
+          {
+            "year": 8,
+            "operatingYearFraction": 1,
+            "producedBoe": 22672924.467200004,
+            "remainingBudgetBoe": 47114376.44022856,
+            "beginningProductionBoeDay": 62670.35062857144,
+            "endingProductionBoeDay": 61564.85193142858,
+            "capexCad": 400000000,
+            "preTaxCashFlowCad": -305272521.57603836,
+            "discountedCashFlowCad": -99794128.80969939
+          },
+          {
+            "year": 9,
+            "operatingYearFraction": 1,
+            "producedBoe": 22309768.145188574,
+            "remainingBudgetBoe": 24804608.295039985,
+            "beginningProductionBoeDay": 61564.85193142858,
+            "endingProductionBoeDay": 60680.452973714295,
+            "capexCad": 400000000,
+            "preTaxCashFlowCad": -306789788.6894021,
+            "discountedCashFlowCad": -87208805.32213604
+          },
+          {
+            "year": 10,
+            "operatingYearFraction": 1,
+            "producedBoe": 22019243.08757943,
+            "remainingBudgetBoe": 2785365.207460556,
+            "beginningProductionBoeDay": 60680.452973714295,
+            "endingProductionBoeDay": 59972.93380754287,
+            "capexCad": 400000000,
+            "preTaxCashFlowCad": -308003602.38009316,
+            "discountedCashFlowCad": -76133779.93879935
+          },
+          {
+            "year": 11,
+            "operatingYearFraction": 0.12731952062140572,
+            "producedBoe": 2785365.207460556,
+            "remainingBudgetBoe": 0,
+            "beginningProductionBoeDay": 59972.93380754287,
+            "endingProductionBoeDay": 59900.86900668895,
+            "capexCad": 50927808.24856229,
+            "preTaxCashFlowCad": -39290552.411792085,
+            "discountedCashFlowCad": -8445237.957630083
+          }
+        ]
+      },
+      {
+        "name": "base",
+        "enterpriseValueCad": -343486595.8356406,
+        "equityValueCad": -588486595.8356407,
+        "modelValuePerShareCad": -3.275921820505682,
+        "producedBoe": 250000000,
+        "remainingBudgetBoe": 3.725290298461914e-9,
+        "years": [
+          {
+            "year": 1,
+            "operatingYearFraction": 1,
+            "producedBoe": 29254750,
+            "remainingBudgetBoe": 220745250,
+            "beginningProductionBoeDay": 83500,
+            "endingProductionBoeDay": 76800,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": 7259007,
+            "discountedCashFlowCad": 6481256.249999999
+          },
+          {
+            "year": 2,
+            "operatingYearFraction": 1,
+            "producedBoe": 27053800,
+            "remainingBudgetBoe": 193691450,
+            "beginningProductionBoeDay": 76800,
+            "endingProductionBoeDay": 71440,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -19618994.399999976,
+            "discountedCashFlowCad": -15640142.219387734
+          },
+          {
+            "year": 3,
+            "operatingYearFraction": 1,
+            "producedBoe": 25293040,
+            "remainingBudgetBoe": 168398410,
+            "beginningProductionBoeDay": 71440,
+            "endingProductionBoeDay": 67152,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -41121395.51999998,
+            "discountedCashFlowCad": -29269397.093658872
+          },
+          {
+            "year": 4,
+            "operatingYearFraction": 1,
+            "producedBoe": 23884432,
+            "remainingBudgetBoe": 144513978,
+            "beginningProductionBoeDay": 67152,
+            "endingProductionBoeDay": 63721.6,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -58323316.41600001,
+            "discountedCashFlowCad": -37065521.974893264
+          },
+          {
+            "year": 5,
+            "operatingYearFraction": 1,
+            "producedBoe": 22757545.6,
+            "remainingBudgetBoe": 121756432.4,
+            "beginningProductionBoeDay": 63721.6,
+            "endingProductionBoeDay": 60977.28,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -72084853.13280004,
+            "discountedCashFlowCad": -40902881.55808174
+          },
+          {
+            "year": 6,
+            "operatingYearFraction": 1,
+            "producedBoe": 21856036.479999997,
+            "remainingBudgetBoe": 99900395.92000002,
+            "beginningProductionBoeDay": 60977.28,
+            "endingProductionBoeDay": 58781.824,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -83094082.50623998,
+            "discountedCashFlowCad": -42098048.183337145
+          },
+          {
+            "year": 7,
+            "operatingYearFraction": 1,
+            "producedBoe": 21134829.184,
+            "remainingBudgetBoe": 78765566.73600002,
+            "beginningProductionBoeDay": 58781.824,
+            "endingProductionBoeDay": 57025.4592,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -91901466.00499201,
+            "discountedCashFlowCad": -41571556.03566831
+          },
+          {
+            "year": 8,
+            "operatingYearFraction": 1,
+            "producedBoe": 20557863.3472,
+            "remainingBudgetBoe": 58207703.38880002,
+            "beginningProductionBoeDay": 57025.4592,
+            "endingProductionBoeDay": 55620.36736,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -98947372.80399352,
+            "discountedCashFlowCad": -39963184.32815494
+          },
+          {
+            "year": 9,
+            "operatingYearFraction": 1,
+            "producedBoe": 20096290.677759998,
+            "remainingBudgetBoe": 38111412.71104002,
+            "beginningProductionBoeDay": 55620.36736,
+            "endingProductionBoeDay": 54496.293888,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -104584098.24319497,
+            "discountedCashFlowCad": -37714074.2801545
+          },
+          {
+            "year": 10,
+            "operatingYearFraction": 1,
+            "producedBoe": 19727032.542208,
+            "remainingBudgetBoe": 18384380.16883202,
+            "beginningProductionBoeDay": 54496.293888,
+            "endingProductionBoeDay": 53597.0351104,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -109093478.59455588,
+            "discountedCashFlowCad": -35125180.394026965
+          },
+          {
+            "year": 11,
+            "operatingYearFraction": 0.9457595093025952,
+            "producedBoe": 18384380.168832015,
+            "remainingBudgetBoe": 3.725290298461914e-9,
+            "beginningProductionBoeDay": 53597.0351104,
+            "endingProductionBoeDay": 52916.64907820878,
+            "capexCad": 331015828.2559083,
+            "preTaxCashFlowCad": -106505777.63413179,
+            "discountedCashFlowCad": -30617866.018277105
+          }
+        ]
+      },
+      {
+        "name": "bull",
+        "enterpriseValueCad": 1167752933.7033484,
+        "equityValueCad": 922752933.7033484,
+        "modelValuePerShareCad": 5.136678544329484,
+        "producedBoe": 250000000,
+        "remainingBudgetBoe": 0,
+        "years": [
+          {
+            "year": 1,
+            "operatingYearFraction": 1,
+            "producedBoe": 29150464.285714284,
+            "remainingBudgetBoe": 220849535.71428573,
+            "beginningProductionBoeDay": 83500,
+            "endingProductionBoeDay": 76228.57142857143,
+            "capexCad": 330000000,
+            "preTaxCashFlowCad": 310377399.42857146,
+            "discountedCashFlowCad": 282161272.2077922
+          },
+          {
+            "year": 2,
+            "operatingYearFraction": 1,
+            "producedBoe": 26761800,
+            "remainingBudgetBoe": 194087735.71428573,
+            "beginningProductionBoeDay": 76228.57142857143,
+            "endingProductionBoeDay": 70411.42857142858,
+            "capexCad": 330000000,
+            "preTaxCashFlowCad": 257903222.39999998,
+            "discountedCashFlowCad": 213143159.00826442
+          },
+          {
+            "year": 3,
+            "operatingYearFraction": 1,
+            "producedBoe": 24850868.571428575,
+            "remainingBudgetBoe": 169236867.14285716,
+            "beginningProductionBoeDay": 70411.42857142858,
+            "endingProductionBoeDay": 65757.71428571429,
+            "capexCad": 330000000,
+            "preTaxCashFlowCad": 215923880.77714276,
+            "discountedCashFlowCad": 162226807.495975
+          },
+          {
+            "year": 4,
+            "operatingYearFraction": 1,
+            "producedBoe": 23322123.42857143,
+            "remainingBudgetBoe": 145914743.71428573,
+            "beginningProductionBoeDay": 65757.71428571429,
+            "endingProductionBoeDay": 62034.74285714286,
+            "capexCad": 330000000,
+            "preTaxCashFlowCad": 182340407.47885716,
+            "discountedCashFlowCad": 124540951.76480918
+          },
+          {
+            "year": 5,
+            "operatingYearFraction": 1,
+            "producedBoe": 22099127.314285714,
+            "remainingBudgetBoe": 123815616.40000002,
+            "beginningProductionBoeDay": 62034.74285714286,
+            "endingProductionBoeDay": 59056.36571428572,
+            "capexCad": 330000000,
+            "preTaxCashFlowCad": 155473628.84022844,
+            "discountedCashFlowCad": 96536891.32028264
+          },
+          {
+            "year": 6,
+            "operatingYearFraction": 1,
+            "producedBoe": 21120730.422857143,
+            "remainingBudgetBoe": 102694885.97714287,
+            "beginningProductionBoeDay": 59056.36571428572,
+            "endingProductionBoeDay": 56673.664000000004,
+            "capexCad": 330000000,
+            "preTaxCashFlowCad": 133980205.92932582,
+            "discountedCashFlowCad": 75628333.39034092
+          },
+          {
+            "year": 7,
+            "operatingYearFraction": 1,
+            "producedBoe": 20338012.909714285,
+            "remainingBudgetBoe": 82356873.06742859,
+            "beginningProductionBoeDay": 56673.664000000004,
+            "endingProductionBoeDay": 54767.502628571434,
+            "capexCad": 330000000,
+            "preTaxCashFlowCad": 116785467.60060334,
+            "discountedCashFlowCad": 59929410.79061875
+          },
+          {
+            "year": 8,
+            "operatingYearFraction": 1,
+            "producedBoe": 19711838.899200004,
+            "remainingBudgetBoe": 62645034.16822858,
+            "beginningProductionBoeDay": 54767.502628571434,
+            "endingProductionBoeDay": 53242.57353142858,
+            "capexCad": 330000000,
+            "preTaxCashFlowCad": 103029676.93762577,
+            "discountedCashFlowCad": 48064104.67202695
+          },
+          {
+            "year": 9,
+            "operatingYearFraction": 1,
+            "producedBoe": 19210899.69078857,
+            "remainingBudgetBoe": 43434134.477440014,
+            "beginningProductionBoeDay": 53242.57353142858,
+            "endingProductionBoeDay": 52022.63025371429,
+            "capexCad": 330000000,
+            "preTaxCashFlowCad": 92025044.40724331,
+            "discountedCashFlowCad": 39027602.16373402
+          },
+          {
+            "year": 10,
+            "operatingYearFraction": 1,
+            "producedBoe": 18810148.32405943,
+            "remainingBudgetBoe": 24623986.153380584,
+            "beginningProductionBoeDay": 52022.63025371429,
+            "endingProductionBoeDay": 51046.675631542865,
+            "capexCad": 330000000,
+            "preTaxCashFlowCad": 83221338.38293743,
+            "discountedCashFlowCad": 32085428.55088582
+          },
+          {
+            "year": 11,
+            "operatingYearFraction": 1,
+            "producedBoe": 18489547.23067612,
+            "remainingBudgetBoe": 6134438.922704466,
+            "beginningProductionBoeDay": 51046.675631542865,
+            "endingProductionBoeDay": 50265.91193380572,
+            "capexCad": 330000000,
+            "preTaxCashFlowCad": 76178373.56349283,
+            "discountedCashFlowCad": 26700055.2064188
+          },
+          {
+            "year": 12,
+            "operatingYearFraction": 0.33505293931056346,
+            "producedBoe": 6134438.922704466,
+            "remainingBudgetBoe": 0,
+            "beginningProductionBoeDay": 50265.91193380572,
+            "endingProductionBoeDay": 50056.634196338666,
+            "capexCad": 110567469.97248594,
+            "preTaxCashFlowCad": 24193884.28148575,
+            "discountedCashFlowCad": 7708917.132199546
+          }
+        ]
+      },
+      {
+        "name": "moonshot",
+        "enterpriseValueCad": 2954336692.6665473,
+        "equityValueCad": 2709336692.6665473,
+        "modelValuePerShareCad": 15.082034583982116,
+        "producedBoe": 250000000,
+        "remainingBudgetBoe": 1.862645149230957e-9,
+        "years": [
+          {
+            "year": 1,
+            "operatingYearFraction": 1,
+            "producedBoe": 29046178.571428575,
+            "remainingBudgetBoe": 220953821.42857143,
+            "beginningProductionBoeDay": 83500,
+            "endingProductionBoeDay": 75657.14285714286,
+            "capexCad": 310000000,
+            "preTaxCashFlowCad": 638473915.0714287,
+            "discountedCashFlowCad": 585755885.3866317
+          },
+          {
+            "year": 2,
+            "operatingYearFraction": 1,
+            "producedBoe": 26469800,
+            "remainingBudgetBoe": 194484021.42857143,
+            "beginningProductionBoeDay": 75657.14285714286,
+            "endingProductionBoeDay": 69382.85714285714,
+            "capexCad": 310000000,
+            "preTaxCashFlowCad": 554344849.2,
+            "discountedCashFlowCad": 466580968.94200826
+          },
+          {
+            "year": 3,
+            "operatingYearFraction": 1,
+            "producedBoe": 24408697.14285714,
+            "remainingBudgetBoe": 170075324.2857143,
+            "beginningProductionBoeDay": 69382.85714285714,
+            "endingProductionBoeDay": 64363.42857142857,
+            "capexCad": 310000000,
+            "preTaxCashFlowCad": 487041596.5028572,
+            "discountedCashFlowCad": 376085474.9220729
+          },
+          {
+            "year": 4,
+            "operatingYearFraction": 1,
+            "producedBoe": 22759814.857142854,
+            "remainingBudgetBoe": 147315509.42857143,
+            "beginningProductionBoeDay": 64363.42857142857,
+            "endingProductionBoeDay": 60347.885714285716,
+            "capexCad": 310000000,
+            "preTaxCashFlowCad": 433198994.34514284,
+            "discountedCashFlowCad": 306889089.0021886
+          },
+          {
+            "year": 5,
+            "operatingYearFraction": 1,
+            "producedBoe": 21440709.028571427,
+            "remainingBudgetBoe": 125874800.4,
+            "beginningProductionBoeDay": 60347.885714285716,
+            "endingProductionBoeDay": 57135.451428571425,
+            "capexCad": 310000000,
+            "preTaxCashFlowCad": 390124912.61897147,
+            "discountedCashFlowCad": 253554425.28796893
+          },
+          {
+            "year": 6,
+            "operatingYearFraction": 1,
+            "producedBoe": 20385424.365714286,
+            "remainingBudgetBoe": 105489376.03428572,
+            "beginningProductionBoeDay": 57135.451428571425,
+            "endingProductionBoeDay": 54565.50399999999,
+            "capexCad": 310000000,
+            "preTaxCashFlowCad": 355665647.23803437,
+            "discountedCashFlowCad": 212071804.7413889
+          },
+          {
+            "year": 7,
+            "operatingYearFraction": 1,
+            "producedBoe": 19541196.63542857,
+            "remainingBudgetBoe": 85948179.39885715,
+            "beginningProductionBoeDay": 54565.50399999999,
+            "endingProductionBoeDay": 52509.54605714285,
+            "capexCad": 310000000,
+            "preTaxCashFlowCad": 328098234.93328464,
+            "discountedCashFlowCad": 179480970.18115464
+          },
+          {
+            "year": 8,
+            "operatingYearFraction": 1,
+            "producedBoe": 18865814.451199997,
+            "remainingBudgetBoe": 67082364.94765715,
+            "beginningProductionBoeDay": 52509.54605714285,
+            "endingProductionBoeDay": 50864.77970285714,
+            "capexCad": 310000000,
+            "preTaxCashFlowCad": 306044305.0894848,
+            "discountedCashFlowCad": 153593316.8102973
+          },
+          {
+            "year": 9,
+            "operatingYearFraction": 1,
+            "producedBoe": 18325508.70381714,
+            "remainingBudgetBoe": 48756856.24384001,
+            "beginningProductionBoeDay": 50864.77970285714,
+            "endingProductionBoeDay": 49548.96661942857,
+            "capexCad": 310000000,
+            "preTaxCashFlowCad": 288401161.21444476,
+            "discountedCashFlowCad": 132787906.26788951
+          },
+          {
+            "year": 10,
+            "operatingYearFraction": 1,
+            "producedBoe": 17893264.105910856,
+            "remainingBudgetBoe": 30863592.137929153,
+            "beginningProductionBoeDay": 49548.96661942857,
+            "endingProductionBoeDay": 48496.31615268571,
+            "capexCad": 310000000,
+            "preTaxCashFlowCad": 274286646.114413,
+            "discountedCashFlowCad": 115861643.50590146
+          },
+          {
+            "year": 11,
+            "operatingYearFraction": 1,
+            "producedBoe": 17547468.427585825,
+            "remainingBudgetBoe": 13316123.710343327,
+            "beginningProductionBoeDay": 48496.31615268571,
+            "endingProductionBoeDay": 47654.19577929142,
+            "capexCad": 310000000,
+            "preTaxCashFlowCad": 262995034.03438747,
+            "discountedCashFlowCad": 101919215.17066492
+          },
+          {
+            "year": 12,
+            "operatingYearFraction": 0.7697563882570271,
+            "producedBoe": 13316123.710343326,
+            "remainingBudgetBoe": 1.862645149230957e-9,
+            "beginningProductionBoeDay": 47654.19577929142,
+            "endingProductionBoeDay": 47135.6137496101,
+            "capexCad": 238624480.3596784,
+            "preTaxCashFlowCad": 196200223.27787262,
+            "discountedCashFlowCad": 69755992.44838017
+          }
+        ]
+      }
+    ],
+    "policies": [
+      {
+        "scenario": "base",
+        "policy": "fixed",
+        "enterpriseValueCad": -343486595.8356406,
+        "equityValueCad": -588486595.8356407,
+        "valuePerShareCad": -3.275921820505682,
+        "producedBoe": 250000000,
+        "remainingBoe": 3.725290298461914e-9,
+        "years": [
+          {
+            "year": 1,
+            "fraction": 1,
+            "startRateBoeDay": 83500,
+            "endRateBoeDay": 76800,
+            "producedBoe": 29254750,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": 7259007,
+            "discountedCashFlowCad": 6481256.249999999,
+            "remainingBoe": 220745250,
+            "decision": "Vaste jaarlijkse capex"
+          },
+          {
+            "year": 2,
+            "fraction": 1,
+            "startRateBoeDay": 76800,
+            "endRateBoeDay": 71440,
+            "producedBoe": 27053800,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -19618994.400000036,
+            "discountedCashFlowCad": -15640142.21938778,
+            "remainingBoe": 193691450,
+            "decision": "Vaste jaarlijkse capex"
+          },
+          {
+            "year": 3,
+            "fraction": 1,
+            "startRateBoeDay": 71440,
+            "endRateBoeDay": 67152,
+            "producedBoe": 25293040,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -41121395.51999998,
+            "discountedCashFlowCad": -29269397.093658872,
+            "remainingBoe": 168398410,
+            "decision": "Vaste jaarlijkse capex"
+          },
+          {
+            "year": 4,
+            "fraction": 1,
+            "startRateBoeDay": 67152,
+            "endRateBoeDay": 63721.6,
+            "producedBoe": 23884432,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -58323316.41600001,
+            "discountedCashFlowCad": -37065521.974893264,
+            "remainingBoe": 144513978,
+            "decision": "Vaste jaarlijkse capex"
+          },
+          {
+            "year": 5,
+            "fraction": 1,
+            "startRateBoeDay": 63721.6,
+            "endRateBoeDay": 60977.28,
+            "producedBoe": 22757545.6,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -72084853.13279998,
+            "discountedCashFlowCad": -40902881.55808171,
+            "remainingBoe": 121756432.4,
+            "decision": "Vaste jaarlijkse capex"
+          },
+          {
+            "year": 6,
+            "fraction": 1,
+            "startRateBoeDay": 60977.28,
+            "endRateBoeDay": 58781.824,
+            "producedBoe": 21856036.479999997,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -83094082.50624004,
+            "discountedCashFlowCad": -42098048.183337174,
+            "remainingBoe": 99900395.92000002,
+            "decision": "Vaste jaarlijkse capex"
+          },
+          {
+            "year": 7,
+            "fraction": 1,
+            "startRateBoeDay": 58781.824,
+            "endRateBoeDay": 57025.4592,
+            "producedBoe": 21134829.184,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -91901466.00499201,
+            "discountedCashFlowCad": -41571556.03566831,
+            "remainingBoe": 78765566.73600002,
+            "decision": "Vaste jaarlijkse capex"
+          },
+          {
+            "year": 8,
+            "fraction": 1,
+            "startRateBoeDay": 57025.4592,
+            "endRateBoeDay": 55620.36736,
+            "producedBoe": 20557863.3472,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -98947372.80399361,
+            "discountedCashFlowCad": -39963184.32815497,
+            "remainingBoe": 58207703.38880002,
+            "decision": "Vaste jaarlijkse capex"
+          },
+          {
+            "year": 9,
+            "fraction": 1,
+            "startRateBoeDay": 55620.36736,
+            "endRateBoeDay": 54496.293888,
+            "producedBoe": 20096290.677759998,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -104584098.24319491,
+            "discountedCashFlowCad": -37714074.280154474,
+            "remainingBoe": 38111412.71104002,
+            "decision": "Vaste jaarlijkse capex"
+          },
+          {
+            "year": 10,
+            "fraction": 1,
+            "startRateBoeDay": 54496.293888,
+            "endRateBoeDay": 53597.0351104,
+            "producedBoe": 19727032.542208,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -109093478.59455588,
+            "discountedCashFlowCad": -35125180.394026965,
+            "remainingBoe": 18384380.16883202,
+            "decision": "Vaste jaarlijkse capex"
+          },
+          {
+            "year": 11,
+            "fraction": 0.9457595093025952,
+            "startRateBoeDay": 53597.0351104,
+            "endRateBoeDay": 52916.64907820878,
+            "producedBoe": 18384380.168832015,
+            "capexCad": 331015828.2559083,
+            "preTaxCashFlowCad": -106505777.63413176,
+            "discountedCashFlowCad": -30617866.018277097,
+            "remainingBoe": 3.725290298461914e-9,
+            "decision": "Vaste jaarlijkse capex"
+          }
+        ]
+      },
+      {
+        "scenario": "base",
+        "policy": "runoff",
+        "enterpriseValueCad": 1028323985.426887,
+        "equityValueCad": 783323985.426887,
+        "valuePerShareCad": 4.360520960960182,
+        "producedBoe": 127723959.66500351,
+        "remainingBoe": 122276040.33499649,
+        "years": [
+          {
+            "year": 1,
+            "fraction": 1,
+            "startRateBoeDay": 83500,
+            "endRateBoeDay": 66800,
+            "producedBoe": 27429750,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 334972107,
+            "discountedCashFlowCad": 299082238.39285713,
+            "remainingBoe": 222570250,
+            "decision": "Geen nieuwe ontwikkeling"
+          },
+          {
+            "year": 2,
+            "fraction": 1,
+            "startRateBoeDay": 66800,
+            "endRateBoeDay": 53440,
+            "producedBoe": 21943800,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 267977685.6,
+            "discountedCashFlowCad": 213630170.2806122,
+            "remainingBoe": 200626450,
+            "decision": "Geen nieuwe ontwikkeling"
+          },
+          {
+            "year": 3,
+            "fraction": 1,
+            "startRateBoeDay": 53440,
+            "endRateBoeDay": 42752,
+            "producedBoe": 17555040,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 214382148.48,
+            "discountedCashFlowCad": 152592978.77186584,
+            "remainingBoe": 183071410,
+            "decision": "Geen nieuwe ontwikkeling"
+          },
+          {
+            "year": 4,
+            "fraction": 1,
+            "startRateBoeDay": 42752,
+            "endRateBoeDay": 34201.6,
+            "producedBoe": 14044032.000000002,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 171505718.784,
+            "discountedCashFlowCad": 108994984.83704703,
+            "remainingBoe": 169027378,
+            "decision": "Geen nieuwe ontwikkeling"
+          },
+          {
+            "year": 5,
+            "fraction": 1,
+            "startRateBoeDay": 34201.6,
+            "endRateBoeDay": 27361.28,
+            "producedBoe": 11235225.6,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 137204575.02719998,
+            "discountedCashFlowCad": 77853560.59789072,
+            "remainingBoe": 157792152.4,
+            "decision": "Geen nieuwe ontwikkeling"
+          },
+          {
+            "year": 6,
+            "fraction": 1,
+            "startRateBoeDay": 27361.28,
+            "endRateBoeDay": 21889.023999999998,
+            "producedBoe": 8988180.479999999,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 109763660.02175999,
+            "discountedCashFlowCad": 55609686.14135051,
+            "remainingBoe": 148803971.92000002,
+            "decision": "Geen nieuwe ontwikkeling"
+          },
+          {
+            "year": 7,
+            "fraction": 1,
+            "startRateBoeDay": 21889.023999999998,
+            "endRateBoeDay": 17511.2192,
+            "producedBoe": 7190544.384,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 87810928.017408,
+            "discountedCashFlowCad": 39721204.386678934,
+            "remainingBoe": 141613427.536,
+            "decision": "Geen nieuwe ontwikkeling"
+          },
+          {
+            "year": 8,
+            "fraction": 1,
+            "startRateBoeDay": 17511.2192,
+            "endRateBoeDay": 14008.97536,
+            "producedBoe": 5752435.5072,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 70248742.4139264,
+            "discountedCashFlowCad": 28372288.847627804,
+            "remainingBoe": 135860992.0288,
+            "decision": "Geen nieuwe ontwikkeling"
+          },
+          {
+            "year": 9,
+            "fraction": 1,
+            "startRateBoeDay": 14008.97536,
+            "endRateBoeDay": 11207.180288,
+            "producedBoe": 4601948.4057599995,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 56198993.931141116,
+            "discountedCashFlowCad": 20265920.60544843,
+            "remainingBoe": 131259043.62304,
+            "decision": "Geen nieuwe ontwikkeling"
+          },
+          {
+            "year": 10,
+            "fraction": 1,
+            "startRateBoeDay": 11207.180288,
+            "endRateBoeDay": 8965.7442304,
+            "producedBoe": 3681558.724608,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 44959195.14491289,
+            "discountedCashFlowCad": 14475657.575320305,
+            "remainingBoe": 127577484.898432,
+            "decision": "Geen nieuwe ontwikkeling"
+          },
+          {
+            "year": 11,
+            "fraction": 1,
+            "startRateBoeDay": 8965.7442304,
+            "endRateBoeDay": 7172.5953843199995,
+            "producedBoe": 2945246.9796864,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 35967356.11593031,
+            "discountedCashFlowCad": 10339755.410943074,
+            "remainingBoe": 124632237.9187456,
+            "decision": "Geen nieuwe ontwikkeling"
+          },
+          {
+            "year": 12,
+            "fraction": 1,
+            "startRateBoeDay": 7172.5953843199995,
+            "endRateBoeDay": 5738.076307456,
+            "producedBoe": 2356197.5837491197,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 28773884.892744247,
+            "discountedCashFlowCad": 7385539.579245051,
+            "remainingBoe": 122276040.33499649,
+            "decision": "Geen nieuwe ontwikkeling"
+          }
+        ]
+      },
+      {
+        "scenario": "base",
+        "policy": "maintenance",
+        "enterpriseValueCad": -343486595.8356406,
+        "equityValueCad": -588486595.8356407,
+        "valuePerShareCad": -3.275921820505682,
+        "producedBoe": 250000000,
+        "remainingBoe": 3.725290298461914e-9,
+        "years": [
+          {
+            "year": 1,
+            "fraction": 1,
+            "startRateBoeDay": 83500,
+            "endRateBoeDay": 76800,
+            "producedBoe": 29254750,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": 7259007,
+            "discountedCashFlowCad": 6481256.249999999,
+            "remainingBoe": 220745250,
+            "decision": "Onderhoud tot capexplafond"
+          },
+          {
+            "year": 2,
+            "fraction": 1,
+            "startRateBoeDay": 76800,
+            "endRateBoeDay": 71440,
+            "producedBoe": 27053800,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -19618994.400000036,
+            "discountedCashFlowCad": -15640142.21938778,
+            "remainingBoe": 193691450,
+            "decision": "Onderhoud tot capexplafond"
+          },
+          {
+            "year": 3,
+            "fraction": 1,
+            "startRateBoeDay": 71440,
+            "endRateBoeDay": 67152,
+            "producedBoe": 25293040,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -41121395.51999998,
+            "discountedCashFlowCad": -29269397.093658872,
+            "remainingBoe": 168398410,
+            "decision": "Onderhoud tot capexplafond"
+          },
+          {
+            "year": 4,
+            "fraction": 1,
+            "startRateBoeDay": 67152,
+            "endRateBoeDay": 63721.6,
+            "producedBoe": 23884432,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -58323316.41600001,
+            "discountedCashFlowCad": -37065521.974893264,
+            "remainingBoe": 144513978,
+            "decision": "Onderhoud tot capexplafond"
+          },
+          {
+            "year": 5,
+            "fraction": 1,
+            "startRateBoeDay": 63721.6,
+            "endRateBoeDay": 60977.28,
+            "producedBoe": 22757545.6,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -72084853.13279998,
+            "discountedCashFlowCad": -40902881.55808171,
+            "remainingBoe": 121756432.4,
+            "decision": "Onderhoud tot capexplafond"
+          },
+          {
+            "year": 6,
+            "fraction": 1,
+            "startRateBoeDay": 60977.28,
+            "endRateBoeDay": 58781.824,
+            "producedBoe": 21856036.479999997,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -83094082.50624004,
+            "discountedCashFlowCad": -42098048.183337174,
+            "remainingBoe": 99900395.92000002,
+            "decision": "Onderhoud tot capexplafond"
+          },
+          {
+            "year": 7,
+            "fraction": 1,
+            "startRateBoeDay": 58781.824,
+            "endRateBoeDay": 57025.4592,
+            "producedBoe": 21134829.184,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -91901466.00499201,
+            "discountedCashFlowCad": -41571556.03566831,
+            "remainingBoe": 78765566.73600002,
+            "decision": "Onderhoud tot capexplafond"
+          },
+          {
+            "year": 8,
+            "fraction": 1,
+            "startRateBoeDay": 57025.4592,
+            "endRateBoeDay": 55620.36736,
+            "producedBoe": 20557863.3472,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -98947372.80399361,
+            "discountedCashFlowCad": -39963184.32815497,
+            "remainingBoe": 58207703.38880002,
+            "decision": "Onderhoud tot capexplafond"
+          },
+          {
+            "year": 9,
+            "fraction": 1,
+            "startRateBoeDay": 55620.36736,
+            "endRateBoeDay": 54496.293888,
+            "producedBoe": 20096290.677759998,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -104584098.24319491,
+            "discountedCashFlowCad": -37714074.280154474,
+            "remainingBoe": 38111412.71104002,
+            "decision": "Onderhoud tot capexplafond"
+          },
+          {
+            "year": 10,
+            "fraction": 1,
+            "startRateBoeDay": 54496.293888,
+            "endRateBoeDay": 53597.0351104,
+            "producedBoe": 19727032.542208,
+            "capexCad": 350000000,
+            "preTaxCashFlowCad": -109093478.59455588,
+            "discountedCashFlowCad": -35125180.394026965,
+            "remainingBoe": 18384380.16883202,
+            "decision": "Onderhoud tot capexplafond"
+          },
+          {
+            "year": 11,
+            "fraction": 0.9457595093025952,
+            "startRateBoeDay": 53597.0351104,
+            "endRateBoeDay": 52916.64907820878,
+            "producedBoe": 18384380.168832015,
+            "capexCad": 331015828.2559083,
+            "preTaxCashFlowCad": -106505777.63413176,
+            "discountedCashFlowCad": -30617866.018277097,
+            "remainingBoe": 3.725290298461914e-9,
+            "decision": "Onderhoud tot capexplafond"
+          }
+        ]
+      },
+      {
+        "scenario": "base",
+        "policy": "economic-gate",
+        "enterpriseValueCad": 1028323985.426887,
+        "equityValueCad": 783323985.426887,
+        "valuePerShareCad": 4.360520960960182,
+        "producedBoe": 127723959.66500351,
+        "remainingBoe": 122276040.33499649,
+        "years": [
+          {
+            "year": 1,
+            "fraction": 1,
+            "startRateBoeDay": 83500,
+            "endRateBoeDay": 66800,
+            "producedBoe": 27429750,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 334972107,
+            "discountedCashFlowCad": 299082238.39285713,
+            "remainingBoe": 222570250,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          },
+          {
+            "year": 2,
+            "fraction": 1,
+            "startRateBoeDay": 66800,
+            "endRateBoeDay": 53440,
+            "producedBoe": 21943800,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 267977685.6,
+            "discountedCashFlowCad": 213630170.2806122,
+            "remainingBoe": 200626450,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          },
+          {
+            "year": 3,
+            "fraction": 1,
+            "startRateBoeDay": 53440,
+            "endRateBoeDay": 42752,
+            "producedBoe": 17555040,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 214382148.48,
+            "discountedCashFlowCad": 152592978.77186584,
+            "remainingBoe": 183071410,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          },
+          {
+            "year": 4,
+            "fraction": 1,
+            "startRateBoeDay": 42752,
+            "endRateBoeDay": 34201.6,
+            "producedBoe": 14044032.000000002,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 171505718.784,
+            "discountedCashFlowCad": 108994984.83704703,
+            "remainingBoe": 169027378,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          },
+          {
+            "year": 5,
+            "fraction": 1,
+            "startRateBoeDay": 34201.6,
+            "endRateBoeDay": 27361.28,
+            "producedBoe": 11235225.6,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 137204575.02719998,
+            "discountedCashFlowCad": 77853560.59789072,
+            "remainingBoe": 157792152.4,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          },
+          {
+            "year": 6,
+            "fraction": 1,
+            "startRateBoeDay": 27361.28,
+            "endRateBoeDay": 21889.023999999998,
+            "producedBoe": 8988180.479999999,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 109763660.02175999,
+            "discountedCashFlowCad": 55609686.14135051,
+            "remainingBoe": 148803971.92000002,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          },
+          {
+            "year": 7,
+            "fraction": 1,
+            "startRateBoeDay": 21889.023999999998,
+            "endRateBoeDay": 17511.2192,
+            "producedBoe": 7190544.384,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 87810928.017408,
+            "discountedCashFlowCad": 39721204.386678934,
+            "remainingBoe": 141613427.536,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          },
+          {
+            "year": 8,
+            "fraction": 1,
+            "startRateBoeDay": 17511.2192,
+            "endRateBoeDay": 14008.97536,
+            "producedBoe": 5752435.5072,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 70248742.4139264,
+            "discountedCashFlowCad": 28372288.847627804,
+            "remainingBoe": 135860992.0288,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          },
+          {
+            "year": 9,
+            "fraction": 1,
+            "startRateBoeDay": 14008.97536,
+            "endRateBoeDay": 11207.180288,
+            "producedBoe": 4601948.4057599995,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 56198993.931141116,
+            "discountedCashFlowCad": 20265920.60544843,
+            "remainingBoe": 131259043.62304,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          },
+          {
+            "year": 10,
+            "fraction": 1,
+            "startRateBoeDay": 11207.180288,
+            "endRateBoeDay": 8965.7442304,
+            "producedBoe": 3681558.724608,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 44959195.14491289,
+            "discountedCashFlowCad": 14475657.575320305,
+            "remainingBoe": 127577484.898432,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          },
+          {
+            "year": 11,
+            "fraction": 1,
+            "startRateBoeDay": 8965.7442304,
+            "endRateBoeDay": 7172.5953843199995,
+            "producedBoe": 2945246.9796864,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 35967356.11593031,
+            "discountedCashFlowCad": 10339755.410943074,
+            "remainingBoe": 124632237.9187456,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          },
+          {
+            "year": 12,
+            "fraction": 1,
+            "startRateBoeDay": 7172.5953843199995,
+            "endRateBoeDay": 5738.076307456,
+            "producedBoe": 2356197.5837491197,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 28773884.892744247,
+            "discountedCashFlowCad": 7385539.579245051,
+            "remainingBoe": 122276040.33499649,
+            "decision": "Geen nieuwe investering (5-jaars toets)"
+          }
+        ]
+      },
+      {
+        "scenario": "base",
+        "policy": "adaptive-grid",
+        "enterpriseValueCad": 1028323985.426887,
+        "equityValueCad": 783323985.426887,
+        "valuePerShareCad": 4.360520960960182,
+        "producedBoe": 127723959.66500351,
+        "remainingBoe": 122276040.33499649,
+        "years": [
+          {
+            "year": 1,
+            "fraction": 1,
+            "startRateBoeDay": 83500,
+            "endRateBoeDay": 66800,
+            "producedBoe": 27429750,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 334972107,
+            "discountedCashFlowCad": 299082238.39285713,
+            "remainingBoe": 222570250,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          },
+          {
+            "year": 2,
+            "fraction": 1,
+            "startRateBoeDay": 66800,
+            "endRateBoeDay": 53440,
+            "producedBoe": 21943800,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 267977685.6,
+            "discountedCashFlowCad": 213630170.2806122,
+            "remainingBoe": 200626450,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          },
+          {
+            "year": 3,
+            "fraction": 1,
+            "startRateBoeDay": 53440,
+            "endRateBoeDay": 42752,
+            "producedBoe": 17555040,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 214382148.48,
+            "discountedCashFlowCad": 152592978.77186584,
+            "remainingBoe": 183071410,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          },
+          {
+            "year": 4,
+            "fraction": 1,
+            "startRateBoeDay": 42752,
+            "endRateBoeDay": 34201.6,
+            "producedBoe": 14044032.000000002,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 171505718.784,
+            "discountedCashFlowCad": 108994984.83704703,
+            "remainingBoe": 169027378,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          },
+          {
+            "year": 5,
+            "fraction": 1,
+            "startRateBoeDay": 34201.6,
+            "endRateBoeDay": 27361.28,
+            "producedBoe": 11235225.6,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 137204575.02719998,
+            "discountedCashFlowCad": 77853560.59789072,
+            "remainingBoe": 157792152.4,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          },
+          {
+            "year": 6,
+            "fraction": 1,
+            "startRateBoeDay": 27361.28,
+            "endRateBoeDay": 21889.023999999998,
+            "producedBoe": 8988180.479999999,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 109763660.02175999,
+            "discountedCashFlowCad": 55609686.14135051,
+            "remainingBoe": 148803971.92000002,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          },
+          {
+            "year": 7,
+            "fraction": 1,
+            "startRateBoeDay": 21889.023999999998,
+            "endRateBoeDay": 17511.2192,
+            "producedBoe": 7190544.384,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 87810928.017408,
+            "discountedCashFlowCad": 39721204.386678934,
+            "remainingBoe": 141613427.536,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          },
+          {
+            "year": 8,
+            "fraction": 1,
+            "startRateBoeDay": 17511.2192,
+            "endRateBoeDay": 14008.97536,
+            "producedBoe": 5752435.5072,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 70248742.4139264,
+            "discountedCashFlowCad": 28372288.847627804,
+            "remainingBoe": 135860992.0288,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          },
+          {
+            "year": 9,
+            "fraction": 1,
+            "startRateBoeDay": 14008.97536,
+            "endRateBoeDay": 11207.180288,
+            "producedBoe": 4601948.4057599995,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 56198993.931141116,
+            "discountedCashFlowCad": 20265920.60544843,
+            "remainingBoe": 131259043.62304,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          },
+          {
+            "year": 10,
+            "fraction": 1,
+            "startRateBoeDay": 11207.180288,
+            "endRateBoeDay": 8965.7442304,
+            "producedBoe": 3681558.724608,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 44959195.14491289,
+            "discountedCashFlowCad": 14475657.575320305,
+            "remainingBoe": 127577484.898432,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          },
+          {
+            "year": 11,
+            "fraction": 1,
+            "startRateBoeDay": 8965.7442304,
+            "endRateBoeDay": 7172.5953843199995,
+            "producedBoe": 2945246.9796864,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 35967356.11593031,
+            "discountedCashFlowCad": 10339755.410943074,
+            "remainingBoe": 124632237.9187456,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          },
+          {
+            "year": 12,
+            "fraction": 1,
+            "startRateBoeDay": 7172.5953843199995,
+            "endRateBoeDay": 5738.076307456,
+            "producedBoe": 2356197.5837491197,
+            "capexCad": 0,
+            "preTaxCashFlowCad": 28773884.892744247,
+            "discountedCashFlowCad": 7385539.579245051,
+            "remainingBoe": 122276040.33499649,
+            "decision": "Adaptieve capex 0% plafond (5-jaars constante-budgettoets)"
+          }
+        ]
+      }
+    ]
+  }
+}

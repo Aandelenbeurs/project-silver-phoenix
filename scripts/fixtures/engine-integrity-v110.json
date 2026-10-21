@@ -1,0 +1,13 @@
+{
+  "data/companies.ts": "ff4f0e6e284ec5f3de9854f9ed019690cb05b6f9586d1f1a1c4b0140abc23406",
+  "data/phoenix-v2.ts": "73eaf8d6c6ce61f27052c454d948a025c74a6e2587473430a3c3ba2c1bd05e3d",
+  "data/scenario-upside.ts": "88e1fc5411ac93467d0cab5859de2cd6603d7e883a655b7dd9f6284858ebc4c2",
+  "data/portfolio-v2.ts": "adfeccc527d81d316b32956ab84740ce4ed2b15efd73c8c110aa03bca0583cd1",
+  "data/optimizer-v2.ts": "a36293f247acef7fc775361d8d1db69b26dc5e6053c1cfe0dcb79aa86c90f65b",
+  "data/rotation-engine.ts": "9863bb0abc082a8db6e292268188029123e654dbcd3080b1644a280d754a4372",
+  "data/buy-eligibility.ts": "aaa0b323e2c50772185c8085fee172285dfa9989a5104555a0d8b5c906c41ce9",
+  "data/multi-sector/cross-asset.ts": "875d7e43fab7899a21e5d079e773a31a10624dbf796fcfc95d10808e85c2318b",
+  "data/multi-sector/sectors/canadian-natural-gas/advantage-energy-v2.ts": "77d2a2591eaf06b7f9038fccc505a5c89c8bcad930873822863c3514c3047093",
+  "data/multi-sector/sectors/canadian-natural-gas/advantage-energy-v3.ts": "30b8c581298dc6d6903918678bd9632c08a828b78bc409f68a52a73e4953b746",
+  "data/multi-sector/sectors/canadian-natural-gas/advantage-energy-investment-policy.ts": "1f88fb83632cdb38c9c54a15b2e6a23cd8946e7a5d6c2c315d06166005417776"
+}

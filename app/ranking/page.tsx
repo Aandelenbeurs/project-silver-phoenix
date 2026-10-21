@@ -1,11 +1,6 @@
-import {
-  phoenixCompaniesV2,
-} from "../../data/phoenix-v2";
-
-import {
-  getCompanyById,
-} from "../../data/companies";
-
+import {buildRankingView} from "../../data/ranking-view";
+import {DATA_STATUS_LABELS} from "../../data/score-transparency";
+import ResearchDecisionNotice from "../../components/ResearchDecisionNotice";
 import {
   getLivePortfolio,
 } from "../../data/portfolio-engine";
@@ -39,41 +34,11 @@ const liveGoldPrice =
       })
     : [];
 
-    const phoenixRanked =
-    phoenixCompaniesV2
-      .map((phoenix) => {
-        const company =
-          getCompanyById(
-            phoenix.companyId,
-          );
-
-          const scenario =
-  scenarioRanking.find(
-    (item) =>
-      item.companyId ===
-      phoenix.companyId,
-  );
-  
-    return {
-  ...phoenix,
-  company,
-
-  scenarioUpside:
-    scenario?.scenarioUpside ?? null,
-
-  investmentScore:
-    scenario?.investmentScore ??
-    phoenix.scores.opportunity,
-};
-      })
-      .sort(
-  (a, b) =>
-    (b.investmentScore ?? -1) -
-    (a.investmentScore ?? -1),
-);
+    const phoenixRanked = buildRankingView(scenarioRanking);
 
   return (
     <>
+<ResearchDecisionNotice />
 <section className="panel">
   <div className="panel-heading">
     <div>
@@ -109,6 +74,7 @@ const liveGoldPrice =
           <th>Catalysts</th>
           <th>Risk</th>
           <th>Confidence</th>
+          <th>Datakwaliteit</th>
           <th>Bucket</th>
         </tr>
       </thead>
@@ -148,10 +114,7 @@ const liveGoldPrice =
               </td>
 
              <td>
-  {scenarioRanking.find(
-    (scenarioItem) =>
-      scenarioItem.companyId === item.companyId,
-  )?.scenarioUpside?.toFixed(1) ?? "—"}
+  {item.scenarioUpside?.toFixed(1) ?? "—"}
 </td>
 
 <td>
@@ -210,6 +173,7 @@ const liveGoldPrice =
                 {item.scores.confidence}
               </td>
 
+              <td><strong>{DATA_STATUS_LABELS[item.scores.dataStatus]}</strong><small className="cell-subtitle">Interne status; geen bronverificatie</small></td>
               <td>
                 {item.portfolio.bucket}
               </td>

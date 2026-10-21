@@ -1,5 +1,7 @@
 "use client";
 
+import ResearchDecisionNotice from "./ResearchDecisionNotice";
+
 import {
   useMemo,
   useState,
@@ -168,6 +170,7 @@ const [error, setError] =
     );
 return (
   <div>
+    <ResearchDecisionNotice />
     {loading && (
       <p
         style={{

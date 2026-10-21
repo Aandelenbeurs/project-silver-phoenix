@@ -11,6 +11,7 @@ const sectors = [
 export default function SectorsPage() {
   return <div style={{maxWidth:1100,margin:'0 auto',padding:'24px 16px'}}>
     <h1>Sectoren</h1>
+    <p><Link href="/research" style={{color:"var(--gold-bright)",textDecoration:"underline"}}>Onderzoekscentrum: bronkwaliteit, methodologie en twee sectoren →</Link></p>
     <p>Sectoranalyses op één plek. De Optimizer en Master Ranking blijven in het hoofdmenu.</p>
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:16}}>
       {sectors.map(s=><section key={s.name} style={{border:'1px solid #64748b55',borderRadius:12,padding:20}}>

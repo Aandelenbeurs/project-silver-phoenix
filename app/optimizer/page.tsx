@@ -1,3 +1,4 @@
+import ResearchDecisionNotice from "../../components/ResearchDecisionNotice";
 export const dynamic = "force-dynamic";
 import {
   buildPhoenixScenarioRanking,
@@ -441,6 +442,7 @@ const rotationSimulation =
 
   return (
   <>
+  <ResearchDecisionNotice />
 
 <section className="panel">
   <div className="panel-heading">
