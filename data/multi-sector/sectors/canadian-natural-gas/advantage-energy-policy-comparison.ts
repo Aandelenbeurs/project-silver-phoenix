@@ -25,6 +25,7 @@ export const POLICY_LABELS: Record<InvestmentPolicy,string> = {
  runoff:'Gecontroleerd afbouwen',
  maintenance:'Onderhoud binnen budget',
  'economic-gate':'Economische investeringspoort',
+ 'adaptive-grid':'Adaptieve investeringsladder',
 };
 function summarize(result:PolicyResult, fixed:PolicyResult):PolicyComparisonRow {
  const totalCapexCad=result.years.reduce((sum,y)=>sum+y.capexCad,0);

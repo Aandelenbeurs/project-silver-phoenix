@@ -4,7 +4,7 @@ import { AAV_ILLUSTRATIVE_SCENARIOS, type ScenarioAssumptions, type ScenarioName
 import { calculateAavV3 } from './advantage-energy-v3';
 
 /** Research-only capital-allocation policy experiment. No claim of optimal AAV corporate behavior. */
-export type InvestmentPolicy = 'fixed' | 'runoff' | 'maintenance' | 'economic-gate';
+export type InvestmentPolicy = 'fixed' | 'runoff' | 'maintenance' | 'economic-gate' | 'adaptive-grid';
 export interface PolicyYear { year:number; fraction:number; startRateBoeDay:number; endRateBoeDay:number; producedBoe:number; capexCad:number; preTaxCashFlowCad:number; discountedCashFlowCad:number; remainingBoe:number; decision:string; }
 export interface PolicyResult { scenario:ScenarioName; policy:InvestmentPolicy; enterpriseValueCad:number; equityValueCad:number; valuePerShareCad:number; producedBoe:number; remainingBoe:number; years:PolicyYear[]; }
 const EPS=1e-7;
@@ -49,6 +49,26 @@ function evaluate(s:ScenarioAssumptions,policy:InvestmentPolicy,a:V2Assumptions)
    capex=ranked[0].c;
    decision=capex===0?'Geen nieuwe investering (5-jaars toets)':capex===options[1]?'Beperkt onderhoud (5-jaars toets)':'Capexplafond (5-jaars toets)';
   }
+  if(policy==='adaptive-grid'){
+   // Five-year receding-horizon *constant-budget* candidate comparison.
+   // Every candidate is maintained throughout the lookahead; unlike the
+   // economic gate, this does not assume all later capex is zero.
+   // It is still a heuristic, NOT a globally optimal investment policy.
+   const horizon=Math.min(5,a.forecastYears-year+1);
+   const choices=[...new Set([0,.25,.5,.75,1].map(f=>s.annualCapexCad*f).concat(Math.min(maintain,s.annualCapexCad)))];
+   const forecast=(annualCapex:number)=>{
+    let r=rate,res=remaining,pv=0;
+    for(let k=0;k<horizon && res>EPS;k++){
+     const step=simulateYear(r,res,annualCapex,a);
+     pv+=(step.produced*margin-step.capex)/Math.pow(1+s.discountRate,k+1);
+     r=step.endRate;res=Math.max(0,res-step.produced);
+    }
+    return pv;
+   };
+   const ranked=choices.map(c=>({c,pv:forecast(c)})).sort((x,y)=>y.pv-x.pv||x.c-y.c);
+   capex=ranked[0].c;
+   decision=`Adaptieve capex ${Math.round(100*capex/s.annualCapexCad)}% plafond (5-jaars constante-budgettoets)`;
+  }
   const step=simulateYear(rate,remaining,capex,a);
   const cash=step.produced*margin-step.capex;
   const discounted=cash/Math.pow(1+s.discountRate,year);
@@ -63,7 +83,7 @@ export function compareAavInvestmentPolicies(name:ScenarioName='base',a:V2Assump
  const s=AAV_ILLUSTRATIVE_SCENARIOS.find(x=>x.name===name);
  if(!s)throw new Error('Unknown scenario');
  if(a.recoverableBudgetBoe<=0||a.developmentCadPerFlowingBoeDay<=0||a.naturalDeclineRate<0||a.naturalDeclineRate>=1||a.annualDays<=0||!Number.isInteger(a.forecastYears)||a.forecastYears<1||a.forecastYears>40)throw new Error('Invalid assumptions');
- const results=(['fixed','runoff','maintenance','economic-gate'] as const).map(p=>evaluate(s,p,a));
+ const results=(['fixed','runoff','maintenance','economic-gate','adaptive-grid'] as const).map(p=>evaluate(s,p,a));
  // Same assumptions and cash flow conventions as V3 for the fixed strategy.
  const original=calculateAavV3(a).find(x=>x.name===name)!;
  if(Math.abs(original.enterpriseValueCad-results[0].enterpriseValueCad)>0.05)throw new Error('Fixed policy deviates from V3');
