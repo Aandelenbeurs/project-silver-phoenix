@@ -1,0 +1,18 @@
+.phoenix-ranking { min-width: 0; }
+.phoenix-ranking .ranking-legend { color: #a8bbcb; max-width: 90ch; font-size: .85rem; line-height: 1.6; }
+.phoenix-ranking .compact-table-wrap { overflow: auto; max-width: 100%; isolation: isolate; }
+.phoenix-ranking .data-table { --rank-width: 68px; --company-width: 220px; min-width: 1720px; width: 100%; table-layout: fixed; }
+.phoenix-ranking .data-table th, .phoenix-ranking .data-table td { width: 100px; white-space: normal; overflow-wrap: anywhere; padding: 12px; }
+.phoenix-ranking .data-table th:nth-child(1), .phoenix-ranking .data-table td:nth-child(1) { position: sticky; left: 0; width: var(--rank-width); z-index: 3; background: #102338; }
+.phoenix-ranking .data-table th:nth-child(2), .phoenix-ranking .data-table td:nth-child(2) { position: sticky; left: var(--rank-width); width: var(--company-width); z-index: 3; background: #102338; box-shadow: 3px 0 0 #29465c; }
+.phoenix-ranking .data-table thead th:nth-child(-n+2) { z-index: 4; }
+.phoenix-ranking .data-table tbody tr:hover td:nth-child(-n+2) { background: #19364d; }
+.phoenix-ranking .data-table td:nth-child(2) strong { display: block; white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.5; }
+.phoenix-ranking .ranking-status { display: inline-block; padding: 4px 6px; border-radius: 6px; font-size: 11px; border: 1px solid #638096; color: #cfdeea; line-height: 1.4; }
+.phoenix-ranking .status-valuation-stale { border-color: #b98b49; color: #ffce88; }
+.phoenix-ranking .status-research-needed, .phoenix-ranking .status-review { border-color: #a47191; color: #efb8d7; }
+.phoenix-ranking .compact-table-wrap:focus-visible { outline: 2px solid #75c9f4; outline-offset: 3px; }
+@media (max-width: 600px) {
+ .phoenix-ranking .data-table { --rank-width: 48px; --company-width: 148px; }
+ .phoenix-ranking .data-table th, .phoenix-ranking .data-table td { padding: 9px 7px; }
+}

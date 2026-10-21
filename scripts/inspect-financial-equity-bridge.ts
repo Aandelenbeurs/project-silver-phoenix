@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {BRIDGE_FIELDS,reconcileEquity,dilutionSensitivity,type BridgeBasis} from '../data/multi-sector/research/equity-bridge';
+import type {FinancialDatum,EvidenceDocument} from '../data/multi-sector/research/evidence';
+const basis:BridgeBasis={asOf:'2026-10-21',scope:'synthetic-only',currency:'CAD',assetBasis:'after-tax-unlevered-net-of-project-capex',conversion:'debt',fundingComplete:true};
+const documents:EvidenceDocument[]=[{id:'test',title:'Fictieve testbron',uri:'https://example.com/synthetic',publishedAt:basis.asOf,origin:'independent'}];
+const values={operatingValue:1000,ownership:.8,nonOperatingAssets:50,cash:100,debt:200,corporateCostPV:20,otherObligations:30,thirdPartyInterests:10,dilutedShares:100,convertiblePrincipal:40,convertibleShares:10};
+const data:FinancialDatum[]=BRIDGE_FIELDS.map(id=>({id,value:values[id],unit:id==='ownership'?'fraction':id==='dilutedShares'||id==='convertibleShares'?'shares':'CAD',kind:'reported',verification:'reviewed',period:{start:basis.asOf,end:basis.asOf},scope:basis.scope,documentId:'test',locator:'Fictieve testtabel',uncertainties:[]}));
+const reviewed={data:structuredClone(data),documents:structuredClone(documents)};
+const run=(d=data,b=basis,docs=documents)=>reconcileEquity(d,docs,b,reviewed);
+assert.equal(run().equityValue,690);assert.equal(run().perShare,6.9);
+assert.equal(run(data,{...basis,conversion:'if-converted'}).perShare,730/110);
+for(const id of BRIDGE_FIELDS){assert.equal(run(data.filter(d=>d.id!==id)).status,'blocked',id);assert.equal(run(data.map(d=>d.id===id?{...d,value:null}:d)).perShare,null,id);}
+for(const change of [{value:999},{unit:'USD'},{scope:'other-company'},{verification:'unreviewed' as const},{kind:'hypothetical' as const},{period:{start:'2026-06-30',end:'2026-06-30'}},{period:{start:'2026-10-22',end:'2026-10-22'}},{value:Infinity},{locator:'changed'}])assert.equal(run(data.map((d,i)=>i===0?{...d,...change}:d)).status,'blocked');
+for(const change of [{uri:'https://example.com/changed'},{publishedAt:'2026-10-22'},{title:'changed'}])assert.equal(run(data,basis,[{...documents[0],...change}]).status,'blocked');
+assert.equal(run(data,{...basis,fundingComplete:false}).perShare,null);
+assert.equal(run([...data,data[0]]).perShare,null);
+assert.equal(run(data.map(d=>d.id==='dilutedShares'?{...d,value:0}:d)).perShare,null);
+assert.equal(run(data.map(d=>d.id==='ownership'?{...d,value:2}:d)).perShare,null);
+assert.equal(dilutionSensitivity(.25).remainingValuePerShareFraction,.8);
+for(const n of [-1,NaN,Infinity])assert.throws(()=>dilutionSensitivity(n));
+assert.equal(dilutionSensitivity(0).kind,'hypothetical');
+console.log('PASS: synthetic bridge, paired conversion, all missing fields, source/period mutations, nonfinite values, ownership, dilution and fail-closed output');

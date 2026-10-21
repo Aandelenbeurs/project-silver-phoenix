@@ -1,3 +1,4 @@
+import './ranking.css';
 import {buildRankingView} from "../../data/ranking-view";
 import {DATA_STATUS_LABELS} from "../../data/score-transparency";
 import ResearchDecisionNotice from "../../components/ResearchDecisionNotice";
@@ -39,7 +40,7 @@ const liveGoldPrice =
   return (
     <>
 <ResearchDecisionNotice />
-<section className="panel">
+<section className="panel phoenix-ranking">
   <div className="panel-heading">
     <div>
       <p className="eyebrow">
@@ -57,7 +58,8 @@ const liveGoldPrice =
     </div>
   </div>
 
-  <div className="compact-table-wrap">
+  <p className="ranking-legend">Scoreconfidence is de bestaande interne scorebeoordeling. Datakwaliteit is een interne status; ook ‘compleet’ is geen actuele bronverificatie. Waarderingszekerheid wordt apart beoordeeld in <a href="/research">onderzoek</a>. Scroll horizontaal; rang en bedrijfsnaam blijven zichtbaar.</p>
+  <div className="compact-table-wrap" tabIndex={0} role="region" aria-label="Phoenix ranking, horizontaal scrollbare tabel">
     <table className="data-table wide-table">
       <thead>
         <tr>
@@ -73,7 +75,7 @@ const liveGoldPrice =
           <th>Valuation</th>
           <th>Catalysts</th>
           <th>Risk</th>
-          <th>Confidence</th>
+          <th>Scoreconfidence</th>
           <th>Datakwaliteit</th>
           <th>Bucket</th>
         </tr>
@@ -173,7 +175,7 @@ const liveGoldPrice =
                 {item.scores.confidence}
               </td>
 
-              <td><strong>{DATA_STATUS_LABELS[item.scores.dataStatus]}</strong><small className="cell-subtitle">Interne status; geen bronverificatie</small></td>
+              <td><span className={`ranking-status status-${item.scores.dataStatus}`} title={DATA_STATUS_LABELS[item.scores.dataStatus]}>{({complete:"Legacy compleet","valuation-stale":"Verouderd","research-needed":"Onderzoek",review:"Herbeoordelen"})[item.scores.dataStatus]}</span></td>
               <td>
                 {item.portfolio.bucket}
               </td>
