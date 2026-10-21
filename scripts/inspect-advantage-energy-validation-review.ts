@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {AAV_OPEN_CHECK_REVIEW,getAavValidationReview,AAV_CAPITAL_REVIEW} from '../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-validation-review';
+import {runAdvantageEnergyScenarios} from '../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-scenario-engine';
+const r=getAavValidationReview();
+assert.equal(r.passed,6);assert.equal(r.total,17);assert.equal(r.open.length,11);assert.deepEqual(r.unmapped,[]);
+assert.equal(new Set(AAV_OPEN_CHECK_REVIEW.map(x=>x.key)).size,11);
+assert.ok(r.open.every(x=>x.needed&&x.available&&x.locator&&x.decision.startsWith('Niet vrijgeven')));
+const c=AAV_CAPITAL_REVIEW;
+assert.equal(c.bankDebtCad+c.convertiblePrincipalCad+c.workingCapitalDeficitCad,c.netDebtCad);
+assert.notEqual(c.convertibleCarryingValueCad,c.convertiblePrincipalCad);
+assert.ok(Math.abs(c.convertiblePrincipalCad/c.conversionPriceCad-c.epsConvertibleShares)<1);
+assert.equal(runAdvantageEnergyScenarios().status,'blocked');assert.deepEqual(runAdvantageEnergyScenarios().results,[]);
+console.log('PASS: 11 open checks mapped, 6/17 retained, historical principal/debt/conversion reconciliation, no gate release');

@@ -1,3 +1,4 @@
+import { readJsonObject, ApiInputError } from "../../../lib/api-input";
 import { NextResponse } from "next/server";
 
 import {
@@ -8,7 +9,7 @@ export async function POST(
   request: Request,
 ) {
   try {
-    const body = await request.json();
+    const body = await readJsonObject(request);
 
     const silverPriceUsd =
       body.silverPriceUsd === null ||
@@ -96,7 +97,7 @@ export async function POST(
           "Scenario kon niet worden berekend.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }

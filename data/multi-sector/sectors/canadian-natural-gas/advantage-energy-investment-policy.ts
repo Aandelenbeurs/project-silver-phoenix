@@ -1,3 +1,4 @@
+import { assertAavInvestmentAssumptions } from './advantage-energy-assumption-validation';
 import { AAV_RESEARCH_INPUTS } from './advantage-energy-research-valuation';
 import { AAV_V2_HYPOTHETICAL, type V2Assumptions } from './advantage-energy-v2';
 import { AAV_ILLUSTRATIVE_SCENARIOS, type ScenarioAssumptions, type ScenarioName } from './advantage-energy-scenario-engine';
@@ -82,7 +83,7 @@ function evaluate(s:ScenarioAssumptions,policy:InvestmentPolicy,a:V2Assumptions)
 export function compareAavInvestmentPolicies(name:ScenarioName='base',a:V2Assumptions=AAV_V2_HYPOTHETICAL):PolicyResult[]{
  const s=AAV_ILLUSTRATIVE_SCENARIOS.find(x=>x.name===name);
  if(!s)throw new Error('Unknown scenario');
- if(a.recoverableBudgetBoe<=0||a.developmentCadPerFlowingBoeDay<=0||a.naturalDeclineRate<0||a.naturalDeclineRate>=1||a.annualDays<=0||!Number.isInteger(a.forecastYears)||a.forecastYears<1||a.forecastYears>40)throw new Error('Invalid assumptions');
+ assertAavInvestmentAssumptions(a);
  const results=(['fixed','runoff','maintenance','economic-gate','adaptive-grid'] as const).map(p=>evaluate(s,p,a));
  // Same assumptions and cash flow conventions as V3 for the fixed strategy.
  const original=calculateAavV3(a).find(x=>x.name===name)!;

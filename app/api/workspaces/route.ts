@@ -1,3 +1,4 @@
+import { readJsonObject, ApiInputError } from "../../../lib/api-input";
 import {
   NextRequest,
   NextResponse,
@@ -43,7 +44,7 @@ export async function GET() {
             : "Onbekende fout.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }
@@ -53,12 +54,12 @@ export async function PATCH(
   request: NextRequest,
 ) {
   try {
-    const body = (await request.json()) as {
+    const body = (await readJsonObject(request)) as {
       workspaceId?: string;
       name?: string;
     };
 
-    if (!body.workspaceId) {
+    if (typeof body.workspaceId !== "string" || !/^[a-z0-9][a-z0-9_-]{0,79}$/.test(body.workspaceId) || (body.name !== undefined && (typeof body.name !== "string" || !body.name.trim() || body.name.length > 80))) {
       return NextResponse.json(
         {
           success: false,
@@ -72,6 +73,7 @@ export async function PATCH(
     }
 
     if (body.name !== undefined) {
+      if ((await getWorkspaces()).find(w=>w.id===body.workspaceId)?.isReadOnly) return NextResponse.json({success:false,error:"Workspace is alleen-lezen."},{status:403});
       const workspace =
         await renameWorkspace({
           workspaceId:
@@ -105,7 +107,7 @@ export async function PATCH(
             : "Onbekende fout.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }
@@ -115,7 +117,7 @@ export async function POST(
   request: NextRequest,
 ) {
   try {
-    const body = (await request.json()) as {
+    const body = (await readJsonObject(request)) as {
       name?: string;
      type?:
   | "portfolio"
@@ -123,7 +125,7 @@ export async function POST(
   | "scenario";
     };
 
-    if (!body.name || !body.type) {
+    if (typeof body.name !== "string" || !body.name.trim() || body.name.length > 80 || !["portfolio", "simulation", "scenario"].includes(body.type ?? "")) {
       return NextResponse.json(
         {
           success: false,
@@ -138,7 +140,7 @@ export async function POST(
     const workspace =
       await createWorkspace({
         name: body.name,
-        type: body.type,
+        type: body.type as "portfolio" | "simulation" | "scenario",
       });
 
     return NextResponse.json({
@@ -157,7 +159,7 @@ export async function POST(
             : "Onbekende fout.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }
@@ -168,7 +170,7 @@ export async function DELETE(
 ) {
   try {
     const body: unknown =
-      await request.json();
+      await readJsonObject(request);
 
     if (
       typeof body !== "object" ||
@@ -205,6 +207,7 @@ export async function DELETE(
       );
     }
 
+    if ((await getWorkspaces()).find(w=>w.id===workspaceId)?.isReadOnly) return NextResponse.json({success:false,error:"Workspace is alleen-lezen."},{status:403});
     await deleteWorkspace(
       workspaceId,
     );
@@ -240,9 +243,7 @@ export async function DELETE(
         error: message,
       },
       {
-        status: isProtectedWorkspace
-          ? 403
-          : 500,
+        status: error instanceof ApiInputError ? error.status : isProtectedWorkspace ? 403 : 500,
       },
     );
   }

@@ -166,7 +166,7 @@ try {
   if (
     error instanceof Error &&
     error.message ===
-      "Economic projection exceeds available gas reserves"
+      "Economic projection exceeds available gas reserves in year 2"
   ) {
     insufficientReservesRejected = true;
   } else {

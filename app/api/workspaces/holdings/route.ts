@@ -1,3 +1,4 @@
+import { readJsonObject, ApiInputError } from "../../../../lib/api-input";
 import {
   NextRequest,
   NextResponse,
@@ -63,7 +64,7 @@ export async function GET() {
             : "Onbekende fout.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }
@@ -74,7 +75,7 @@ export async function POST(
 ) {
   try {
     const body: unknown =
-      await request.json();
+      await readJsonObject(request);
 
     if (
       typeof body !== "object" ||
@@ -219,6 +220,7 @@ if (!companyData && !instrumentData) {
 
     const workspace =
       await getCurrentWorkspace();
+    if (workspace.isReadOnly) return NextResponse.json({success:false,error:"Workspace is alleen-lezen."},{status:403});
 
     const holdings =
       await readWorkspaceHoldings(
@@ -370,7 +372,7 @@ await writeWorkspaceTransactions(
             : "Onbekende fout.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }
@@ -381,7 +383,7 @@ export async function PATCH(
 ) {
   try {
     const body: unknown =
-      await request.json();
+      await readJsonObject(request);
 
     if (
       typeof body !== "object" ||
@@ -504,6 +506,7 @@ if (
 
     const workspace =
       await getCurrentWorkspace();
+    if (workspace.isReadOnly) return NextResponse.json({success:false,error:"Workspace is alleen-lezen."},{status:403});
 
    const [
   holdings,
@@ -674,7 +677,7 @@ transactionValueEur:
             : "Onbekende fout.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }
@@ -685,7 +688,7 @@ export async function DELETE(
 ) {
   try {
     const body: unknown =
-      await request.json();
+      await readJsonObject(request);
 
     if (
       typeof body !== "object" ||
@@ -724,6 +727,7 @@ export async function DELETE(
 
     const workspace =
       await getCurrentWorkspace();
+    if (workspace.isReadOnly) return NextResponse.json({success:false,error:"Workspace is alleen-lezen."},{status:403});
 
     const holdings =
       await readWorkspaceHoldings(
@@ -782,7 +786,7 @@ export async function DELETE(
             : "Onbekende fout.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }

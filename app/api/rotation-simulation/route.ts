@@ -1,3 +1,4 @@
+import { readJsonObject, ApiInputError } from "../../../lib/api-input";
 import {
   phoenixCompaniesV2,
 } from "../../../data/phoenix-v2";
@@ -28,7 +29,7 @@ export async function POST(
 ) {
   try {
     const body =
-      await request.json();
+      await readJsonObject(request);
 
     const selectedSellCompanyIds =
       Array.isArray(
@@ -146,7 +147,7 @@ const entryCandidateCompanyIds =
           "Rotatiesimulatie kon niet worden berekend.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }

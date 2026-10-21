@@ -1,3 +1,4 @@
+import { assertAavInvestmentAssumptions } from './advantage-energy-assumption-validation';
 import { AAV_RESEARCH_INPUTS } from './advantage-energy-research-valuation';
 import { AAV_V2_HYPOTHETICAL, type V2Assumptions } from './advantage-energy-v2';
 import { AAV_ILLUSTRATIVE_SCENARIOS, type ScenarioAssumptions, type ScenarioName } from './advantage-energy-scenario-engine';
@@ -56,7 +57,7 @@ export function diagnoseAavMarginalInvestment(
 ):MarginalInvestmentDiagnostic {
  const s=AAV_ILLUSTRATIVE_SCENARIOS.find(x=>x.name===scenario);
  if(!s)throw new Error('Unknown scenario');
- if(a.recoverableBudgetBoe<=0||a.developmentCadPerFlowingBoeDay<=0||a.naturalDeclineRate<0||a.naturalDeclineRate>=1||a.annualDays<=0||!Number.isInteger(a.forecastYears)||a.forecastYears<1||a.forecastYears>40||s.discountRate<=-1)throw new Error('Invalid assumptions');
+ assertAavInvestmentAssumptions(a);
  if(capexOptionsCad.some(x=>!Number.isFinite(x)||x<0))throw new Error('Invalid capex');
  const baseline=simulate(s,a,0),margin=marginPerBoe(s),fiveYearWindow=Math.min(5,a.forecastYears);
  const rows=capexOptionsCad.map(capex=>{

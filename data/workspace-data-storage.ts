@@ -1,3 +1,4 @@
+import { workspacePath } from "../lib/workspace-path";
 import "server-only";
 
 import {
@@ -72,20 +73,14 @@ const workspacesDirectory = path.join(
 function getWorkspaceDirectory(
   workspaceId: string,
 ): string {
-  return path.join(
-    workspacesDirectory,
-    workspaceId,
-  );
+  return workspacePath(workspacesDirectory, workspaceId);
 }
 
 function getWorkspaceFilePath(
   workspaceId: string,
   fileName: string,
 ): string {
-  return path.join(
-    getWorkspaceDirectory(workspaceId),
-    fileName,
-  );
+  return workspacePath(workspacesDirectory, workspaceId, fileName);
 }
 
 async function readJsonFile<T>({
@@ -97,12 +92,10 @@ async function readJsonFile<T>({
   fileName: string;
   fallback: T;
 }): Promise<T> {
+  const filePath = getWorkspaceFilePath(workspaceId, fileName);
   try {
     const file = await readFile(
-      getWorkspaceFilePath(
-        workspaceId,
-        fileName,
-      ),
+      filePath,
       "utf-8",
     );
 
@@ -131,6 +124,10 @@ async function writeJsonFile<T>({
   fileName: string;
   data: T;
 }): Promise<void> {
+  if (fileName !== "workspace.json") {
+    const metadata = await readWorkspaceMetadata(workspaceId);
+    if (metadata?.isReadOnly) throw new Error("Workspace is alleen-lezen.");
+  }
   await mkdir(
     getWorkspaceDirectory(workspaceId),
     {
@@ -263,6 +260,7 @@ export async function saveDailyWorkspaceSnapshot({
     allocationPercent: number;
   }[];
 }): Promise<WorkspacePortfolioSnapshot | null> {
+  if ((await readWorkspaceMetadata(workspaceId))?.isReadOnly) return null;
   if (
     !Number.isFinite(totalMarketValueEur) ||
     totalMarketValueEur <= 0

@@ -1,3 +1,5 @@
+import { getCurrentWorkspace } from "../../../data/workspace";
+import { readJsonObject, ApiInputError } from "../../../lib/api-input";
 import {
   NextRequest,
   NextResponse,
@@ -36,7 +38,7 @@ export async function GET() {
             : "Onbekende fout bij het ophalen van holdings.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }
@@ -46,8 +48,9 @@ export async function PATCH(
   request: NextRequest,
 ) {
   try {
+    if ((await getCurrentWorkspace()).isReadOnly) return NextResponse.json({success:false,error:"Workspace is alleen-lezen."},{status:403});
     const body: unknown =
-      await request.json();
+      await readJsonObject(request);
 
     if (
       typeof body !== "object" ||
@@ -130,7 +133,7 @@ export async function PATCH(
             : "Onbekende fout bij het aanpassen van de holding.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }
@@ -140,6 +143,7 @@ export async function DELETE(
   request: NextRequest,
 ) {
   try {
+    if ((await getCurrentWorkspace()).isReadOnly) return NextResponse.json({success:false,error:"Workspace is alleen-lezen."},{status:403});
     const holdingId =
       request.nextUrl.searchParams.get(
         "holdingId",
@@ -181,7 +185,7 @@ export async function DELETE(
             : "Onbekende fout bij het herstellen van de holding.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }

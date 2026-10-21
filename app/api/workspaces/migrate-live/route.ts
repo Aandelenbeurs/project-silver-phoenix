@@ -1,3 +1,5 @@
+import { readJsonObject, ApiInputError } from "../../../../lib/api-input";
+import type { NextRequest } from "next/server";
 import {
   NextResponse,
 } from "next/server";
@@ -13,8 +15,10 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const body=await readJsonObject(request);
+    if(body.confirm!=="MIGRATE_LIVE_HOLDINGS") return NextResponse.json({success:false,error:"Expliciete migratiebevestiging ontbreekt."},{status:400});
     const liveHoldings =
       await getEffectiveHoldings();
 
@@ -44,7 +48,7 @@ export async function POST() {
             : "Onbekende fout tijdens de migratie.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }

@@ -1,3 +1,4 @@
+import { readJsonObject, ApiInputError } from "../../../../lib/api-input";
 import {
   NextRequest,
   NextResponse,
@@ -45,7 +46,7 @@ export async function GET() {
             : "Onbekende fout.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }
@@ -56,7 +57,7 @@ export async function PATCH(
 ) {
   try {
     const body: unknown =
-      await request.json();
+      await readJsonObject(request);
 
     if (
       typeof body !== "object" ||
@@ -130,6 +131,7 @@ if (
 
     const workspace =
       await getCurrentWorkspace();
+    if (workspace.isReadOnly) return NextResponse.json({success:false,error:"Workspace is alleen-lezen."},{status:403});
 
     const currentSettings =
       await readWorkspaceSettings(
@@ -175,7 +177,7 @@ if (
             : "Onbekende fout.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }

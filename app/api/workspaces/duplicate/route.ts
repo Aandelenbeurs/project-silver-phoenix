@@ -1,3 +1,4 @@
+import { readJsonObject, ApiInputError } from "../../../../lib/api-input";
 import {
   NextRequest,
   NextResponse,
@@ -16,7 +17,7 @@ export async function POST(
 ) {
   try {
     const body: unknown =
-      await request.json();
+      await readJsonObject(request);
 
     if (
       typeof body !== "object" ||
@@ -39,7 +40,7 @@ export async function POST(
 
     if (
       typeof name !== "string" ||
-      name.trim().length < 2
+      name.trim().length < 2 || name.length > 80
     ) {
       return NextResponse.json(
         {
@@ -84,7 +85,7 @@ export async function POST(
             : "Onbekende fout bij het dupliceren.",
       },
       {
-        status: 500,
+        status: error instanceof ApiInputError ? error.status : 500,
       },
     );
   }

@@ -1,135 +1,70 @@
-import React from "react";
-import type { Metadata } from "next";
-import {
-  runAdvantageEnergyScenarios,
-  AAV_ILLUSTRATIVE_SCENARIOS,
-} from "../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-scenario-engine";
-import { evaluateClaimBackedAdvantageReadiness } from "../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-claim-readiness";
-import {
-  AAV_RESEARCH_INPUTS,
-  calculateAavResearchValuation,
-} from "../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-research-valuation";
-
-export const metadata: Metadata = {
-  title: "Advantage Energy | Phoenix Portfolio",
-  description: "Researchscenario's en gecontroleerde AAV-waardering.",
-};
-
-const labels: Record<string, string> = {
-  bear: "Bear", base: "Base", bull: "Bull", moonshot: "Moonshot",
-};
-const cad = (n: number, digits = 2) => new Intl.NumberFormat("nl-NL", {
-  style: "currency", currency: "CAD", maximumFractionDigits: digits,
-  minimumFractionDigits: digits,
-}).format(n);
-const number = (n: number) => new Intl.NumberFormat("nl-NL").format(n);
-const panel: React.CSSProperties = {
-  border: "1px solid #64748b55", borderRadius: 12, padding: 20,
-};
-const grid: React.CSSProperties = {
-  display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 16,
-};
-
-export default function AdvantageEnergyValuationPage() {
-  const verified = runAdvantageEnergyScenarios();
-  const readiness = evaluateClaimBackedAdvantageReadiness();
-  const research = calculateAavResearchValuation();
-  const passed = Object.values(readiness.checks).filter(Boolean).length;
-  const total = Object.keys(readiness.checks).length;
-
-  return (
-    <div style={{ maxWidth: 1120, margin: "0 auto", padding: "24px 8px" }}>
-      <p style={{ opacity: 0.75 }}>Phoenix Portfolio / Canadian Natural Gas</p>
-      <h1>Advantage Energy Ltd. (TSX: AAV)</h1>
-      <p>Onderzoekswaarderingen en afzonderlijke verificatiecontroles. Bedragen in CAD.</p>
-
-      <section aria-label="Research Valuation" style={{ marginTop: 28 }}>
-        <h2>Research Valuation — voorlopig</h2>
-        <p>
-          Vereenvoudigde vijfjaars-DCF met managementverwachtingen en onderzoeksaanames.
-          Dit zijn <strong>geen koersdoelen of geverifieerde fair values</strong>.
-        </p>
-        <div style={grid}>
-          {research.map((result) => {
-            const scenario = AAV_ILLUSTRATIVE_SCENARIOS.find(s => s.name === result.name);
-            return (
-              <article key={result.name} style={panel}>
-                <h3>{labels[result.name]}</h3>
-                <p style={{ fontSize: 28, fontWeight: 700, margin: "12px 0" }}>
-                  {cad(result.perShareCad)}
-                </p>
-                <p style={{ opacity: 0.8, fontSize: 13 }}>
-                  {result.equityValueCad < 0
-                    ? "Negatieve model-equity; geen negatieve beurskoers"
-                    : "Illustratieve modelwaarde per proxy-aandeel"}
-                </p>
-                <small>
-                  Gas {scenario ? cad(scenario.gasPriceCadPerMcf) : "—"}/Mcf ·
-                  {scenario?.forecastYears ?? 5} jaar · EV {cad(result.enterpriseValueCad / 1_000_000, 1)} mln
-                </small>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <section aria-label="Research aannames" style={{ ...panel, marginTop: 24 }}>
-        <h2>Gebruikte researchaannames</h2>
-        <div style={grid}>
-          <p><strong>Productie</strong><br />{number(AAV_RESEARCH_INPUTS.productionBoePerDay)} boe/d (Q4-guidance-midden)</p>
-          <p><strong>Gas-aandeel</strong><br />{Math.round(AAV_RESEARCH_INPUTS.gasEnergyShare * 100)}% (proxy)</p>
-          <p><strong>Nettoschuld</strong><br />{cad(AAV_RESEARCH_INPUTS.netDebtCad / 1_000_000, 0)} mln (verwachting)</p>
-          <p><strong>Aandelen</strong><br />{number(AAV_RESEARCH_INPUTS.shareCountProxy)} (Q2-proxy)</p>
-          <p><strong>Royalties</strong><br />{Math.round(AAV_RESEARCH_INPUTS.royaltyRate * 100)}% (aanname)</p>
-          <p><strong>G&amp;A</strong><br />{cad(AAV_RESEARCH_INPUTS.gaCadPerBoe)}/boe (guidance)</p>
-        </div>
-        <p style={{ fontSize: 13, opacity: 0.8 }}>
-          Peildatum {AAV_RESEARCH_INPUTS.asOf}. Het model bevat geen belastingen, hedges,
-          financieringskosten, ontmantelingsverplichtingen, terminale waarde of expliciete reservebeperking.
-          De vijfjaars-DCF is daarom geen volledige bedrijfswaardering.
-        </p>
-        <p style={{ fontSize: 13 }}>
-          Bronnen: <a href={AAV_RESEARCH_INPUTS.sources.disposition} target="_blank" rel="noreferrer">Wembley-afronding</a>
-          {" · "}<a href={AAV_RESEARCH_INPUTS.sources.guidance} target="_blank" rel="noreferrer">Bedrijfsverwachtingen</a>
-          {" · "}<a href={AAV_RESEARCH_INPUTS.sources.q2} target="_blank" rel="noreferrer">Q2 2026</a>
-        </p>
-      </section>
-
-      <section aria-label="Verified Valuation" style={{ ...panel, marginTop: 28 }}>
-        <h2>Verified Valuation — {verified.status === "blocked" ? "Geblokkeerd" : "Illustratief"}</h2>
-        <p>{passed} van {total} controles geslaagd.</p>
-        <p>{verified.status === "blocked"
-          ? "Geen geverifieerde koerswaardering: actuele gegevens of bewijsstukken ontbreken."
-          : "Geverifieerde invoer beschikbaar; uitkomsten blijven illustratief."}</p>
-        <div style={grid}>
-          {AAV_ILLUSTRATIVE_SCENARIOS.map(s => {
-            const result = verified.results.find(r => r.name === s.name);
-            return (
-              <article key={s.name} style={panel}>
-                <h3>{labels[s.name]}</h3>
-                <p style={{ fontSize: 24, fontWeight: 700 }}>
-                  {result ? cad(result.illustrativePerShareCad) : "—"}
-                </p>
-                <small>{result ? "Illustratieve berekening" : "Wacht op geverifieerde invoer"}</small>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <section aria-label="Validatiecontroles" style={{ marginTop: 28 }}>
-        <h2>Controleoverzicht</h2>
-        <details>
-          <summary>Toon {total} controles ({total - passed} openstaand)</summary>
-          <ul>{Object.entries(readiness.checks).map(([key, valid]) => (
-            <li key={key}>{valid ? "✓" : "○"} {key}: {valid ? "geslaagd" : "niet gevalideerd"}</li>
-          ))}</ul>
-        </details>
-        <details style={{ marginTop: 16 }}>
-          <summary>Toon ontbrekende bewijsstukken en fouten</summary>
-          <ul>{readiness.errors.map((error, i) => <li key={i}>{error}</li>)}</ul>
-        </details>
-      </section>
-    </div>
-  );
+import React from 'react';
+import type {Metadata} from 'next';
+import {AAV_COMPANY_FACTS,AAV_COMPANY_SOURCES,AAV_METHODOLOGY_FINDINGS} from '../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-company-review';
+import {getAavValidationReview,REVIEW_SOURCES,AAV_VALIDATION_REVIEW_DATE,AAV_CAPITAL_REVIEW} from '../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-validation-review';
+import {AAV_ILLUSTRATIVE_SCENARIOS,runAdvantageEnergyScenarios} from '../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-scenario-engine';
+import {calculateAavResearchValuation} from '../../../data/multi-sector/sectors/canadian-natural-gas/advantage-energy-research-valuation';
+import './review.css';
+export const metadata:Metadata={title:'Advantage Energy | Phoenix Portfolio',description:'Bronnen, onderzoeksstatus en scenario’s van Advantage Energy.'};
+const labels={bear:'Bear',base:'Base',bull:'Bull',moonshot:'Moonshot'};
+const n=(v:number)=>new Intl.NumberFormat('nl-NL',{maximumFractionDigits:2}).format(v);
+export default function AdvantageEnergyValuationPage(){
+ const review=getAavValidationReview(),strict=runAdvantageEnergyScenarios(),research=calculateAavResearchValuation();
+ return <div className="aav-review">
+  <header className="aav-hero"><p className="aav-eyebrow">PHOENIX RESEARCH · CANADEES AARDGAS</p>
+   <h1>Advantage Energy</h1><p>TSX: AAV · Bedragen in CAD · Broncontrole {AAV_VALIDATION_REVIEW_DATE}</p>
+   <nav aria-label="Onderzoeksnavigatie"><a href="#samenvatting">Samenvatting</a><a href="#waardering">Waardering</a><a href="#scenarios">Scenarioanalyse</a><a href="#verdieping">Verdieping</a></nav>
+  </header>
+  <section id="samenvatting" aria-label="Beleggersoverzicht" className="aav-section">
+   <h2>Een gasproducent met een veranderde portefeuille</h2>
+   <p>Advantage produceert aardgas, olie en gasvloeistoffen in West-Canada, met eigen infrastructuur rond Glacier, Valhalla en Progress.
+    De verkoop van Wembley is afgerond. De invloed op de actuele productie, balans en reservebasis vraagt nog een samenhangende aansluiting.</p>
+   <div className="aav-cards">
+    <article><span>Gerapporteerde productie</span><strong>70.611 boe/d</strong><small>Q2 2026 · vóór verkoop</small></article>
+    <article><span>Gerapporteerde nettoschuld</span><strong>CAD 560,25 mln</strong><small>30 juni 2026 · exclusief Entropy</small></article>
+    <article><span>Wembley-verkoop</span><strong>CAD 316 mln</strong><small>11 september · bruto vóór aanpassingen</small></article>
+    <article><span>Onderzoeksstatus</span><strong>{review.passed}/{review.total} controles</strong><small>{review.total-review.passed} open · waardering geblokkeerd</small></article>
+   </div>
+   <p className="aav-conclusion"><strong>Conclusie:</strong> de verkoop levert financiële ruimte op, maar de beschikbare gegevens onderbouwen nog geen betrouwbare waarde per aandeel.</p>
+   <p><strong>Grootste risico’s:</strong> gasprijs en afzetcontracten, natuurlijke productieafname en vervangingsinvesteringen, plus onzekerheid over schuld, verwatering en reserves na verkoop.</p>
+   <p className="aav-muted"><a href={AAV_COMPANY_SOURCES.q2}>Q2-resultaten</a> · <a href={AAV_COMPANY_SOURCES.sale}>Afronding Wembley</a></p>
+  </section>
+  <section id="waardering" className="aav-section aav-blocked">
+   <p className="aav-eyebrow">WAARDERING</p><h2>{strict.status==='blocked'?'Geblokkeerd — nog geen betrouwbaar koersdoel':'Invoercontroles afgerond — uitkomst blijft illustratief'}</h2>
+   <p>Er ontbreken gemeten gas- en liquidsproductie na de verkoop, een actuele schuld- en aandelenbrug en aangepaste gasreserves.
+    Kosten en investeringen moeten bovendien bij dezelfde bedrijfsomvang en periode aansluiten.</p>
+   <p>Een verkoopbericht, kwartaalgemiddelde of managementverwachting kan die metingen niet vervangen. Daarom tonen we hier geen geverifieerde waarde per aandeel.</p>
+   <p>De {review.total} technische controles zijn geen {review.total} onafhankelijke financiële bewijzen: sommige controleren dezelfde gegevens opnieuw op bron en definitie.</p>
+   <details><summary>Wat ontbreekt er precies? ({review.open.length} open controles)</summary>
+    <div className="aav-check-list">{review.open.map(r=><article key={r.key}><h3>{r.label}</h3><p><strong>Nodig:</strong> {r.needed}</p><p><strong>Beschikbaar:</strong> {r.available}</p><p className="aav-muted">{r.kind} · {REVIEW_SOURCES[r.source].period} · <a href={REVIEW_SOURCES[r.source].url}>{REVIEW_SOURCES[r.source].title}</a> · {r.locator}</p><p>{r.decision}</p></article>)}</div>
+   </details>
+  </section>
+  <section id="scenarios" className="aav-section"><p className="aav-eyebrow">SCENARIOANALYSE</p><h2>Wat verandert als de aannames veranderen?</h2>
+   <p>Bear, Base, Bull en Moonshot zijn stresstests. Gasprijzen hieronder zijn hypothetische gerealiseerde verkoopprijzen, geen AECO-voorspelling of geverifieerd koersdoel.</p>
+   <div className="aav-cards">{AAV_ILLUSTRATIVE_SCENARIOS.map(s=><article key={s.name}><span>{labels[s.name]}</span><strong>CAD {n(s.gasPriceCadPerMcf)}/Mcf</strong><small>Liquids CAD {n(s.liquidsPriceCadPerBbl)}/bbl<br/>Jaarcapex CAD {n(s.annualCapexCad/1e6)} mln<br/>Discontering {n(s.discountRate*100)}%</small></article>)}</div>
+   <details><summary>Research Valuation: toon hypothetische vijfjaarsuitkomsten</summary>
+    <p>Geen belastingen, hedges, expliciete reservebeperking, ontmanteling of restwaarde. Capex heeft hier geen effect op productie. De aandelenproxy en schuld zijn niet gereconcilieerd voor convertibles.</p>
+    <div className="aav-cards">{research.map(r=><article key={r.name}><span>{labels[r.name]}</span><strong>CAD {n(r.perShareCad)}</strong><small>Hypothetische uitkomst per proxy-aandeel; geen koersdoel.{r.equityValueCad<0?' Negatieve model-equity is geen negatieve beurskoers.':''}</small></article>)}</div>
+   </details>
+  </section>
+  <section id="verdieping" className="aav-section"><p className="aav-eyebrow">TECHNISCHE VERDIEPING</p><h2>Bronnen en detailmodellen</h2>
+   <details id="bedrijfsfeiten"><summary>Bedrijfsfeiten en bronregister</summary>
+    <div className="aav-table"><table><caption>Periode en status horen bij iedere waarde</caption><thead><tr><th>Gegeven</th><th>Waarde</th><th>Status / periode</th><th>Beperking en bron</th></tr></thead><tbody>{AAV_COMPANY_FACTS.map(f=><tr key={f.label}><th scope="row">{f.label}</th><td>{f.display}</td><td>{f.kind==='reported'?'Gerapporteerd':'Managementverwachting'}<br/>{f.period}</td><td>{f.limitation} <a href={AAV_COMPANY_SOURCES[f.source]}>Bron</a></td></tr>)}</tbody></table></div>
+    <ul>{Object.entries(REVIEW_SOURCES).map(([id,s])=><li key={id}><a href={s.url}>{s.title}</a> · gepubliceerd {s.published} · {s.period}</li>)}</ul>
+   </details>
+   <details><summary>Convertibles: schuld en aandelen consequent behandelen</summary>
+    <p>Historische schuldbrug per {AAV_CAPITAL_REVIEW.asOf}: CAD 397,896 mln bankschuld + CAD 143,750 mln hoofdsom convertibles + CAD 18,602 mln werkkapitaaltekort = CAD 560,248 mln nettoschuld.</p>
+    <p>{AAV_CAPITAL_REVIEW.rule} De boekwaarde van de obligaties (CAD 128,703 mln) is niet gelijk aan de hoofdsom in deze schulddefinitie. Conversieprijs volgens AIF: CAD 14,58, onder voorbehoud van contractuele aanpassingen.</p>
+   </details>
+   <details id="modelcontrole"><summary>Methodologische beperkingen</summary><ul>{AAV_METHODOLOGY_FINDINGS.map(f=><li key={f}>{f}</li>)}</ul></details>
+   <details id="modellen"><summary>Open de detailmodellen</summary><ul>
+    <li><a href="/valuation/advantage-energy/engine">Modeloverzicht, vijf strategieën, adaptieve ladder en marginale analyse</a></li>
+    <li><a href="/valuation/advantage-energy/investment-threshold">Economische investeringsdrempels</a></li>
+    <li><a href="/valuation/advantage-energy/project-investments">Fictieve projecttranches</a></li>
+    <li><a href="/valuation/advantage-energy/v2">V2 — capaciteit en reservebudget</a></li><li><a href="/valuation/advantage-energy/v3">V3 — gedeeltelijk uitputtingsjaar</a></li>
+   </ul></details>
+   <details><summary>Toon {review.total} verificatiecontroles</summary><ul>{Object.entries(review.readiness.checks).map(([key,valid])=><li key={key}>{valid?'✓':'○'} {key}: {valid?'geslaagd':'Wacht op geverifieerde invoer'}</li>)}</ul></details>
+   <details><summary>Toon ontbrekende bewijsstukken en fouten</summary><ul>{review.readiness.errors.map((e,i)=><li key={i}>{e}</li>)}</ul></details>
+  </section>
+ </div>;
 }

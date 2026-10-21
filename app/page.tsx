@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import MetalScenarioCalculator from "../components/MetalScenarioCalculator";
 import AllocationPanel from "../components/AllocationPanel";
 import Link from "next/link";
