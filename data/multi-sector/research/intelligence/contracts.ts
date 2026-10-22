@@ -1,3 +1,4 @@
+import type {PdfValue} from './pdf-tables';
 import type {FinancialDatum} from '../evidence';
 export type CompanyId='abrasilver'|'advantage-energy';
 export type DocumentType='annual'|'quarterly'|'mda'|'press-release'|'technical-study'|'reserves'|'financial-notes'|'material-event';
@@ -9,12 +10,14 @@ export interface SourceDocument {
  period:{start:string;end:string};discoveredAt:string;version:string;supersedes:string|null;
  text:string;locator:string;contentHash:string;currency:'CAD'|'USD'|null;
  monitoring?:{channelId:string;bodyHash:string|null;hashBasis:'pdf-bytes'|'html-text'|'index-metadata';processing:'discovered'|'fetched'|'processed'|'manual-required'|'unreachable';warnings:string[];previousVersion:string|null};
- method:'manual-excerpt'|'automatic-discovery';status:'discovered'|'extracted'|'extraction-error';
+ pdf?:{parser:string;fileHash:string|null;sourceDocumentId:string;status:'processed'|'unreadable'|'error';pages:number;reportDate:string|null;warnings:string[];errorCode:string|null};
+ method:'manual-excerpt'|'automatic-discovery'|'pdf-extraction';status:'discovered'|'extracted'|'extraction-error';
 }
 export interface Candidate {
  id:string;documentId:string;companyId:CompanyId;metric:string;label:string;
  datum:FinancialDatum;currency:'CAD'|'USD'|null;raw:string;quote:string;locator:string;
- method:'rule-v1'|'manual-v1';formula:string|null;status:CandidateStatus;issues:string[];
+ pdf?:Omit<PdfValue,'value'|'metric'|'label'|'unit'|'currency'|'period'|'scope'> & {fileHash:string;parser:string;confidence:'review-required'};
+ method:'rule-v1'|'manual-v1'|'pdf-table-v1';formula:string|null;status:CandidateStatus;issues:string[];
  relation:'new-period'|'correction'|'guidance'|'event'|'same-period';relevance:string;fingerprint:string;
 }
 export interface Decision {id:string;candidateId:string;fingerprint:string;documentHash:string;action:'approve'|'reject';reason:string;at:string;actor:'local-user'}

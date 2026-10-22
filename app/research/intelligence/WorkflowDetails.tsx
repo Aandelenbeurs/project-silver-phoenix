@@ -1,0 +1,19 @@
+'use client';
+import React from 'react';
+import {HUMAN_LABELS,type WorkflowStatus} from '../../../data/multi-sector/research/intelligence/workflow-status';
+import type {ModelReadinessView} from '../../../data/multi-sector/research/intelligence/model-readiness-view';
+export function WorkflowDetails({status}:{status:WorkflowStatus|undefined}){
+ if(!status)return <p role="alert">Actuele workflowgegevens ontbreken. Groepsgoedkeuring is niet beschikbaar.</p>;
+ return <div className="fi-workflow"><dl><dt>Automatische bronverificatie</dt><dd>{({green:'GROEN',orange:'ORANJE',red:'ROOD',unverifiable:'NIET VERIFIEERBAAR'})[status.source]}</dd><dt>Financiële reconciliatie</dt><dd>{status.reconciliation.label}. {status.reconciliation.limitation}</dd><dt>Menselijke beoordeling</dt><dd>{HUMAN_LABELS[status.human]}</dd><dt>Modelvalidatie</dt><dd>Niet gevalideerd voor modelinvoer</dd><dt>Waarderingsvrijgave</dt><dd>Geblokkeerd</dd></dl>
+ <p>{status.basis==='historical-pre-wembley'?'Historische periode vóór Wembley; geen actuele post-sale bedrijfsbasis.':status.basis==='post-event-unreconciled'?'Post-Wembley datum; actuele bedrijfsaansluiting nog niet gevalideerd.':'Afzonderlijke bedrijfs- en modelbasis vereist.'}</p>
+ {status.reconciliation.reasons.length>0&&<><h4>Actuele aandachtspunten / blokkades</h4><ul>{status.reconciliation.reasons.map((r,i)=><li key={i}>{r}</li>)}</ul></>}
+ {status.reconciliation.requiredEvidence.length>0&&<><h4>Wat is nog nodig?</h4><ul>{status.reconciliation.requiredEvidence.map((r,i)=><li key={i}>{r}</li>)}</ul></>}
+ {status.reconciliation.arithmetic.map((r,i)=><p key={i}>Bestaande periodecontrole: {r.message} Geen integrale financiële goedkeuring.</p>)}
+ <details><summary>Historische importstatus en bronkoppeling</summary><p>Vastgelegde importstatus: {status.extractionStatus}. Dit is geen actuele bronverificatiestatus of menselijke beslissing.</p><ul>{status.importWarnings.map((w,i)=><li key={i}>{w}</li>)}</ul><p className="fi-hash">Oorspronkelijke bron {status.originalDocumentId} · analyseversie {status.analysisDocumentId}</p></details></div>;
+}
+export function ModelReadinessPanel({companies}:{companies:ModelReadinessView|undefined}){
+ return <section id="fi-modelgereedheid" className="panel"><h2>Financiële modelgereedheid</h2><p>Bronbewijs → financiële reconciliatie → menselijke goedkeuring → afzonderlijke modelvalidatie → waarderingsvrijgave. Geen stap keurt automatisch de volgende goed. Onderzoekskandidaten hieronder wijzigen geen engine-invoer.</p>
+ {!companies&&<p role="alert">Modelgereedheid kon niet worden geladen; geen vrijgave.</p>}
+ {companies?.map(c=><article key={c.companyId}><h3>{c.label} · {c.passed!==null?`${c.passed}/${c.total} bestaande enginechecks`:'equitywaardering geblokkeerd'}</h3><p>Waarderingsvrijgave: geblokkeerd. Modelvalidatie van Intelligence-kandidaten: niet uitgevoerd.</p><details><summary>Vereiste velden, gerelateerd bronbewijs en open blokkades — {c.label}</summary><div className="fi-table-wrap"><table><thead><tr><th>Veld / controle</th><th>Bestaande enginecheck</th><th>Onderzoeksbewijs</th><th>Menselijk goedgekeurd</th><th>Modelvalidatie</th><th>Wat ontbreekt?</th></tr></thead><tbody>{c.fields.map(f=><tr key={f.id}><td>{f.label}<small>{f.basis}</small></td><td>{f.engineCheckPassed?'Geslaagd in bestaande engine':'Niet geslaagd / ontbreekt'}</td><td>{f.research.sourceVerified} gerelateerde groene kandidaten{f.research.historicalExcluded>0&&<small>{f.research.historicalExcluded} historische kandidaten uitgesloten van actuele koppeling</small>}</td><td>{f.research.humanApproved} gerelateerde onderzoeksbeslissingen</td><td>Geen Intelligence-invoer gevalideerd</td><td>{f.needed}<small>{f.research.note}</small></td></tr>)}</tbody></table></div><ul>{c.reasons.map((r,i)=><li key={i}>{r}</li>)}</ul></details></article>)}
+ </section>;
+}

@@ -21,3 +21,26 @@
 .financial-intelligence .fi-checkbox input {width:auto;flex:0 0 auto;margin-top:6px;}
 .fi-status {color:#ffd49b;}
 @media(max-width:550px){.financial-intelligence dl{grid-template-columns:1fr;gap:5px;}.financial-intelligence dd{margin-bottom:12px;}}
+.fi-table-wrap {overflow:auto;max-width:100%;}
+.fi-documents {width:100%;border-collapse:collapse;font-size:.9rem;}
+.fi-documents th,.fi-documents td {text-align:left;padding:12px;border-bottom:1px solid #2b455a;vertical-align:top;min-width:110px;}
+.fi-documents th {color:#9eb7ca;font-weight:600;}
+.fi-documents td:first-child {min-width:230px;}
+.fi-documents td button {margin:0 8px 8px 0;font-size:.85rem;}
+.fi-documentdetail {margin-top:24px;padding-top:20px;border-top:1px solid #4b687f;}
+.fi-documents th,.fi-documents td {min-width:0;padding:8px;}
+.fi-documents td:first-child {min-width:170px;max-width:260px;overflow-wrap:anywhere;}
+.fi-documents td button {padding:5px 8px;margin:0 4px 5px 0;font-size:.8rem;}
+.fi-documents td:first-child button {text-align:left;background:transparent;border-color:transparent;padding:0;}
+.fi-documents td:last-child {min-width:130px;}
+.fi-documents small {display:block;margin-top:5px;color:#9eb7ca;}
+.fi-documentdetail {scroll-margin-top:20px;border:1px solid #4b687f;border-radius:10px;padding:18px;overflow-wrap:anywhere;}
+.fi-analysis-result,.fi-candidate-count {border-left:3px solid #89d9ff;padding-left:16px;}
+.fi-verification-green {border-left:3px solid #75dca5;padding-left:12px;}
+.fi-verification-orange {border-left:3px solid #ffc970;padding-left:12px;}
+.fi-verification-red {border-left:3px solid #ff8e91;padding-left:12px;}
+.fi-verification-unverifiable {border-left:3px solid #aab9c9;padding-left:12px;}
+.fi-batch-options {max-height:250px;overflow:auto;margin:14px 0;}
+.fi-batch-selection {border:1px solid #5885a7;border-radius:8px;padding:14px;overflow-wrap:anywhere;}
+.financial-intelligence > p[role="status"] {position:sticky;top:8px;z-index:3;background:#0b1d2d;padding:12px;border-radius:8px;}
+.financial-intelligence > p[role="status"]:empty {display:none;}

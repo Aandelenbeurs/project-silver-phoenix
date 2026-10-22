@@ -15,6 +15,7 @@ export function assertState(s:IntelligenceState):void{
  for(const d of s.documents){const {id,version,...rest}=d;const {discoveredAt,status,...core}=rest;
   if(digest(d.text)!==d.contentHash||documentIdentity(core)!==id||version!==id)throw new IntelligenceError('Documentversie beschadigd.',409);
  }
+ for(const doc of s.documents)if(doc.pdf&&!s.audit.some(a=>a.action==='import'&&a.subject===doc.id&&a.fingerprint===doc.id))throw new IntelligenceError('PDF mist auditbinding.',409);
  for(const check of s.checks)if(!s.audit.some(a=>a.action==='source-check'&&a.subject===check.id&&a.fingerprint===digest(JSON.stringify(check))))throw new IntelligenceError('Broncontrole mist geldige auditbinding.',409);
  for(const c of s.candidates){const {id,fingerprint:fp,...base}=c;if(fingerprint(base)!==fp||id!==fp||!s.documents.some(d=>d.id===c.documentId))throw new IntelligenceError('Kandidaat beschadigd.',409);}
  for(const d of s.decisions){const c=s.candidates.find(c=>c.id===d.candidateId),doc=s.documents.find(x=>x.id===c?.documentId);if(!c||!doc||d.fingerprint!==c.fingerprint||d.documentHash!==doc.contentHash||!s.audit.some(a=>a.subject===c.id&&a.action===d.action&&a.fingerprint===digest(JSON.stringify(d))))throw new IntelligenceError('Beslissing mist geldige bron-/auditbinding.',409);}
@@ -55,6 +56,43 @@ export function registerDiscovered(original:IntelligenceState,input:Omit<SourceD
  s.documents.push(doc);s.candidates.push(...candidates);audit(s,at,'import',id,id);bounded(s);
  return {state:s,documentId:id};
 }
+/** Appends a PDF-derived document, never rewrites imported history or decisions. */
+export function registerPdfAnalysis(original:IntelligenceState,sourceId:string,result:{fileHash:string|null;parser:string;pages:number;values:import('./pdf-tables').PdfValue[];warnings:string[];reportDate:string|null;errorCode:string|null;publishedAt:string|null},at:string){
+ assertState(original);nowCheck(at);const source=original.documents.find(d=>d.id===sourceId);
+ if(!source||source.companyId!=='advantage-energy'||source.sourceClass!=='primary')throw new IntelligenceError('Officieel geregistreerd Advantage-document vereist.');
+ const duplicate=result.fileHash&&original.documents.find(d=>d.companyId===source.companyId&&d.pdf?.fileHash===result.fileHash&&d.pdf.parser===result.parser&&d.pdf.status==='processed');
+ if(duplicate)return original;
+ if(result.values.length>100||result.values.some(v=>v.quote.length>1500||!v.header||!Number.isFinite(v.value)||!validDate(v.period.start)||!validDate(v.period.end)))throw new IntelligenceError('Ongeldig PDF-extractieresultaat.');
+ const quotes=[...new Set(result.values.map(v=>`PDF-pagina ${v.page}\n${v.header}\n${v.quote}`))].join('\n\n');
+ if(quotes.length>30000)throw new IntelligenceError('Te veel bronpassages; handmatige selectie vereist.');
+ const core={companyId:source.companyId,title:source.title,type:source.type,event:source.event,issuer:source.issuer,url:source.url,sourceClass:source.sourceClass,publishedAt:result.publishedAt,
+  period:source.period,currency:null,text:quotes,locator:'Fysieke PDF-pagina’s; iedere kandidaat heeft eigen kolom en verslagperiode',supersedes:original.documents.filter(d=>d.url===source.url&&d.pdf?.status==='processed').at(-1)?.id??null,contentHash:digest(quotes),method:'pdf-extraction' as const,
+  pdf:{parser:result.parser,fileHash:result.fileHash,sourceDocumentId:source.pdf?.sourceDocumentId??source.id,status:result.errorCode?(result.errorCode.startsWith('PDF_')?'unreadable' as const:'error' as const):'processed' as const,pages:result.pages,reportDate:result.reportDate,warnings:result.warnings,errorCode:result.errorCode}};
+ const id=documentIdentity(core);if(original.documents.some(d=>d.id===id))return original;
+ const doc:SourceDocument={...core,id,version:id,discoveredAt:at,status:result.errorCode?'extraction-error':result.values.length?'extracted':'discovered'};
+ const s=structuredClone(original);s.documents.push(doc);
+ for(const v of result.values){
+  const {value,metric,label,unit,currency,period,scope,...evidence}=v;
+  const issues:string[]=[];if(!doc.publishedAt)issues.push('Publicatiedatum ontbreekt; MD&A-/bestandsdatum is geen bewezen publicatie.');
+  const locator=`PDF-pagina ${v.page}; ${v.definition}; ${v.periodType}; ${period.start} — ${period.end}`;
+  const base:Omit<Candidate,'id'|'fingerprint'>={documentId:id,companyId:doc.companyId,metric,label,currency,raw:v.rawNumber,quote:v.quote,locator,method:'pdf-table-v1',formula:v.scale===1?null:`${v.rawNumber} × ${v.scale} (expliciete tabelschaal)`,
+   datum:{id:metric,value,unit,kind:'reported',verification:'unreviewed',period,scope,documentId:id,locator,uncertainties:issues},status:issues.length?'insufficient-evidence':'to-review',issues,relation:doc.supersedes?'correction':'new-period',relevance:'Historisch financieel brongegeven; bedrijfsscope en Wembley-aansluiting afzonderlijk controleren. Geen gevalideerde modelinvoer.',
+   pdf:{...evidence,fileHash:result.fileHash!,parser:result.parser,confidence:'review-required'}};
+  const h=fingerprint(base);s.candidates.push({...base,id:h,fingerprint:h});
+ }
+ audit(s,at,'import',id,id);bounded(s);return s;
+}
+function replaces(s:IntelligenceState,doc:SourceDocument,prior:string){const seen=new Set<string>();let id=doc.supersedes;while(id&&!seen.has(id)){if(id===prior)return true;seen.add(id);id=s.documents.find(d=>d.id===id)?.supersedes??null;}return false;}
+function samePeriodAndScope(a:Candidate,b:Candidate){
+ return a.datum.period.start===b.datum.period.start&&a.datum.period.end===b.datum.period.end&&a.datum.unit===b.datum.unit&&(!a.pdf&&!b.pdf||a.datum.scope===b.datum.scope&&a.pdf?.periodType===b.pdf?.periodType);
+}
+function newerDocument(s:IntelligenceState,doc:SourceDocument,x:SourceDocument){
+ if(x.id===doc.id||x.companyId!==doc.companyId||s.documents.indexOf(x)<=s.documents.indexOf(doc))return false;
+ if(x.pdf&&!x.pdf.fileHash)return false;
+ if(x.supersedes===doc.id)return true;if(x.url!==doc.url)return false;
+ if(doc.pdf?.fileHash&&(x.pdf?.fileHash===doc.pdf.fileHash||x.monitoring?.bodyHash===doc.pdf.fileHash))return false;
+ return true;
+}
 export function addManualCandidate(original:IntelligenceState,documentId:string,value:ManualValue,at:string){
  assertState(original);const doc=original.documents.find(d=>d.id===documentId);if(!doc)throw new IntelligenceError('Document bestaat niet.');
  let c:Candidate;try{c=manualCandidate(doc,value);}catch(e){throw new IntelligenceError(e instanceof Error?e.message:'Handmatige invoer ongeldig.');}
@@ -67,10 +105,11 @@ export function candidateProblems(s:IntelligenceState,c:Candidate,asOf:string){
  const ev:EvidenceDocument={id:doc.id,title:doc.title,uri:doc.url,publishedAt:doc.publishedAt??'',origin:doc.sourceClass==='primary'?'issuer':'internal'};
  const review=reviewEvidence([d],[ev],{asOf,rules:[{id:d.id,unit:d.unit,scope:d.scope,kinds:['reported','guidance']}]});
  const reasons=[...c.issues,...review.issues.map(x=>x.message)];
+ if(c.pdf&&(!doc.pdf||c.pdf.fileHash!==doc.pdf.fileHash||!c.quote.includes(c.pdf.rawNumber)||!doc.text.includes(c.quote)||!c.pdf.page||!c.pdf.definition||!c.pdf.periodType))reasons.push('PDF-bewijsbinding, definitie of periode ontbreekt.');
  if(doc.method==='automatic-discovery')reasons.push('Automatische ontdekking: publicatie, verslagperiode en inhoud moeten via een volledige handmatige bronimport worden bevestigd.');
- if(s.documents.some(x=>x.id!==doc.id&&x.companyId===doc.companyId&&(x.supersedes===doc.id||x.url===doc.url)&&s.documents.indexOf(x)>s.documents.indexOf(doc)))reasons.push('Nieuwere importversie van deze bronlink bekend; beoordeel die versie. Dit bewijst geen wijziging van het externe volledige document.');
- if(s.candidates.some(x=>x.id!==c.id&&x.documentId===c.documentId&&x.metric===c.metric&&x.datum.value!==c.datum.value&&s.decisions.find(d=>d.candidateId===x.id)?.action!=='reject'))reasons.push('Conflicterende kandidaat voor dezelfde documentmetriek; wijs foutieve extractie eerst af.');
- const competing=s.candidates.some(x=>x.id!==c.id&&x.companyId===c.companyId&&x.metric===c.metric&&x.datum.unit===c.datum.unit&&x.datum.period.start===c.datum.period.start&&x.datum.period.end===c.datum.period.end&&x.datum.value!==c.datum.value&&doc.supersedes!==x.documentId&&s.decisions.find(d=>d.candidateId===x.id)?.action!=='reject');
+ if(s.documents.some(x=>newerDocument(s,doc,x)))reasons.push('Nieuwere importversie van deze bronlink bekend; beoordeel die versie. Dit bewijst geen wijziging van het externe volledige document.');
+ if(s.candidates.some(x=>x.id!==c.id&&x.documentId===c.documentId&&x.metric===c.metric&&samePeriodAndScope(x,c)&&x.datum.value!==c.datum.value&&s.decisions.find(d=>d.candidateId===x.id)?.action!=='reject'))reasons.push('Conflicterende kandidaat voor dezelfde documentmetriek; wijs foutieve extractie eerst af.');
+ const competing=s.candidates.some(x=>x.id!==c.id&&x.companyId===c.companyId&&x.metric===c.metric&&samePeriodAndScope(x,c)&&x.datum.unit===c.datum.unit&&x.datum.period.start===c.datum.period.start&&x.datum.period.end===c.datum.period.end&&x.datum.value!==c.datum.value&&!replaces(s,doc,x.documentId)&&s.decisions.find(d=>d.candidateId===x.id)?.action!=='reject');
  if(competing)reasons.push('Andere waarde voor dezelfde bedrijfsmetriek en periode; wijs de foutieve kandidaat af of registreer een expliciete broncorrectie.');
  return [...new Set(reasons)];
 }
@@ -107,7 +146,7 @@ export function assessFreshness(input:{asOf:string;essentialOutdated:boolean;pen
 }
 export function documentReviewStatus(s:IntelligenceState,d:SourceDocument){
  const values=s.candidates.filter(c=>c.documentId===d.id);
- if(s.documents.some(x=>x.supersedes===d.id||x.url===d.url&&s.documents.indexOf(x)>s.documents.indexOf(d)))return 'Nieuwe importversie bekend';
+ if(s.documents.some(x=>newerDocument(s,d,x)))return 'Nieuwe importversie bekend';
  if(!values.length)return d.monitoring?'Ontdekt; handmatige broncontrole vereist':'Extractiefout / geen regelmatch';
  const decided=values.map(c=>s.decisions.find(x=>x.candidateId===c.id));
  if(decided.every(x=>x?.action==='reject'))return 'Alle voorstellen afgewezen';
@@ -127,3 +166,15 @@ export function analysisImpact(s:IntelligenceState,companyId:CompanyId,asOf:stri
  return {companyId,asOf,usedDate,status,events,explanation:outdated?'Goedgekeurde relevante informatie dateert na een essentieel uitgangspunt. Historische cijfers blijven behouden.':relevant.length?'Nieuwe informatie kan de analyse beïnvloeden; nog geen modelvalidatie.':'Geen voldoende volledige actuele broncontrole; een lege indexcontrole bewijst geen actualiteit.',engineChanged:false,financialGateChanged:false};
 }
 export {emptyIntelligenceState};
+
+export function candidateComparison(s:IntelligenceState,c:Candidate){
+ const old=priorObservation(s,c);const reasons:string[]=[];
+ if(!old)return {old:null,comparable:false,difference:null,reasons:['Geen vergelijkbaar eerder gegeven.']};
+ if(old.unit!==c.datum.unit)reasons.push('Eenheden of schaal verschillen; geen impliciete conversie.');
+ if(old.period.start!==c.datum.period.start||old.period.end!==c.datum.period.end)reasons.push('Verslagperioden verschillen; afzonderlijke aansluiting vereist.');
+ if(c.pdf){
+  const prior=s.candidates.find(x=>x.id!==c.id&&x.metric===c.metric&&x.companyId===c.companyId&&x.datum.value===old.value&&x.datum.period.start===old.period.start&&s.decisions.some(d=>d.candidateId===x.id&&d.action==='approve'));
+  if(!prior?.pdf||prior.datum.scope!==c.datum.scope||prior.pdf.definition!==c.pdf.definition||prior.pdf.periodType!==c.pdf.periodType)reasons.push('Financiële definitie of bedrijfsscope is niet aantoonbaar gelijk.');
+ }
+ return {old,comparable:reasons.length===0,difference:reasons.length||old.value===null||c.datum.value===null?null:c.datum.value-old.value,reasons};
+}
