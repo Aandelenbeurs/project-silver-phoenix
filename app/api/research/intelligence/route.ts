@@ -2,8 +2,8 @@ import {NextResponse} from 'next/server';
 import {readJsonObject,ApiInputError} from '../../../../lib/api-input';
 import {assessRequest} from '../../../../lib/request-security';
 import {readIntelligence,mutateIntelligence} from '../../../../data/multi-sector/research/intelligence/storage';
-import {importDocument,addManualCandidate,decideCandidate,recordSourceCheck,approvedResearchInputs,analysisImpact,priorObservation,candidateProblems,documentReviewStatus,IntelligenceError,type ImportDocument} from '../../../../data/multi-sector/research/intelligence/workflow';
-import {checkSource} from '../../../../data/multi-sector/research/intelligence/connectors';
+import {importDocument,addManualCandidate,decideCandidate,approvedResearchInputs,analysisImpact,priorObservation,candidateProblems,documentReviewStatus,IntelligenceError,type ImportDocument} from '../../../../data/multi-sector/research/intelligence/workflow';
+import {monitorSource} from '../../../../data/multi-sector/research/intelligence/monitoring';
 import {SOURCE_CHANNELS} from '../../../../data/multi-sector/research/intelligence/sources';
 import type {ManualValue} from '../../../../data/multi-sector/research/intelligence/extraction';
 export const runtime='nodejs';
@@ -30,7 +30,7 @@ export async function POST(request:Request){
    if(body.action==='decision')return decideCandidate(current,body.decision as Parameters<typeof decideCandidate>[1],at);
    const id=String(body.channelId);if(!SOURCE_CHANNELS.some(c=>c.id===id))throw new IntelligenceError('Onbekend bronkanaal.');
    const last=current.checks.filter(c=>c.channelId===id).at(-1);if(last&&now-Date.parse(last.at)<60000)throw new IntelligenceError('Dit bronkanaal is minder dan één minuut geleden gecontroleerd.',429);
-   return recordSourceCheck(current,await checkSource(id,current.checks,at));
+   return monitorSource(current,id,at);
   });
   return NextResponse.json({success:true,revision:state.revision,valuationReleased:false},{headers});
  }catch(e){return errorResponse(e);}

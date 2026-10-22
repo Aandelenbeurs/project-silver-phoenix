@@ -15,6 +15,7 @@ export function assertState(s:IntelligenceState):void{
  for(const d of s.documents){const {id,version,...rest}=d;const {discoveredAt,status,...core}=rest;
   if(digest(d.text)!==d.contentHash||documentIdentity(core)!==id||version!==id)throw new IntelligenceError('Documentversie beschadigd.',409);
  }
+ for(const check of s.checks)if(!s.audit.some(a=>a.action==='source-check'&&a.subject===check.id&&a.fingerprint===digest(JSON.stringify(check))))throw new IntelligenceError('Broncontrole mist geldige auditbinding.',409);
  for(const c of s.candidates){const {id,fingerprint:fp,...base}=c;if(fingerprint(base)!==fp||id!==fp||!s.documents.some(d=>d.id===c.documentId))throw new IntelligenceError('Kandidaat beschadigd.',409);}
  for(const d of s.decisions){const c=s.candidates.find(c=>c.id===d.candidateId),doc=s.documents.find(x=>x.id===c?.documentId);if(!c||!doc||d.fingerprint!==c.fingerprint||d.documentHash!==doc.contentHash||!s.audit.some(a=>a.subject===c.id&&a.action===d.action&&a.fingerprint===digest(JSON.stringify(d))))throw new IntelligenceError('Beslissing mist geldige bron-/auditbinding.',409);}
  if(new Set(s.decisions.map(x=>x.candidateId)).size!==s.decisions.length)throw new IntelligenceError('Meerdere beslissingen voor één kandidaat.',409);
@@ -40,6 +41,20 @@ export function importDocument(original:IntelligenceState,v:ImportDocument,at:st
  const candidates=extractCandidates(doc);doc.status=candidates.length?'extracted':'extraction-error';s.documents.push(doc);s.candidates.push(...candidates);audit(s,at,'import',id,id);bounded(s);
  return {state:s,documentId:id,duplicate:false};
 }
+/** Trusted connector entry, not an API import surface. Unknown periods stay unknown.
+ * Automatic candidates can never pass evidence review until a complete manual import. */
+export function registerDiscovered(original:IntelligenceState,input:Omit<SourceDocument,'id'|'version'|'discoveredAt'|'status'|'contentHash'>,at:string){
+ assertState(original);nowCheck(at);
+ if(!input.monitoring||input.method!=='automatic-discovery'||input.text.length>30000||validateReference(input.url,input.companyId).sourceClass!=='primary')throw new IntelligenceError('Ongeldige ontdekkingsregistratie.');
+ const core={...input,contentHash:digest(input.text)};const id=documentIdentity(core);
+ if(original.documents.some(d=>d.id===id))return {state:original,documentId:id};
+ const s=structuredClone(original);const doc:SourceDocument={...core,id,version:id,discoveredAt:at,status:'discovered'};
+ // Only actual downloaded text enters the existing rule extractor. No candidates from titles or PDF metadata.
+ const candidates=input.monitoring.processing==='processed'?extractCandidates(doc):[];
+ if(candidates.length)doc.status='extracted';
+ s.documents.push(doc);s.candidates.push(...candidates);audit(s,at,'import',id,id);bounded(s);
+ return {state:s,documentId:id};
+}
 export function addManualCandidate(original:IntelligenceState,documentId:string,value:ManualValue,at:string){
  assertState(original);const doc=original.documents.find(d=>d.id===documentId);if(!doc)throw new IntelligenceError('Document bestaat niet.');
  let c:Candidate;try{c=manualCandidate(doc,value);}catch(e){throw new IntelligenceError(e instanceof Error?e.message:'Handmatige invoer ongeldig.');}
@@ -52,6 +67,7 @@ export function candidateProblems(s:IntelligenceState,c:Candidate,asOf:string){
  const ev:EvidenceDocument={id:doc.id,title:doc.title,uri:doc.url,publishedAt:doc.publishedAt??'',origin:doc.sourceClass==='primary'?'issuer':'internal'};
  const review=reviewEvidence([d],[ev],{asOf,rules:[{id:d.id,unit:d.unit,scope:d.scope,kinds:['reported','guidance']}]});
  const reasons=[...c.issues,...review.issues.map(x=>x.message)];
+ if(doc.method==='automatic-discovery')reasons.push('Automatische ontdekking: publicatie, verslagperiode en inhoud moeten via een volledige handmatige bronimport worden bevestigd.');
  if(s.documents.some(x=>x.id!==doc.id&&x.companyId===doc.companyId&&(x.supersedes===doc.id||x.url===doc.url)&&s.documents.indexOf(x)>s.documents.indexOf(doc)))reasons.push('Nieuwere importversie van deze bronlink bekend; beoordeel die versie. Dit bewijst geen wijziging van het externe volledige document.');
  if(s.candidates.some(x=>x.id!==c.id&&x.documentId===c.documentId&&x.metric===c.metric&&x.datum.value!==c.datum.value&&s.decisions.find(d=>d.candidateId===x.id)?.action!=='reject'))reasons.push('Conflicterende kandidaat voor dezelfde documentmetriek; wijs foutieve extractie eerst af.');
  const competing=s.candidates.some(x=>x.id!==c.id&&x.companyId===c.companyId&&x.metric===c.metric&&x.datum.unit===c.datum.unit&&x.datum.period.start===c.datum.period.start&&x.datum.period.end===c.datum.period.end&&x.datum.value!==c.datum.value&&doc.supersedes!==x.documentId&&s.decisions.find(d=>d.candidateId===x.id)?.action!=='reject');
@@ -92,7 +108,7 @@ export function assessFreshness(input:{asOf:string;essentialOutdated:boolean;pen
 export function documentReviewStatus(s:IntelligenceState,d:SourceDocument){
  const values=s.candidates.filter(c=>c.documentId===d.id);
  if(s.documents.some(x=>x.supersedes===d.id||x.url===d.url&&s.documents.indexOf(x)>s.documents.indexOf(d)))return 'Nieuwe importversie bekend';
- if(!values.length)return 'Extractiefout / geen regelmatch';
+ if(!values.length)return d.monitoring?'Ontdekt; handmatige broncontrole vereist':'Extractiefout / geen regelmatch';
  const decided=values.map(c=>s.decisions.find(x=>x.candidateId===c.id));
  if(decided.every(x=>x?.action==='reject'))return 'Alle voorstellen afgewezen';
  if(decided.some(x=>x?.action==='approve'))return 'Brongegevens deels goedgekeurd; geen integrale documentaudit';
@@ -104,7 +120,7 @@ export function analysisImpact(s:IntelligenceState,companyId:CompanyId,asOf:stri
  const docs=s.documents.filter(d=>d.companyId===companyId);
  const events=docs.map(d=>({documentId:d.id,title:d.title,event:d.event,affected:IMPACT[d.event],approved:s.candidates.some(c=>c.documentId===d.id&&s.decisions.some(x=>x.candidateId===c.id&&x.action==='approve'))}));
  const usedDate=companyId==='advantage-energy'?'2026-06-30':'2026-06-19';
- const relevant=events.filter(e=>{const d=docs.find(x=>x.id===e.documentId)!;return d.period.end>usedDate||Boolean(d.supersedes)||docs.some(x=>x.id!==d.id&&x.url===d.url&&docs.indexOf(x)<docs.indexOf(d));});
+ const relevant=events.filter(e=>{const d=docs.find(x=>x.id===e.documentId)!;return Boolean(d.monitoring)||d.period.end>usedDate||Boolean(d.supersedes)||docs.some(x=>x.id!==d.id&&x.url===d.url&&docs.indexOf(x)<docs.indexOf(d));});
  const outdated=relevant.some(e=>e.approved&&['issuance','disposition','reserves','study','financial-report','share-count'].includes(e.event));
  // Index coverage alone can NEVER establish freshness of an entire financial analysis.
  const status=assessFreshness({asOf,essentialOutdated:outdated,pendingRelevant:relevant.length>0,coverageComplete:false,lastSuccessfulAt:null});
